@@ -13,20 +13,20 @@ chmod u+w,a+rx REPLACEME_SV_TOP_BIN_DIR_TCL
 
 
 cd ../REPLACEME_SV_TCL_DIR/win
-nmake -f makefile.vc MACHINE=AMD64 INSTALLDIR="REPLACEME_SV_TOP_BIN_DIR_TCL" OPTS=msvcrt,threads hose
-nmake -f makefile.vc MACHINE=AMD64 INSTALLDIR="REPLACEME_SV_TOP_BIN_DIR_TCL" OPTS=msvcrt,threads release
-nmake -f makefile.vc MACHINE=AMD64 INSTALLDIR="REPLACEME_SV_TOP_BIN_DIR_TCL" OPTS=msvcrt,threads install
+nmake -f makefile.vc MACHINE=AMD64 INSTALLDIR="REPLACEME_SV_TOP_BIN_DIR_TCL" OPTS=msvcrt,static,threads hose
+nmake -f makefile.vc MACHINE=AMD64 INSTALLDIR="REPLACEME_SV_TOP_BIN_DIR_TCL" OPTS=msvcrt,static,threads release
+nmake -f makefile.vc MACHINE=AMD64 INSTALLDIR="REPLACEME_SV_TOP_BIN_DIR_TCL" OPTS=msvcrt,static,threads install
 chmod -R a+rwx REPLACEME_SV_TOP_BIN_DIR_TCL
 cd ../..
 cd REPLACEME_SV_TK_DIR/win
-nmake -f makefile.vc MACHINE=AMD64 TCLDIR="REPLACEME_SV_TOP_SRC_DIR_TCL" INSTALLDIR="REPLACEME_SV_TOP_BIN_DIR_TK" OPTS=msvcrt,threads hose
-nmake -f makefile.vc MACHINE=AMD64 TCLDIR="REPLACEME_SV_TOP_SRC_DIR_TCL" INSTALLDIR="REPLACEME_SV_TOP_BIN_DIR_TK" OPTS=msvcrt,threads release
-nmake -f makefile.vc MACHINE=AMD64 TCLDIR="REPLACEME_SV_TOP_SRC_DIR_TCL" INSTALLDIR="REPLACEME_SV_TOP_BIN_DIR_TK" OPTS=msvcrt,threads install
+nmake -f makefile.vc MACHINE=AMD64 TCLDIR="REPLACEME_SV_TOP_SRC_DIR_TCL" INSTALLDIR="REPLACEME_SV_TOP_BIN_DIR_TK" OPTS=msvcrt,static,threads hose
+nmake -f makefile.vc MACHINE=AMD64 TCLDIR="REPLACEME_SV_TOP_SRC_DIR_TCL" INSTALLDIR="REPLACEME_SV_TOP_BIN_DIR_TK" OPTS=msvcrt,static,threads release
+nmake -f makefile.vc MACHINE=AMD64 TCLDIR="REPLACEME_SV_TOP_SRC_DIR_TCL" INSTALLDIR="REPLACEME_SV_TOP_BIN_DIR_TK" OPTS=msvcrt,static,threads install
 chmod -R a+rwx REPLACEME_SV_TOP_BIN_DIR_TK
-nmake -f makefile.vc MACHINE=AMD64 TCLDIR="REPLACEME_SV_TOP_SRC_DIR_TCL" INSTALLDIR= OPTS=msvcrt,threads hose
+nmake -f makefile.vc MACHINE=AMD64 TCLDIR="REPLACEME_SV_TOP_SRC_DIR_TCL" INSTALLDIR= OPTS=msvcrt,static,threads hose
 cd ../..
 cd REPLACEME_SV_TCL_DIR/win
-nmake -f makefile.vc MACHINE=AMD64 INSTALLDIR="REPLACEME_SV_TOP_BIN_DIR_TCL" OPTS=msvcrt,threads hose
+nmake -f makefile.vc MACHINE=AMD64 INSTALLDIR="REPLACEME_SV_TOP_BIN_DIR_TCL" OPTS=msvcrt,static,threads hose
 
 cd ../../BuildHelpers
 

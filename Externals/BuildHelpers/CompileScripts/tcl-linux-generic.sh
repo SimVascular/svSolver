@@ -13,7 +13,7 @@ chmod u+w,a+rx REPLACEME_SV_TOP_BIN_DIR_TCL
 
 
 cd ../REPLACEME_SV_TCL_DIR/unix
-./configure --prefix=REPLACEME_SV_TOP_BIN_DIR_TCL --enable-threads --enable-shared
+./configure --prefix=REPLACEME_SV_TOP_BIN_DIR_TCL --enable-threads --disable-shared
 make -j8 clean
 make -j8 release
 make -j8 install
@@ -22,7 +22,7 @@ cd ../..
 cd REPLACEME_SV_TK_DIR/unix
 ./configure --prefix=REPLACEME_SV_TOP_BIN_DIR_TK \
             --with-tcl=REPLACEME_SV_TOP_BIN_DIR_TCL/lib \
-            --enable-threads --enable-shared
+            --enable-threads --disable-shared
 make -j8 clean
 make -j8 release
 make -j8 install

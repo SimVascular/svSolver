@@ -8,8 +8,8 @@ export SV_TCL_VERSION=$1
 export SV_COMPILER_DIR=$2
 export SV_TCL_MAJOR_VERSION=$3
 
-export SV_TOPLEVEL_SRCDIR=/usr/local/sv/ext/src
-export SV_TOPLEVEL_BINDIR=/usr/local/sv/ext/bin
+export SV_TOPLEVEL_SRCDIR=/usr/local/svsolver/externals/src
+export SV_TOPLEVEL_BINDIR=/usr/local/svsolver/externals/bin
 
 export SV_ARCH_DIR=x64
 

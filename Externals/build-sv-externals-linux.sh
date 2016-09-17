@@ -1,4 +1,4 @@
-EXTERNALS_TOP=/usr/local/sv/ext
+EXTERNALS_TOP=/usr/local/svsolver/externals
 EXTERNALS_BUILD_TOP=$EXTERNALS_TOP/build
 
 #
@@ -8,8 +8,8 @@ EXTERNALS_BUILD_TOP=$EXTERNALS_TOP/build
 sudo mkdir -p /usr/local/package
 sudo chmod a+rwx /usr/local/package
 
-sudo mkdir -p /usr/local/sv
-sudo chmod a+rwx /usr/local/sv
+sudo mkdir -p /usr/local/svsolver
+sudo chmod a+rwx /usr/local/svsolver
 
 #
 # initial setup
