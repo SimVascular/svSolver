@@ -33,22 +33,12 @@ cd ../../BuildHelpers
 export SV_TOPLEVEL_BINDIR_CYGWIN=`cygpath "REPLACEME_SV_TOP_BIN_DIR_TCL"`
 
 cd ../tcllib-1.17
-$SV_TOPLEVEL_BINDIR_CYGWIN/bin/tclsh8?t.exe installer.tcl
+$SV_TOPLEVEL_BINDIR_CYGWIN/bin/REPLACEME_SV_TCLSH_EXECUTABLE installer.tcl
 cd ../BuildHelpers
 chmod -R a+rx $SV_TOPLEVEL_BINDIR_CYGWIN
 
 cd ../tklib-0.6
-$SV_TOPLEVEL_BINDIR_CYGWIN/bin/tclsh8?t.exe installer.tcl
+$SV_TOPLEVEL_BINDIR_CYGWIN/bin/REPLACEME_SV_TCLSH_EXECUTABLE installer.tcl
 cd ../BuildHelpers
 chmod -R a+rx $SV_TOPLEVEL_BINDIR_CYGWIN
-
-# copy names required for opencascade
-cp -f $SV_TOPLEVEL_BINDIR_CYGWIN/bin/tclsh86t.exe  $SV_TOPLEVEL_BINDIR_CYGWIN/bin/tclsh86.exe
-cp -f $SV_TOPLEVEL_BINDIR_CYGWIN/bin/wish86t.exe $SV_TOPLEVEL_BINDIR_CYGWIN/bin/wish86.exe
-cp -f $SV_TOPLEVEL_BINDIR_CYGWIN/bin/tcl86t.dll  $SV_TOPLEVEL_BINDIR_CYGWIN/bin/tcl86.dll
-cp -f $SV_TOPLEVEL_BINDIR_CYGWIN/bin/tk86t.dll $SV_TOPLEVEL_BINDIR_CYGWIN/bin/tk86.dll
-cp -f $SV_TOPLEVEL_BINDIR_CYGWIN/lib/tcl86t.lib  $SV_TOPLEVEL_BINDIR_CYGWIN/lib/tcl86.lib
-cp -f $SV_TOPLEVEL_BINDIR_CYGWIN/lib/tk86t.lib $SV_TOPLEVEL_BINDIR_CYGWIN/lib/tk86.lib
-
-
 
