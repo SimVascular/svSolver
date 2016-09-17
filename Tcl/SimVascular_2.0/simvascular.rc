@@ -1,4 +1,0 @@
-
-if {![info exists SV_FULL_VER_NO]} {
-  source $env(SV_HOME)/Tcl/simvascular_startup.tcl
-}
