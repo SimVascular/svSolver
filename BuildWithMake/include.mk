@@ -74,54 +74,6 @@ endif
 SV_USE_SHARED = 1
 SV_USE_GLOBALS_SHARED = 1
 
-# ---------------------------------------
-# Control solid modeling kernel inclusion
-# ---------------------------------------
-# Note that Geodesic allows for multiple kernels to be built into a
-# single executable.  In order to include a kernel, uncomment its line
-# in the following short section.  In order to exclude a kernel,
-# set the value to something other than 1 in global_overrides.mk or 
-# via the make command line.
-
-SV_USE_PARASOLID = 0
-SV_USE_PARASOLID_SHARED = 1
-
-# ------------
-# Open Cascade
-# ------------
-
-SV_USE_OPENCASCADE = 1
-SV_USE_OPENCASCADE_SHARED = 1
-
-# --------------------------------------
-# Control inclusion of meshSim functions
-# --------------------------------------
-
-SV_USE_MESHSIM = 0
-SV_USE_MESHSIM_DISCRETE_MODEL = 0
-SV_USE_MESHSIM_DISCRETE_MODEL_SHARED = 1
-SV_USE_MESHSIM_SOLID_MODEL = 0
-SV_USE_MESHSIM_SOLID_MODEL_SHARED = 1
-SV_USE_MESHSIM_ADAPTOR = 0
-SV_USE_MESHSIM_SHARED = 1
-MESHSIM_USE_LICENSE_FILE = 1
-MESHSIM_EMBED_LICENSE_KEYS = 0
-MESHSIM_LICENSE_IN_WIN32_REGISTRY = 0
-
-# -------------------------------------
-# Control inclusion of tetgen functions
-# -------------------------------------
-
-SV_USE_TETGEN = 1
-SV_USE_TETGEN_ADAPTOR = 1
-
-# ------------------------
-# Control inclusion of mmg
-# ------------------------
-
-SV_USE_MMG = 1
-SV_USE_MMG_SHARED = 1
-
 # ----------------------------------------------
 # Control inclusion of leslib
 # {binary and dummy} are mutually exclusive opts
@@ -143,30 +95,6 @@ SV_USE_SOURCE_CODE_SVLS = 1
 # -----------------------------------------------------
 
 SV_USE_ZLIB = 1
-
-# -----------------------------------------------------
-# Compile with python interpreter
-# -----------------------------------------------------
-
-SV_USE_PYTHON = 1
-SV_USE_PYTHON_SHARED = 1
-SV_USE_SYSTEM_PYTHON = 1
-
-# -----------------------------------------------------
-# Compile with python interpreter
-# -----------------------------------------------------
-
-SV_USE_QT = 1
-SV_USE_SYSTEM_QT = 1
-SV_USE_QT_GUI = 1
-SV_USE_QT_GUI_SHARED = 1
-
-# -----------------------------------------------------
-# Compile with freetype
-# -----------------------------------------------------
-
-SV_USE_FREETYPE = 1
-SV_USE_SYSTEM_FREETYPE = 1
 
 # -----------------------------------------------------
 # system tcltk
@@ -224,37 +152,6 @@ EXCLUDE_ALL_BUT_THREEDSOLVER ?= 0
 SV_USE_VTK = 1
 
 # -----------------------------------------------------
-# Compile with ITK
-# -----------------------------------------------------
-
-SV_USE_ITK = 1
-
-# -----------------------------------------------------
-# Compile with VMTK
-# -----------------------------------------------------
-
-SV_USE_VMTK = 1
-
-# -----------------------------------------------------
-# Compile with GDCM
-# -----------------------------------------------------
-
-SV_USE_GDCM = 1
-
-# -----------------------------------------------------
-# Compile with MITK
-# -----------------------------------------------------
-
-SV_USE_MITK = 1
-
-# -----------------------------------------------------
-# Compile with glib & gts
-# -----------------------------------------------------
-
-SV_USE_GLIB = 0
-SV_USE_GTS  = 0
-
-# -----------------------------------------------------
 # Compile with sparse, metis, nspcg
 # -----------------------------------------------------
 
@@ -273,7 +170,7 @@ LINK_WITH_DEBUG = 1
 # Static link
 # -----------------------------------------------------
 
-#SV_STATIC_BUILD = 1
+SV_STATIC_BUILD = 1
 
 # if you need to override anything above for a given site, do it here
 # -----------------------------------------------------------------------
@@ -301,24 +198,24 @@ ifeq ($(CLUSTER), x64_macosx)
 endif
 
 ifeq ($(CLUSTER), x64_cygwin)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/sv/ext/bin/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/svsolver/externals/bin/$(SVEXTERN_COMPILER_VERSION)/x64
     OPEN_SOFTWARE_BUILDS_TOPLEVEL   = C:/sv/build/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = C:/cygwin64/usr/local/sv/ext/src
-    LICENSED_SOFTWARE_TOPLEVEL      = C:/cygwin64/usr/local/sv/licensed
+    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = C:/cygwin64/usr/local/svsolver/externals/src
+    LICENSED_SOFTWARE_TOPLEVEL      = C:/cygwin64/usr/local/svsolver/licensed
 endif
 
 ifeq ($(CLUSTER), x64_linux)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/bin/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = /usr/local/sv/ext/build/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /usr/local/sv/ext/src
-    LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/sv/licensed
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/svsolver/externals/bin/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = /usr/local/svsolver/externals/build/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /usr/local/svsolver/externals/src
+    LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/svsolver/licensed
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/bin/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = /usr/local/sv/ext/build/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /usr/local/sv/ext/src
-    LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/sv/licensed
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/svsolver/externals/bin/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = /usr/local/svsolver/externals/build/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /usr/local/svsolver/externals/src
+    LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/svsolver/licensed
 endif
 
 # -------------------------------------------
@@ -326,7 +223,7 @@ endif
 # -------------------------------------------
 
 SV_MAJOR_VER_NO = "2.16"
-SV_FULL_VER_NO = "2.16.0902"
+SV_FULL_VER_NO = "2.16.0917"
 SV_USE_WIN32_REGISTRY=0
 SV_REGISTRY_TOPLEVEL=SIMVASCULAR
 
@@ -358,14 +255,6 @@ ifeq ($(EXCLUDE_ALL_BUT_THREEDSOLVER), 1)
     ifeq ($(SV_THREEDSOLVER_USE_VTK), 0)
         SV_USE_VTK = 0
     endif
-
-    SV_USE_ITK = 0
-    SV_USE_MITK = 0
-    SV_USE_GDCM = 0
-    SV_USE_VMTK = 0
-    SV_USE_TETGEN = 0
-    SV_USE_SPARSE = 0
-    SV_USE_NSPCG = 0
 endif
 
 # --------------
@@ -398,96 +287,8 @@ ifeq ($(CLUSTER), x64_macosx)
    GLOBAL_DEFINES += -DSV_USE_NOTIMER -DUNIX
 endif
 
-
-ifeq ($(SV_USE_PARASOLID),1)
-    GLOBAL_DEFINES += -DSV_USE_PARASOLID
-endif
-ifeq ($(SV_USE_PARASOLID_SHARED),1)
-    GLOBAL_DEFINES += -DSV_USE_PARASOLID_SHARED
-endif
-ifeq ($(SV_USE_OPENCASCADE),1)
-    GLOBAL_DEFINES += -DSV_USE_OPENCASCADE
-endif
-ifeq ($(SV_USE_OPENCASCADE_SHARED),1)
-    GLOBAL_DEFINES += -DSV_USE_OPENCASCADE_SHARED
-endif
-
-ifeq ($(SV_USE_MESHSIM),1) 
-  GLOBAL_DEFINES += -DSV_USE_MESHSIM
-  ifeq ($(SV_USE_MESHSIM_SHARED),1) 
-    GLOBAL_DEFINES += -DSV_USE_MESHSIM_SHARED
-  endif
-  ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
-    GLOBAL_DEFINES += -DSV_USE_MESHSIM_DISCRETE_MODEL
-  endif
-  ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL_SHARED),1)
-    GLOBAL_DEFINES += -DSV_USE_MESHSIM_DISCRETE_MODEL_SHARED
-  endif
-  ifeq ($(SV_USE_MESHSIM_SOLID_MODEL),1)
-    GLOBAL_DEFINES += -DSV_USE_MESHSIM_SOLID_MODEL
-  endif
-  ifeq ($(SV+USE_MESHSIM_SOLID_MODEL_SHARED),1)
-    GLOBAL_DEFINES += -DSV_USE_MESHSIM_SOLID_MODEL_SHARED
-  endif
-  ifeq ($(SV_USE_MESHSIM_ADAPTOR),1) 
-    GLOBAL_DEFINES += -DSV_USE_MESHSIM_ADAPTOR
-  endif
-  ifeq ($(SV_USE_WIN32_REGISTRY),1)
-    GLOBAL_DEFINES += -DMESHSIM_LICENSE_IN_WIN32_REGISTRY
-  else
-    ifeq ($(MESHSIM_USE_LICENSE_FILE),1)
-      GLOBAL_DEFINES += -DMESHSIM_USE_LICENSE_FILE
-    endif
-    ifeq ($(MESHSIM_EMBED_LICENSE_KEYS),1)
-      GLOBAL_DEFINES += -DMESHSIM_EMBED_LICENSE_KEYS
-    endif
-  endif
-endif
-
-ifeq ($(SV_USE_TETGEN),1) 
-  GLOBAL_DEFINES += -DSV_USE_TETGEN
-  ifeq ($(SV_USE_TETGEN_ADAPTOR),1) 
-    GLOBAL_DEFINES += -DSV_USE_TET_ADAPTOR
-  endif
-endif
-
-ifeq ($(SV_USE_MMG),1)
-  GLOBAL_DEFINES += -DSV_USE_MMG
-endif
-
-ifeq ($(SV_USE_PYTHON),1)
-    GLOBAL_DEFINES += -DSV_USE_PYTHON
-endif
-
-ifeq ($(SV_USE_QT),1)
-    GLOBAL_DEFINES += -DSV_USE_QT
-  ifeq ($(SV_USE_QT_GUI),1)
-    GLOBAL_DEFINES += -DSV_USE_QT_GUI
-  endif
-endif
-
 ifeq ($(SV_USE_ZLIB),1)
   GLOBAL_DEFINES += -DSV_USE_ZLIB
-endif
-
-ifeq ($(SV_USE_ITK),1)
-  GLOBAL_DEFINES += -DSV_USE_ITK
-endif
-
-ifeq ($(SV_USE_MITK),1)
-  GLOBAL_DEFINES += -DSV_USE_MITK
-endif
-
-ifeq ($(SV_USE_GDCM),1)
-  GLOBAL_DEFINES += -DSV_USE_GDCM
-endif
-
-ifeq ($(SV_USE_VMTK),1)
-  GLOBAL_DEFINES += -DSV_USE_VMTK
-endif
-
-ifeq ($(SV_USE_GTS),1)
-  GLOBAL_DEFINES += -DSV_USE_GTS -DNATIVE_WIN32
 endif
 
 # ----------------------------------
@@ -563,117 +364,8 @@ LIB_MPI_BUILD_DIR = $(CLUSTER)/$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSIO
 
 LIBDIRS =
 SHARED_LIBDIRS =
-
-ifeq ($(SV_USE_GLOBALS_SHARED),1)
-  SHARED_LIBDIRS = ../Code/Source/Common/Globals
-else
-  LIBDIRS = ../Code/Source/Common/Globals
-endif
-
-ifeq ($(SV_USE_SHARED),1)
-  SHARED_LIBDIRS += ../Code/Source/Common/Utils \
-	  ../Code/Source/Common/Repository \
-	  ../Code/Source/Model/SolidModel \
-	  ../Code/Source/Mesh/MeshObject \
-	  ../Code/Source/Common/Geometry \
-	  ../Code/Source/ImageProcessing \
-	  ../Code/Source/PostProcessing \
-	  ../Code/Source/Model/PolyDataSolidModel \
-	  ../Code/Source/Legacy/LevelSet
-else
-  LIBDIRS += ../Code/Source/Common/Utils \
-	  ../Code/Source/Common/Repository \
-	  ../Code/Source/Model/SolidModel \
-	  ../Code/Source/Mesh/MeshObject \
-	  ../Code/Source/Common/Geometry \
-	  ../Code/Source/ImageProcessing \
-	  ../Code/Source/PostProcessing \
-	  ../Code/Source/Model/PolyDataSolidModel \
-	  ../Code/Source/Legacy/LevelSet
-endif
-
-ifeq ($(SV_USE_ITK),1)
-  ifeq ($(SV_USE_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/Segmentation/ITK
-  else
-     LIBDIRS += ../Code/Source/Segmentation/ITK
-  endif
-endif
-
-# for now, combine mitk code qt gui code
-ifeq ($(SV_USE_MITK),1)
-  ifeq ($(SV_USE_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/SV3/Modules
-  else
-     LIBDIRS += ../Code/Source/SV3/Modules
-  endif
-endif
-
-ifeq ($(SV_USE_MMG),1)
-  ifeq ($(SV_USE_MMG_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/Mesh/MMGMeshUtils
-  else
-     LIBDIRS += ../Code/Source/Mesh/MMGMeshUtils
-  endif
-endif
-
-ifeq ($(SV_USE_TETGEN),1)
-  ifeq ($(SV_USE_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/Mesh/TetGenMeshObject
-  else
-     LIBDIRS += ../Code/Source/Mesh/TetGenMeshObject
-  endif
-endif
-
-#  solid modeling
-
-ifeq ($(SV_USE_PARASOLID),1)
-  ifeq ($(SV_USE_PARASOLID_SHARED),1)
-    SHARED_LIBDIRS += ../Code/Licensed/ParasolidSolidModel
-  else
-    LIBDIRS += ../Code/Licensed/ParasolidSolidModel
-  endif
-endif
-
-ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
-  ifeq ($(SV_USE_MESHSIM_SHARED),1)
-    SHARED_LIBDIRS += ../Code/Source/Model/MeshSimDiscreteSolidModel
-  else
-    LIBDIRS += ../Code/Source/Model/MeshSimDiscreteSolidModel
-  endif
-endif
-
-    ifeq ($(SV_USE_MESHSIM_SOLID_MODEL),1)
-      ifeq ($(SV_USE_MESHSIM_SOLID_MODEL_SHARED),1)
-        SHARED_LIBDIRS += ../Code/Source/Model/MeshSimSolidModel
-      else
-        LIBDIRS += ../Code/Source/Model/MeshSimSolidModel
-      endif
-    endif
-
-ifeq ($(SV_USE_OPENCASCADE),1)
-  ifeq ($(SV_USE_OPENCASCADE_SHARED),1)
-    SHARED_LIBDIRS += ../Code/Source/Model/OCCTSolidModel
-  else
-    LIBDIRS += ../Code/Source/Model/OCCTSolidModel
-  endif
-endif
-
-# meshing
-
-ifeq ($(SV_USE_MESHSIM),1)
-  ifeq ($(SV_USE_MESHSIM_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/Mesh/MeshSimMeshObject
-  else
-     LIBDIRS += ../Code/Source/Mesh/MeshSimMeshObject
-  endif
-endif
-
-ifneq ($(EXCLUDE_ALL_BUT_THREEDSOLVER),1)
-  EXECDIRS = ../Code/Source/UI
-else
-  EXECDIRS = 
-endif
+EXECDIRS =
+LOCAL_INCDIR = $(TOP)/../Code/Source/Include/Make
 
 ifeq ($(SV_USE_THREEDSOLVER),1)
      LIBDIRS += ../Code/FlowSolvers/ThreeDSolver
@@ -685,64 +377,6 @@ endif
 ifeq ($(SV_USE_SOLVERIO),1)
      LIBDIRS += ../Code/FlowSolvers/ThreeDSolver/SolverIO
      THREEDSOLVER_INCDIR = -I $(TOP)/../Code/FlowSolvers/ThreeDSolver
-endif
-
-# need solverio for adaptor classes so add them after adding solverio
-
-ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
-  ifeq ($(SV_USE_SHARED),1)
-    SHARED_LIBDIRS += ../Code/Source/Mesh/AdaptObject
-  else
-    LIBDIRS += ../Code/Source/Mesh/AdaptObject
-  endif
-else
-  ifeq ($(SV_USE_MESHSIM_ADAPTOR),1)
-    ifeq ($(SV_USE_SHARED),1)
-      SHARED_LIBDIRS += ../Code/Source/Mesh/AdaptObject
-    else
-      LIBDIRS += ../Code/Source/Mesh/AdaptObject
-    endif
-  endif
-endif
-
-ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
-  ifeq ($(SV_USE_SHARED),1)
-    SHARED_LIBDIRS += ../Code/Source/Mesh/TetGenAdapt
-  else
-    LIBDIRS += ../Code/Source/Mesh/TetGenAdapt
-  endif
-endif
-
-ifeq ($(SV_USE_MESHSIM_ADAPTOR),1)
-  ifeq ($(SV_USE_MESHSIM_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/Mesh/MeshSimAdapt
-  else
-     LIBDIRS += ../Code/Source/Mesh/MeshSimAdapt
-  endif
-endif
-
-# -------------------------
-# Build a python interpreter
-# -------------------------
-
-ifeq ($(SV_USE_PYTHON),1)
-  ifeq ($(SV_USE_PYTHON_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/TclPython
-  else
-     LIBDIRS += ../Code/Source/TclPython
-  endif
-endif
-
-# -------------------------
-# Qt
-# -------------------------
-
-ifeq ($(SV_USE_QT_GUI),1)
-  ifeq ($(SV_USE_QT_GUI_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/SV3/Plugins
-  else
-     LIBDIRS += ../Code/Source/SV3/Plugins
-  endif
 endif
 
 #
@@ -763,28 +397,6 @@ SUBDIRS         = $(LIBDIRS) $(EXECDIRS)
 LOCAL_SUBDIRS   = $(LIBDIRS) $(SHARED_LIBDIRS) ../Code/Source/Include ../Code/Source/Include/Make
 LOCAL_INCDIR    := $(foreach i, ${LOCAL_SUBDIRS}, -I$(TOP)/$(i))
 
-ifeq ($(SV_USE_ITK),1)
-     LOCAL_INCDIR += -I$(TOP)/../Code/Source/Segmentation/ITK/Include
-endif
-
-# for now, combine the mitk and qt gui include dirs
-ifeq ($(SV_USE_MITK),1)
-     LOCAL_INCDIR += -I$(TOP)/../Code/Source/SV3/Plugins/mitk.image \
-                     -I$(TOP)/../Code/Source/SV3/Plugins/mitk.segmentation \
-                     -I$(TOP)/../Code/Source/SV3/Plugins/sv.general \
-                     -I$(TOP)/../Code/Source/SV3/Plugins/sv.modeling \
-                     -I$(TOP)/../Code/Source/SV3/Plugins/sv.pathplanning \
-                     -I$(TOP)/../Code/Source/SV3/Plugins/sv.segmentation \
-                     -I$(TOP)/../Code/Source/SV3/Plugins/sv.test \
-                     -I$(TOP)/../Code/Source/SV3/Modules/Common \
-                     -I$(TOP)/../Code/Source/SV3/Modules/Model \
-                     -I$(TOP)/../Code/Source/SV3/Modules/Path \
-                     -I$(TOP)/../Code/Source/SV3/Modules/ProjectManagement \
-                     -I$(TOP)/../Code/Source/SV3/Modules/QtAppBase \
-                     -I$(TOP)/../Code/Source/SV3/Modules/QtWidgets \
-                     -I$(TOP)/../Code/Source/SV3/Modules/Segmentation
-endif
-
 # Link flags, which also need to be dealt with conditionally depending
 # on which concrete classes derived from SolidModel are being
 # included.
@@ -793,19 +405,7 @@ endif
 # include path to find libs when linking
 GLOBAL_LFLAGS 	 += $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib/$(LIB_BUILD_DIR)
 
-LFLAGS 	 = $(GLOBAL_LFLAGS) $(VTK_LIBS) $(TCLTK_LIBS) $(PYTHON_LIB)
-
-ifneq ($(SV_USE_SHARED),1)
-  LFLAGS     += $(SVLIBFLAG)_simvascular_lset$(LIBLINKEXT) \
-              $(SVLIBFLAG)_simvascular_image$(LIBLINKEXT) \
-              $(SVLIBFLAG)_simvascular_mesh$(LIBLINKEXT) \
-              $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
-              $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
-              $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
-              $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
-              $(SVLIBFLAG)_simvascular_post$(LIBLINKEXT) \
-              $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT)
-endif
+LFLAGS 	 = $(GLOBAL_LFLAGS) $(VTK_LIBS) $(TCLTK_LIBS)
 
 #
 # ThirdParty software that must be built
@@ -817,17 +417,6 @@ endif
 # ***   (less restrictive licenses)     ***
 # *** (e.g. MIT or BSD or Apache 2.0)   ***
 # -----------------------------------------
-
-# ----
-# VMTK
-# ----
-
-ifeq ($(SV_USE_VMTK),1)
-     THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/vmtk
-     VMTK_TOP = $(TOP)/../Code/ThirdParty/vmtk
-     VMTK_INCDIR  = -I $(VMTK_TOP)
-     VMTK_LIBS    = $(SVLIBFLAG)_simvascular_thirdparty_vmtk$(LIBLINKEXT)
-endif
 
 # ------
 # Sparse
@@ -871,15 +460,6 @@ endif
 # ***  Optional Open Source Packages    ***
 # ***  (not free for commercial use)    ***
 # -----------------------------------------
-
-ifeq ($(SV_USE_TETGEN),1)
-  TETGEN150       = 1
-  GLOBAL_DEFINES += -DTETLIBRARY
-  THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/tetgen
-  TETGEN_TOP = $(TOP)/../Code/ThirdParty/tetgen
-  TETGEN_INCDIR  = -I $(TETGEN_TOP)
-  TETGEN_LIBS    = $(SVLIBFLAG)_simvascular_thirdparty_tetgen$(LIBLINKEXT)
-endif
 
 # ----
 # svLS
@@ -970,66 +550,6 @@ endif
 # *** (e.g. MIT or BSD or Apache 2.0)   ***
 # -----------------------------------------
 
-# ----
-# GDCM
-# ----
-
-ifeq ($(SV_USE_GDCM),1)
-
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/gdcm-2.6.1.x64_cygwin.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/gdcm-2.6.1.x64_linux.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_macosx)
-	include $(TOP)/MakeHelpers/gdcm-2.6.1.x64_macosx.mk
-  endif
-
-endif
-
-# ---------------
-# Insight ToolKit
-# ---------------
-
-ifeq ($(SV_USE_ITK),1)
-
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/itk-4.7.1.x64_cygwin.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/itk-4.7.1.x64_linux.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_macosx)
-	include $(TOP)/MakeHelpers/itk-4.7.1.x64_macosx.mk
-  endif
-
-endif
-
-# ----
-# MITK
-# ----
-
-ifeq ($(SV_USE_MITK),1)
-
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/mitk-2016.03.x64_cygwin.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/mitk-2016.03.x64_linux.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_macosx)
-	include $(TOP)/MakeHelpers/mitk-2016.03.x64_macosx.mk
-  endif
-
-endif
-
 # -----
 # MPI
 # -----
@@ -1082,185 +602,9 @@ endif
 # ***           (GPL code)              ***
 # -----------------------------------------
 
-# ------------
-# Open Cascade
-# ------------
-
-ifeq ($(SV_USE_OPENCASCADE),1)
-
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/opencascade-7.0.0.x64_cygwin.mk
-         OPENCASCADE_DEFS = -DWNT
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/opencascade-7.0.0.x64_linux.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_macosx)
-	include $(TOP)/MakeHelpers/opencascade-7.0.0.x64_macosx.mk
-  endif
-
-endif
-
-# ----
-# glib
-# ----
-
-ifeq ($(SV_USE_GLIB),1)
-
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/glib-2.36.4.x64_cygwin.mk
-  endif
-
-###  ifeq ($(CLUSTER), x64_linux)
-###	include $(TOP)/MakeHelpers/glib-??????.x64_linux.mk
-###  endif
-
-endif
-
-# ---
-# gts
-# ---
-
-ifeq ($(SV_USE_GTS),1)
-
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/gts-2010.03.21.x64_cygwin.mk
-  endif
-
-###  ifeq ($(CLUSTER), x64_linux)
-###	include $(TOP)/MakeHelpers/gts-2010.03.21.x64_linux.mk
-###  endif
-
-endif
-
-# ------------------
-# Python
-# ------------------
-
-ifeq ($(SV_USE_PYTHON),1)
-  ifeq ($(CLUSTER), x64_cygwin)
-	  include $(TOP)/MakeHelpers/python-2.7.x64_cygwin.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-	  include $(TOP)/MakeHelpers/python-2.7.x64_linux.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_macosx)
-	include $(TOP)/MakeHelpers/python-2.7.x64_macosx.mk
-  endif
-endif
-
-# --------
-# Freetype
-# --------
-
-ifeq ($(SV_USE_FREETYPE),1)
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/freetype-2.6.3.x64_cygwin.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/freetype-2.6.3.x64_linux.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_macosx)
-	include $(TOP)/MakeHelpers/freetype-2.6.3.x64_macosx.mk
-  endif
-endif
-
-# ---
-# MMG
-# ---
-
-ifeq ($(SV_USE_MMG),1)
-
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/mmg-5.1.0.x64_cygwin.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/mmg-5.1.0.x64_linux.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_macosx)
-	include $(TOP)/MakeHelpers/mmg-5.1.0.x64_macosx.mk
-  endif
-
-endif
-
-# -----------------------------------------
-# ***  Optional Open Source Packages    ***
-# ***  (not free for commercial use)    ***
-# -----------------------------------------
-
-# ------------------
-# Qt
-# ------------------
-
-ifeq ($(SV_USE_QT),1)
-  ifeq ($(CLUSTER), x64_cygwin)
-	  include $(TOP)/MakeHelpers/qt-5.4.x64_cygwin.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-	  include $(TOP)/MakeHelpers/qt-5.4.x64_linux.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_macosx)
-	  include $(TOP)/MakeHelpers/qt-5.4.x64_macosx.mk
-  endif
-endif
-
 # --------------------------------------
 # ***  Optional Commercial Packages  ***
 # --------------------------------------
-
-# ---------
-# Parasolid
-# ---------
-
-ifeq ($(SV_USE_PARASOLID),1)
-
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/parasolid-26.1.x64_cygwin.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/parasolid-26.1.x64_linux.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_macosx)
-	include $(TOP)/MakeHelpers/parasolid-26.1.x64_macosx.mk
-  endif
-
-endif
-
-# -------
-# MeshSim
-# -------
-
-ifeq ($(SV_USE_MESHSIM),1)
-
-  SIM_LICENSE_FILE = Licenses/MeshSim/license.dat
-
-  ifeq ($(SV_USE_PARASOLID),1)
-    MESHSIM_MODELER=parasolid
-  endif
-
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/meshsim-9.0-151017-vs12.x64_cygwin.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/meshsim-9.0-150704.x64_linux.mk
-  endif
-
-  #No meshsim for mac osx
-
-endif
 
 # ------
 # LesLib
