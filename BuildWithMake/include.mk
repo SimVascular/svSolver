@@ -529,7 +529,7 @@ ifeq ($(SV_USE_DUMMY_MPI),1)
   MPI_NAME      = nompi
   MPI_TOP       = ../dummyMPI
   MPI_INCDIR    = -I $(MPI_TOP)
-  MPI_LIBS      = $(LIBFLAG)_simvascular_dummy_mpi$(LIBLINKEXT)
+  MPI_LIBS      = $(SVLIBFLAG)_simvascular_dummy_mpi$(LIBLINKEXT)
   MPI_SO_PATH   = 
   MPIEXEC_PATH  = 
   MPIEXEC       =

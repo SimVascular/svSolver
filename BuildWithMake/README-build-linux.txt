@@ -54,7 +54,7 @@ the scripts in "../Externals", or pre-built binaries can be
 downloaded using the script
 
 % cd svsolver/BuildWithMake
-% ./get-vtk-binaries.sh
+% ./get-vtk-binaries.sh centos_6
 
 4. Override options
 -------------------

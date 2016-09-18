@@ -26,7 +26,6 @@ s+REPLACEME_SV_TOP_BIN_DIR_VTK+REPLACEME_SV_TOPLEVEL_BINDIR/REPLACEME_SV_COMPILE
 s+REPLACEME_SV_TOPLEVEL_SRCDIR+C:/cygwin64/usr/local/svsolver/externals/src+g
 s+REPLACEME_SV_TOPLEVEL_BINDIR+C:/cygwin64/usr/local/svsolver/externals/bin+g
 s+REPLACEME_SV_TOPLEVEL_BUILDDIR+C:/cygwin64/usr/local/svsolver/externals/build+g
-#s+REPLACEME_SV_TOPLEVEL_BUILDDIR+C:/svsolver+g
 
 #
 #
@@ -48,7 +47,7 @@ s+REPLACEME_SV_MAKE_CMD+devenv.exe+g
 s+REPLACEME_SV_MAKE_BUILD_PARAMETERS+/build REPLACEME_SV_CMAKE_BUILD_TYPE /project ALL_BUILD /projectconfig REPLACEME_SV_CMAKE_BUILD_TYPE /out ./stdout.devenv.build.txt+g
 s+REPLACEME_SV_MAKE_INSTALL_PARAMETERS+/build REPLACEME_SV_CMAKE_BUILD_TYPE /project INSTALL /projectconfig REPLACEME_SV_CMAKE_BUILD_TYPE /out ./stdout.devenv.install.txt +g
 
-s+REPLACEME_SV_CMAKE_BUILD_TYPE+RelWithDebInfo+g
+s+REPLACEME_SV_CMAKE_BUILD_TYPE+Release+g
 s+REPLACEME_SV_CMAKE_CMD+/cygdrive/c/Program\\ Files/CMake/bin/cmake.exe+g
 s+REPLACEME_SV_CMAKE_OBJECT_PATH_MAX+128+g
 
