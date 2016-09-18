@@ -22,7 +22,6 @@ s+REPLACEME_SV_TOP_BIN_DIR_VTK+REPLACEME_SV_TOPLEVEL_BINDIR/REPLACEME_SV_COMPILE
 
 s+REPLACEME_SV_TOPLEVEL_SRCDIR+/usr/local/svsolver/externals/src+g
 s+REPLACEME_SV_TOPLEVEL_BINDIR+/usr/local/svsolver/externals/bin+g
-s+REPLACEME_NO_FIRST_SLASH_SV_TOPLEVEL_BINDIR+usr/local/svsolver/externals/bin+g
 s+REPLACEME_SV_TOPLEVEL_BUILDDIR+/usr/local/svsolver/externals/build+g
 
 #

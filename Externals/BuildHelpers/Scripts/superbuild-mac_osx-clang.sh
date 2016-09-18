@@ -11,15 +11,15 @@ mkdir -p tmp
 
 
 #  tcl/tk 8.6
-sed -f CompileScripts/sed-script-x64_mac_osx-options-clang.sh CompileScripts/tcl-mac_osx-generic.sh > tmp/compile.make.tcl.clang.sh
-chmod a+rx ./tmp/compile.make.tcl.clang.sh
+#sed -f CompileScripts/sed-script-x64_mac_osx-options-clang.sh CompileScripts/tcl-mac_osx-generic.sh > tmp/compile.make.tcl.clang.sh
+#chmod a+rx ./tmp/compile.make.tcl.clang.sh
 
 # vtk
 sed -f CompileScripts/sed-script-x64_mac_osx-options-clang.sh CompileScripts/compile-cmake-vtk-generic.sh > tmp/compile.cmake.vtk.clang.sh
 chmod a+rx ./tmp/compile.cmake.vtk.clang.sh
 
 # create script to create tar files
-sed -f CompileScripts/sed-script-x64_mac_osx-options-clang.sh Scripts/create-archives-mac_osx.sh > tmp/create-archives-mac_osx.clang.sh
+sed -f CompileScripts/sed-script-x64_mac_osx-options-clang.sh Scripts/create-archives-generic.sh > tmp/create-archives-mac_osx.clang.sh
 chmod a+rx ./tmp/create-archives-mac_osx.clang.sh
 
 # create script to create zip files
@@ -31,7 +31,7 @@ chmod a+rx ./tmp/tar-to-zip-all.clang.sh
 #
 
 #  tcl/tk 8.6
-./tmp/compile.make.tcl.clang.sh >& ./tmp/stdout.tcl.txt
+#./tmp/compile.make.tcl.clang.sh >& ./tmp/stdout.tcl.txt
 
 # vtk
 ./tmp/compile.cmake.vtk.clang.sh >& ./tmp/stdout.vtk.clang.txt

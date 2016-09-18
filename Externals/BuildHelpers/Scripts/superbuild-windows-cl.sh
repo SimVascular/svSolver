@@ -10,8 +10,8 @@ mkdir -p tmp
 #
 
 #  tcl/tk 8.6
-sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/tcl-windows-generic.sh > tmp/compile.make.tcl.cl.sh
-chmod a+rx ./tmp/compile.make.tcl.cl.sh
+#sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/tcl-windows-generic.sh > tmp/compile.make.tcl.cl.sh
+#chmod a+rx ./tmp/compile.make.tcl.cl.sh
 
 # vtk
 sed -f CompileScripts/sed-script-x64_cygwin-options-cl.sh CompileScripts/compile-cmake-vtk-generic.sh > tmp/compile.cmake.vtk.cl.sh
@@ -30,7 +30,7 @@ chmod a+rx ./tmp/tar-to-zip-all.windows.cl.sh
 #
 
 #  tcl/tk 8.6
-./tmp/compile.make.tcl.cl.sh >& ./tmp/stdout.tcl.txt
+#./tmp/compile.make.tcl.cl.sh >& ./tmp/stdout.tcl.txt
 
 # vtk
 ./tmp/compile.cmake.vtk.cl.sh >& ./tmp/stdout.vtk.cl.txt

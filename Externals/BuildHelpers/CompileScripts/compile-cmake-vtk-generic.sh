@@ -23,6 +23,7 @@ REPLACEME_SV_CMAKE_CMD -G REPLACEME_SV_CMAKE_GENERATOR \
    -DVTK_Group_Imaging=0 \
    -DVTK_Group_Qt=0 \
    -DVTK_Group_Tk=0 \
+   -DVTK_Group_Rendering=0 \
    -DVTK_WRAP_PYTHON=0 \
    -DVTK_WRAP_TCL=0 \
    -DVTK_QT_VERSION=5 \
