@@ -166,10 +166,10 @@ exec-shared-build:
 
 post-build: mksedscript
 ifeq ($(CLUSTER),x64_linux)
-	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-flowsolver-linux-script > mysolver
+#	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-flowsolver-linux-script > mysolver
 endif
 ifeq ($(CLUSTER),x64_macosx)
-	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-flowsolver-macosx-script > mysolver
+#	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-flowsolver-macosx-script > mysolver
 endif
 ifeq ($(CLUSTER),x64_cygwin)
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-flowsolver-windows-script > mysolver
