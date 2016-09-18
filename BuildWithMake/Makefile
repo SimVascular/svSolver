@@ -44,7 +44,6 @@ mksedscript:
 	if [ -e tclscript ];then /bin/rm -f tclscript;fi
 	if [ -e sedscript ];then /bin/rm -f sedscript;fi
 	if [ -e mysolver ];then /bin/rm -f mysolver;fi
-	if [ -e mypost ];then /bin/rm -f mypost;fi
 	-echo "puts \"s+REPLACEME_SOFTWARE_PLATFORM+$(CLUSTER)+g\"" > tclscript 
 	-echo "puts \"s+REPLACEME_CXX_COMPILER_VERSION+$(CXX_COMPILER_VERSION)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_FORTRAN_COMPILER_VERSION+$(FORTRAN_COMPILER_VERSION)+g\"" >> tclscript
@@ -166,8 +165,6 @@ exec-shared-build:
 	  $(MAKE) shared;fi ) ; done
 
 post-build: mksedscript
-	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-core-script > mypost
-	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-postsolver-script >> mypost
 ifeq ($(CLUSTER),x64_linux)
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-flowsolver-linux-script > mysolver
 endif
@@ -178,7 +175,6 @@ ifeq ($(CLUSTER),x64_cygwin)
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-flowsolver-windows-script > mysolver
 endif
 	-chmod a+rx mysolver
-	-chmod a+rx mypost
 #	-rm -f sedscript
 
 create-svsolver-options-file:
@@ -215,7 +211,6 @@ veryclean:
 	for fn in $(TOP)/Lib/*; do /bin/rm -f -r $$fn; done
 	for fn in $(TOP)/Bin/*; do /bin/rm -f -r $$fn; done
 	if [ -e mysolver ];then /bin/rm -f mysolver;fi
-	if [ -e mypost ];then /bin/rm -f mypost;fi
 	/bin/rm -f  ../Code/Source/Include/Make/simvascular_options.h
 	/bin/rm -f  ../Code/Source/Include/Make/simvascular_version.h
 	/bin/rm -f  ../Code/FlowSolvers/Include/Make/cvFlowsolverOptions.h
