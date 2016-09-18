@@ -195,22 +195,16 @@ endif
 
 ifeq ($(CLUSTER), x64_cygwin)
     OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/svsolver/externals/bin/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = C:/sv/build/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = C:/cygwin64/usr/local/svsolver/externals/src
     LICENSED_SOFTWARE_TOPLEVEL      = C:/cygwin64/usr/local/svsolver/licensed
 endif
 
 ifeq ($(CLUSTER), x64_linux)
     OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/svsolver/externals/bin/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = /usr/local/svsolver/externals/build/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /usr/local/svsolver/externals/src
     LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/svsolver/licensed
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
     OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/svsolver/externals/bin/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = /usr/local/svsolver/externals/build/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /usr/local/svsolver/externals/src
     LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/svsolver/licensed
 endif
 
