@@ -72,7 +72,6 @@ endif
 # -------
 
 SV_USE_SHARED = 1
-SV_USE_GLOBALS_SHARED = 1
 
 # ----------------------------------------------
 # Control inclusion of leslib
@@ -140,12 +139,6 @@ ifeq ($(CLUSTER), x64_macosx)
 endif
 
 # -----------------------------------------------------
-# Build only the 3D Solver
-# -----------------------------------------------------
-
-EXCLUDE_ALL_BUT_THREEDSOLVER ?= 0
-
-# -----------------------------------------------------
 # Compile with VTK
 # -----------------------------------------------------
 
@@ -191,7 +184,7 @@ ifeq ($(CLUSTER), x64_cygwin)
   SVEXTERN_COMPILER_VERSION = $(CXX_COMPILER_VERSION)
 endif
 ifeq ($(CLUSTER), x64_linux)
-  SVEXTERN_COMPILER_VERSION = gnu-4.8
+  SVEXTERN_COMPILER_VERSION = gnu-4.4.7
 endif
 ifeq ($(CLUSTER), x64_macosx)
   SVEXTERN_COMPILER_VERSION = clang-7.0
@@ -247,14 +240,6 @@ ifeq ($(CLUSTER),x64_linux)
   SV_PLATFORM = x64
   SV_POSTFIX=
   SV_OS=linux
-endif
-
-# by default don't build most third party
-# if we are only building the flow solver
-ifeq ($(EXCLUDE_ALL_BUT_THREEDSOLVER), 1)
-    ifeq ($(SV_THREEDSOLVER_USE_VTK), 0)
-        SV_USE_VTK = 0
-    endif
 endif
 
 # --------------
@@ -379,15 +364,6 @@ ifeq ($(SV_USE_SOLVERIO),1)
      THREEDSOLVER_INCDIR = -I $(TOP)/../Code/FlowSolvers/ThreeDSolver
 endif
 
-#
-#  override other options to build solver only!
-#
-
-ifeq ($(EXCLUDE_ALL_BUT_THREEDSOLVER),1)
-  LIBDIRS = ../Code/FlowSolvers/ThreeDSolver
-  EXECDIRS = ../Code/FlowSolvers/ThreeDSolver
-endif
-
 SUBDIRS         = $(LIBDIRS) $(EXECDIRS)
 
 # -------------------------
@@ -396,11 +372,6 @@ SUBDIRS         = $(LIBDIRS) $(EXECDIRS)
 
 LOCAL_SUBDIRS   = $(LIBDIRS) $(SHARED_LIBDIRS) ../Code/Source/Include ../Code/Source/Include/Make
 LOCAL_INCDIR    := $(foreach i, ${LOCAL_SUBDIRS}, -I$(TOP)/$(i))
-
-# Link flags, which also need to be dealt with conditionally depending
-# on which concrete classes derived from SolidModel are being
-# included.
-# -----
 
 # include path to find libs when linking
 GLOBAL_LFLAGS 	 += $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib/$(LIB_BUILD_DIR)
