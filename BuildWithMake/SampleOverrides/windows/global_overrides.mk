@@ -13,7 +13,7 @@ FORTRAN_COMPILER_VERSION = ifort
 # * can be built using scripts in "../Externals"
 # * pre-built binaries for Windows 10, vs2013 compilers
 #   can be downloaded using the "get-vtk-binaries.sh" script:
-#    i.e. % ./get-vtk-binaries.sh
+#    i.e. % ./get-vtk-binaries.sh msvc-12.5
 
 SVEXTERN_COMPILER_VERSION = $(CXX_COMPILER_VERSION)
 OPEN_SOFTWARE_BINARIES_TOPLEVEL =C:/cygwin64/${HOME}/svsolver/externals/bin/$(SVEXTERN_COMPILER_VERSION)/x64

@@ -2,11 +2,11 @@
 # external location for installed vtk libs
 #
 # * can be built using scripts in "../Externals"
-# * pre-built binaries for centos 6.8, gnu 4.4.7 compilers
+# * pre-built binaries for centos 6.8, gnu 4.8 compilers
 #   can be downloaded using the "get-vtk-binaries.sh" script:
-#    i.e. % ./get-vtk-binaries.sh centos_6
+#    i.e. % ./get-vtk-binaries.sh ubuntu_14
 
-OPEN_SOFTWARE_BINARIES_TOPLEVEL=${HOME}/svsolver/externals/bin/gnu-4.4.7/x64
+OPEN_SOFTWARE_BINARIES_TOPLEVEL=${HOME}/svsolver/externals/bin/gnu-4.8/x64
 
 #
 # licensed is only needed if using leslib
@@ -18,9 +18,6 @@ LICENSED_SOFTWARE_TOPLEVEL=
 # Notes on MPI:
 # * default is to use dummy mpi
 # * can only build one at a time
-# * use modules on centos: 
-#    e.g.  % module add openmpi-x86_64
-#    e.g.  % module add mpich-x864_64
 #
 
 SV_USE_DUMMY_MPI=1
