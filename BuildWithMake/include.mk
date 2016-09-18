@@ -47,19 +47,22 @@
 NO_DEPEND = 1
 
 # -----------------------------------------------------------
-# CLUSTER = { x64_cygwin, x64_linux }
+# CLUSTER = { x64_cygwin, x64_linux, x64_macosx }
 # -----------------------------------------------------------
 
-CLUSTER = x64_cygwin
-#CLUSTER = x64_linux
+#CLUSTER = x64_cygwin
+CLUSTER = x64_linux
 
 # ---------------------------------------------------------------------
 # CXX_COMPILER_VERSION = { icpc, vs10.1, msvc-12.5, mingw-gcc, gcc}
 # FORTRAN_COMPILER_VERSION = { ifort, mingw-gfortran, gfortran }
 # ---------------------------------------------------------------------
 
-CXX_COMPILER_VERSION = msvc-12.5
-FORTRAN_COMPILER_VERSION = ifort
+#CXX_COMPILER_VERSION = msvc-12.5
+#FORTRAN_COMPILER_VERSION = ifort
+
+CXX_COMPILER_VERSION=gcc
+FORTRAN_COMPILER_VERSION=gfortran
 
 ifeq ($(LOCAL_DIR_CLUSTER_OVERRIDES),1)
 -include cluster_overrides.mk
