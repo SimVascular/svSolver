@@ -6,7 +6,7 @@
 #   can be downloaded using the "get-vtk-binaries.sh" script:
 #    i.e. % ./get-vtk-binaries.sh centos_6
 
-OPEN_SOFTWARE_BINARIES_TOPLEVEL=${HOME}/svsolver/externals/bin/gnu-4.4.7/x64
+OPEN_SOFTWARE_BINARIES_TOPLEVEL=${HOME}/svsolver/externals/bin/gnu-4.4/x64
 
 #
 # licensed is only needed if using leslib
