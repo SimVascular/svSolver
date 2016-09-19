@@ -2,7 +2,7 @@
 # external location for installed vtk libs
 #
 # * can be built using scripts in "../Externals"
-# * pre-built binaries for centos 6.8, gnu 4.8 compilers
+# * pre-built binaries for ubuntu 14.04 and gnu 4.8 compilers
 #   can be downloaded using the "get-vtk-binaries.sh" script:
 #    i.e. % ./get-vtk-binaries.sh ubuntu_14
 

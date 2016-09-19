@@ -1,32 +1,36 @@
 ------------------------------------------------------------------------
-            Compiling Instructions for SimVascular on Linux
-                       Revised 2014-08-14
+            Compiling Instructions for svSolver on Mac OSX
+                       Revised 2016-09-18
 ------------------------------------------------------------------------
-
-sudo port install py27-scipy
-sudo port install py27-numpy
-
-check out /opt/local/bin/gfortran-mp-4.9
 
 --------
 Overview
 --------
 
-By default, SimVascular is configured to build on macosx using
-makefiles.  Our base test configuration for macosx is:
+By default, svSolver is configured to build on osx using
+makefiles.  Our base test configuration for OSX is:
 
-Apple OSX 10.10.5 64-bit
+Apple OSX 10.11 64-bit
 Intel 7 processor
 
-clang/clang++ version 7.0
+clang/clang++ version 7.3
 macports mpich/gfortran5
+
+and/or
+
+ifort/icpc/icc intel compilers
+
+NOTE: The CMake system is currently broken for svSolver and
+      is under revision.
 
 -----------
 Major Steps
 -----------
 
-1. MacOSX prerequisities
+1. System Prerequisities
 ------------------------
+The following packages are required to build svsolver
+
 XCode command line tools are required
 % xcode-select --install
 
@@ -38,29 +42,18 @@ The following packages are required to build simvascular
 % sudo port install gfortran5
 % sudo port install mpich-gcc5
 
-2.  /sv_extern
---------------
-Download necessary external packages from simtk.org:
+2. Checkout svSolver source code
+--------------------------------
+% git clone https://github.com/SimVascular/svSolver.git svsolver
 
-% svn co https://simtk.org/svn/sv_private/trunk sv_private_trunk
-% svn co https://simtk.org/svn/sv_thirdparty/trunk/macos sv_thirdparty_macosx
-% svn co https://simtk.org/svn/sv_thirdparty/trunk/src sv_thirdparty_src
+3. vtk libraries
+----------------
+svSolver requires vtk libraries.  They can be build using the
+the scripts in "../Externals", or pre-built binaries can be
+downloaded using the script
 
-untar all files into "/sv_extern", e.g. using bash:
-
-% cd sv_thirdparty_macosx
-% for f in *.tar.gz; do tar -xf $f -C /;done
-
-or using tclsh:
-
-% cd sv_thirdparty_macosx
-% tclsh
-tclsh% foreach fn [glob *.tar.gz] {
-tclsh%   tar --directory / -xvzf $fn
-tclsh% }
-tclsh% exit
-
-repeat for "sv_thirdparty_src" and "sv_private_trunk".
+% cd svsolver/BuildWithMake
+% ./get-vtk-binaries.sh macosx_11
 
 4. Override options
 -------------------
@@ -69,26 +62,32 @@ Override defaults with:
   * cluster_overrides.mk
   * global_overrides.mk
   * site_overrides.mk
-  * pk_overrides.mk
+  * pkg_overrides.mk
 
-Building with clang and gfortran compilers and normal /sv_extern should
-build "out of the box" without required overrides.
+See include.mk for all options.  Sample override files
+can be found in:
 
-See include.mk for all options.  The most common:
+SampleOverrides
 
-COMPILER_VERSION = clang_70
-EXCLUDE_ALL_BUT_THREEDSOLVER = 1 (build flow solver only)
+to use one of these files, copy into local BuildWithMake
+directory and modify as needed, e.g.:
 
-5. Build
+% cd svsolver/BuildWithMake
+% cp SampleOverrides/macosx_11/global_overrides.mk
+
+6. Build
 --------
-% cd simvascular/Code
+% cd svsolver/BuildWithMake
 % make
 
-6. Running developer version
+7. Running developer version
 ----------------------------
-% ./sv
+Binaries are in "BuildWithMake/Bin" directory.
 
-7. Build release
+8. Build release (NOTE: out-of-date!)
 -----------------
-% cd Release
-% make
+To be updated.
+
+9. Installing a distribution (NOTE: out-of-date!)
+----------------------------
+To be updated.
