@@ -58,7 +58,7 @@ VTK_INCDIRS = \
 #
 
 
-VTK_LIBS =      $(LIBPATH_COMPILER_FLAG)$(VTK_LIBDIRS) \
+#VTK_LIBS =      $(LIBPATH_COMPILER_FLAG)$(VTK_LIBDIRS) \
 		$(LIBFLAG)vtkChartsCoreTCL-6.2$(LIBLINKEXT) \
 		$(LIBFLAG)vtkCommonColorTCL-6.2$(LIBLINKEXT) \
 		$(LIBFLAG)vtkCommonComputationalGeometryTCL-6.2$(LIBLINKEXT) \
@@ -148,7 +148,7 @@ VTK_LIBS =      $(LIBPATH_COMPILER_FLAG)$(VTK_LIBDIRS) \
 		$(LIBFLAG)vtkIOParallelXMLTCL-6.2$(LIBLINKEXT)
 
 
-VTK_LIBS +=     $(LIBPATH_COMPILER_FLAG)$(VTK_LIBDIRS) \
+#VTK_LIBS +=     $(LIBPATH_COMPILER_FLAG)$(VTK_LIBDIRS) \
 		$(LIBFLAG)vtkChartsCore-6.2$(LIBLINKEXT) \
 		$(LIBFLAG)vtkCommonColor-6.2$(LIBLINKEXT) \
 		$(LIBFLAG)vtkCommonComputationalGeometry-6.2$(LIBLINKEXT) \
@@ -292,13 +292,3 @@ ifeq ($(SV_USE_PYTHON),1)
   VTK_LIBS +=  $(LIBFLAG)vtkWrappingPython27Core-6.2$(LIBLINKEXT)
 endif
 
-#
-#		vtkRenderingHybridOpenGL-6.2.lib \
-#		vtkRenderingHybridOpenGLTCL-6.2.lib \
-#		vtkRenderingVolumeAMR-6.2.lib \
-#		vtkRenderingVolumeAMRTCL-6.2.lib \
-#		vtkGeovisCore-6.2.lib \
-#		vtkGeovisCoreTCL-6.2.lib
-#		vtkViewsGeovis-6.2.lib \
-#		vtkViewsGeovisTCL-6.2.lib \
-#

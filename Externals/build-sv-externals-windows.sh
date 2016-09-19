@@ -1,5 +1,6 @@
-EXTERNALS_TOP=/usr/local/sv/ext
-EXTERNALS_BUILD_TOP=/cygdrive/c/sv
+EXTERNALS_TOP=/usr/local/svsolver/externals
+EXTERNALS_BUILD_TOP=$EXTENALS_TOP
+#EXTERNALS_BUILD_TOP=/cygdrive/c/svsolver
 
 #
 # initial setup

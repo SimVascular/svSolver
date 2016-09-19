@@ -40,7 +40,7 @@ include $(TOP)/include.mk
 # Compiler flags
 # --------------
 
-CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(SOLVERIO_INCDIR) $(THREEDSOLVER_INCDIR) $(ZLIB_INCDIR) $(VTK_INCDIRS) -I../../Include/Make
+CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(SOLVERIO_INCDIR) $(THREEDSOLVER_INCDIR) $(ZLIB_INCDIR) $(VTK_INCDIRS) -I../../Include -I../../Include/Make
 
 HDRS	=
 

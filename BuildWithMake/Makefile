@@ -43,11 +43,7 @@ mixed: static-pre-build static-build shared-build exec-build
 mksedscript:
 	if [ -e tclscript ];then /bin/rm -f tclscript;fi
 	if [ -e sedscript ];then /bin/rm -f sedscript;fi
-	if [ -e sv ];then /bin/rm -f sv;fi
-	if [ -e xfsv ];then /bin/rm -f xfsv;fi
 	if [ -e mysolver ];then /bin/rm -f mysolver;fi
-	if [ -e sv-shared ];then /bin/rm -f sv;fi
-	if [ -e mypost ];then /bin/rm -f mypost;fi
 	-echo "puts \"s+REPLACEME_SOFTWARE_PLATFORM+$(CLUSTER)+g\"" > tclscript 
 	-echo "puts \"s+REPLACEME_CXX_COMPILER_VERSION+$(CXX_COMPILER_VERSION)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_FORTRAN_COMPILER_VERSION+$(FORTRAN_COMPILER_VERSION)+g\"" >> tclscript
@@ -62,13 +58,9 @@ ifeq ($(CLUSTER),x64_cygwin)
 	-echo "puts \"s+REPLACEME_TK_LIBRARY+`cygpath -u $(TK_LIBRARY)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TCLTK_SO_PATH+`cygpath -u $(TCLTK_SO_PATH)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TCLSH+`cygpath -u $(TCLSH)`+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_TKCXIMAGE_DLL+`cygpath -u $(TKCXIMAGE_DLL)`+g\"" >> tclscript
 # leave intel compilers blank for now on windows
 #	-echo "puts \"s+REPLACEME_INTEL_COMPILER_SO_PATH+`cygpath -u $(INTEL_COMPILER_SO_PATH)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_INTEL_COMPILER_SO_PATH++g\"" >> tclscript
-ifeq ($(SV_USE_GLIB),1)
-	-echo "puts \"s+REPLACEME_GLIB_SO_PATH+`cygpath -u $(GLIB_SO_PATH)`+g\"" >> tclscript
-endif
 ifeq ($(SV_USE_MPI),1)
   ifdef $(MPI_SO_PATH)
 	-echo "puts \"s+REPLACEME_MPI_SO_PATH+`cygpath -u $(MPI_SO_PATH)`+g\"" >> tclscript
@@ -78,14 +70,6 @@ ifeq ($(SV_USE_MPI),1)
   endif
 	-echo "puts \"s+MPIEXEC+$(MPIEXEC)+g\"" >> tclscript
 endif
-ifeq ($(SV_USE_PARASOLID),1)
-	-echo "puts \"s+REPLACEME_PARASOLID_SO_PATH+`cygpath -u $(PARASOLID_SO_PATH)`+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_P_SCHEMA+`cygpath -u $(P_SCHEMA)`+g\"" >> tclscript
-endif
-ifeq ($(SV_USE_MESHSIM),1)
-	-echo "puts \"s+REPLACEME_MESHSIM_SO_PATH+`cygpath -u $(MESHSIM_SO_PATH)`+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_SIM_LICENSE_FILE+$(SIM_LICENSE_FILE)+g\"" >> tclscript
-endif
 ifeq ($(SV_USE_LESLIB),1)
 	-echo "puts \"s+REPLACEME_LES_LICENSE_SERVER+$(LES_LICENSE_SERVER)+g\"" >> tclscript
 endif
@@ -94,36 +78,6 @@ ifeq ($(SV_USE_VTK),1)
 	-echo "puts \"s+REPLACEME_VTK_BIN_PATH+`cygpath -u $(VTK_BINDIRS)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_LIB_PATH+`cygpath -u $(VTK_LIBDIRS)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_TCL_LIB_PATH+`cygpath -u $(VTK_TCL_LIB_PATH)`+g\"" >> tclscript
-endif
-ifeq ($(SV_USE_GDCM),1)
-	-echo "puts \"s+REPLACEME_SV_GDCM_SO_PATH+`cygpath -u $(SV_GDCM_SO_PATH)`+g\"" >> tclscript
-endif
-ifeq ($(SV_USE_ITK),1)
-	-echo "puts \"s+REPLACEME_ITK_SO_PATH+`cygpath -u $(ITK_BIN_LIBS)`+g\"" >> tclscript
-endif
-
-ifeq ($(SV_USE_FREETYPE),1)
-	-echo "puts \"s+REPLACEME_SV_FREETYPE_SO_PATH+`cygpath -u $(SV_FREETYPE_SO_PATH)`+g\"" >> tclscript
-endif
-ifeq ($(SV_USE_PYTHON),1)
-	-echo "puts \"s+REPLACEME_PYTHON_HOME+`cygpath -u $(PYTHON_HOME)`+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_SV_PYTHON_SO_PATH+`cygpath -u $(SV_PYTHON_SO_PATH)`+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_PYTHON_SITE_PACKAGES+$(PYTHON_SITE_PACKAGES)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_VTK_PYTHON_PACKAGES+$(VTK_PYTHON_PACKAGES)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_PYTHON_PACKAGES+$(PYTHON_SITE_PACKAGES)\;$(VTK_PYTHON_PACKAGES);$(VTK_SO_PATH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_SV_USE_PYTHON+ON+g\"" >> tclscript
-else
-	-echo "puts \"s+REPLACEME_SV_USE_PYTHON+OFF+g\"" >> tclscript
-endif
-
-ifeq ($(SV_USE_QT),1)
-	-echo "puts \"s+REPLACEME_QT_SO_PATH+`cygpath -u $(QT_SO_PATH)`+g\"" >> tclscript
-endif
-ifeq ($(SV_USE_OPENCASCADE),1)
-	-echo "puts \"s+REPLACEME_SV_OPENCASCADE_SO_PATH+`cygpath -u $(SV_OPENCASCADE_SO_PATH)`+g\"" >> tclscript
-endif
-ifeq ($(SV_USE_MITK),1)
-	-echo "puts \"s+REPLACEME_SV_MITK_SO_PATH+`cygpath -u $(SV_MITK_SO_PATH)`+g\"" >> tclscript
 endif
 endif
 ifeq ($(CLUSTER),x64_linux)
@@ -135,48 +89,13 @@ ifeq ($(CLUSTER),x64_linux)
 	-echo "puts \"s+REPLACEME_TK_LIBRARY+$(TK_LIBRARY)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TCLTK_SO_PATH+$(TCLTK_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TCLSH+$(TCLSH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_TKCXIMAGE_DLL+$(TKCXIMAGE_DLL)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_TCL_LIB_PATH+$(VTK_TCL_LIB_PATH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_GLIB_SO_PATH+$(GLIB_SO_PATH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_SIM_LICENSE_FILE+$(SIM_LICENSE_FILE)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_MPI_SO_PATH+$(MPI_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_MPIEXEC_PATH+$(MPIEXEC_PATH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_MESHSIM_SO_PATH+$(MESHSIM_SO_PATH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_PARASOLID_SO_PATH+$(PARASOLID_SO_PATH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_P_SCHEMA+$(P_SCHEMA)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_SO_PATH+$(VTK_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_BIN_PATH+$(VTK_BINDIRS)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_LIB_PATH+$(VTK_LIBDIRS)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_INTEL_COMPILER_SO_PATH+$(INTEL_COMPILER_SO_PATH)+g\"" >> tclscript
-ifeq ($(SV_USE_GDCM),1)
-	-echo "puts \"s+REPLACEME_SV_GDCM_SO_PATH+$(SV_GDCM_SO_PATH)+g\"" >> tclscript
-endif
-ifeq ($(SV_USE_ITK),1)
-	-echo "puts \"s+REPLACEME_ITK_SO_PATH+$(ITK_BIN_LIBS)+g\"" >> tclscript
-endif
-ifeq ($(SV_USE_QT),1)
-	-echo "puts \"s+REPLACEME_QT_SO_PATH+$(QT_SO_PATH)+g\"" >> tclscript
-endif
-ifeq ($(SV_USE_OPENCASCADE),1)
-	-echo "puts \"s+REPLACEME_SV_OPENCASCADE_SO_PATH+$(SV_OPENCASCADE_SO_PATH)+g\"" >> tclscript
-endif
-ifeq ($(SV_USE_MITK),1)
-	-echo "puts \"s+REPLACEME_SV_MITK_SO_PATH+$(SV_MITK_SO_PATH)+g\"" >> tclscript
-endif
-ifeq ($(SV_USE_FREETYPE),1)
-	-echo "puts \"s+REPLACEME_SV_FREETYPE_SO_PATH+$(SV_FREETYPE_SO_PATH)+g\"" >> tclscript
-endif
-ifeq ($(SV_USE_PYTHON),1)
-	-echo "puts \"s+REPLACEME_PYTHON_HOME+$(PYTHON_HOME)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_SV_PYTHON_SO_PATH+$(SV_PYTHON_SO_PATH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_PYTHON_SITE_PACKAGES+$(PYTHON_SITE_PACKAGES)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_VTK_PYTHON_PACKAGES+$(VTK_PYTHON_PACKAGES)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_PYTHON_PACKAGES+$(PYTHON_SITE_PACKAGES):$(VTK_PYTHON_PACKAGES):$(VTK_SO_PATH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_SV_USE_PYTHON+ON+g\"" >> tclscript
-else
-	-echo "puts \"s+REPLACEME_SV_USE_PYTHON+OFF+g\"" >> tclscript
-endif
-
 endif
 
 ifeq ($(CLUSTER),x64_macosx)
@@ -188,47 +107,13 @@ ifeq ($(CLUSTER),x64_macosx)
 	-echo "puts \"s+REPLACEME_TK_LIBRARY+$(TK_LIBRARY)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TCLTK_SO_PATH+$(TCLTK_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TCLSH+$(TCLSH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_TKCXIMAGE_DLL+$(TKCXIMAGE_DLL)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_TCL_LIB_PATH+$(VTK_TCL_LIB_PATH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_GLIB_SO_PATH+$(GLIB_SO_PATH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_SIM_LICENSE_FILE+`cygpath -u $(SIM_LICENSE_FILE)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_MPI_SO_PATH+$(MPI_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_MPIEXEC_PATH+$(MPIEXEC_PATH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_MESHSIM_SO_PATH+$(MESHSIM_SO_PATH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_PARASOLID_SO_PATH+$(PARASOLID_SO_PATH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_P_SCHEMA+$(P_SCHEMA)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_SO_PATH+$(VTK_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_BIN_PATH+$(VTK_BINDIR)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_LIB_PATH+$(VTK_LIBDIRS)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_INTEL_COMPILER_SO_PATH+$(INTEL_COMPILER_SO_PATH)+g\"" >> tclscript
-ifeq ($(SV_USE_GDCM),1)
-	-echo "puts \"s+REPLACEME_SV_GDCM_SO_PATH+$(SV_GDCM_SO_PATH)+g\"" >> tclscript
-endif
-ifeq ($(SV_USE_ITK),1)
-	-echo "puts \"s+REPLACEME_ITK_SO_PATH+$(ITK_BIN_LIBS)+g\"" >> tclscript
-endif
-ifeq ($(SV_USE_OPENCASCADE),1)
-	-echo "puts \"s+REPLACEME_SV_OPENCASCADE_SO_PATH+$(SV_OPENCASCADE_SO_PATH)+g\"" >> tclscript
-endif
-ifeq ($(SV_USE_QT),1)
-	-echo "puts \"s+REPLACEME_QT_SO_PATH+$(QT_SO_PATH)+g\"" >> tclscript
-endif
-ifeq ($(SV_USE_MITK),1)
-	-echo "puts \"s+REPLACEME_SV_MITK_SO_PATH+$(SV_MITK_SO_PATH)+g\"" >> tclscript
-endif
-ifeq ($(SV_USE_FREETYPE),1)
-	-echo "puts \"s+REPLACEME_SV_FREETYPE_SO_PATH+$(SV_FREETYPE_SO_PATH)+g\"" >> tclscript
-endif
-ifeq ($(SV_USE_PYTHON),1)
-	-echo "puts \"s+REPLACEME_PYTHON_HOME+$(PYTHON_HOME)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_SV_PYTHON_SO_PATH+$(SV_PYTHON_SO_PATH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_PYTHON_SITE_PACKAGES+$(PYTHON_SITE_PACKAGES)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_VTK_PYTHON_PACKAGES+$(VTK_PYTHON_PACKAGES)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_PYTHON_PACKAGES+$(PYTHON_SITE_PACKAGES):$(VTK_PYTHON_PACKAGES):$(VTK_SO_PATH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_SV_USE_PYTHON+ON+g\"" >> tclscript
-else
-	-echo "puts \"s+REPLACEME_SV_USE_PYTHON+OFF+g\"" >> tclscript
-endif
 endif
 	-/usr/bin/tclsh tclscript > sedscript
 	-rm -f tclscript
@@ -236,21 +121,13 @@ endif
 common-pre-build: mksedscript create-svsolver-options-file post-build
 	mkdir -p Bin
 	mkdir -p Lib
-	mkdir -p Bin/plugins
 	mkdir -p ../Code/Source/Include/Make
 	touch ../Code/Source/Include/Make/simvascular_options.h
 	touch ../Code/Source/Include/Make/simvascular_version.h
 
 shared-pre-build: common-pre-build
-	cd ../Code/Source/SV3/Plugins;$(MAKE) moc rcc ui
-	cd ../Code/Source/SV3/Modules;$(MAKE) moc rcc ui
-	cd ../Code/Source/SV3/Modules;$(MAKE) create_exports_h us-init-module
 
 static-pre-build: common-pre-build
-	cd ../Code/Source/UI;$(MAKE) SV_STATIC_BUILD=1 pre
-	cd ../Code/Source/SV3/Plugins;$(MAKE) moc rcc ui
-	cd ../Code/Source/SV3/Modules;$(MAKE) moc rcc ui
-	cd ../Code/Source/SV3/Modules;$(MAKE) create_exports_h us-init-module
 
 shared-build:
 	for i in ${SHARED_LIBDIRS}; do ( \
@@ -288,25 +165,16 @@ exec-shared-build:
 	  $(MAKE) shared;fi ) ; done
 
 post-build: mksedscript
-	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-core-script > sv
-	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-simvascular-script >> sv
-	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-core-script > xfsv
-	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-xfsv-script >> xfsv
-	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-core-script > mypost
-	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-postsolver-script >> mypost
 ifeq ($(CLUSTER),x64_linux)
-	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-flowsolver-linux-script > mysolver
+#	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-flowsolver-linux-script > mysolver
 endif
 ifeq ($(CLUSTER),x64_macosx)
-	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-flowsolver-macosx-script > mysolver
+#	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-flowsolver-macosx-script > mysolver
 endif
 ifeq ($(CLUSTER),x64_cygwin)
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-flowsolver-windows-script > mysolver
 endif
-	-chmod a+rx sv
-	-chmod a+rx xfsv
 	-chmod a+rx mysolver
-	-chmod a+rx mypost
 #	-rm -f sedscript
 
 create-svsolver-options-file:
@@ -342,19 +210,7 @@ veryclean:
 	for fn in $(TOP)/*~; do /bin/rm -f $$fn;done
 	for fn in $(TOP)/Lib/*; do /bin/rm -f -r $$fn; done
 	for fn in $(TOP)/Bin/*; do /bin/rm -f -r $$fn; done
-	if [ -e myadaptor ];then /bin/rm -f myadaptor;fi
-	if [ -e mytetadaptor ];then /bin/rm -f mytetadaptor;fi
-	if [ -e sv ];then /bin/rm -f sv;fi
-	if [ -e xfsv ];then /bin/rm -f xfsv;fi
 	if [ -e mysolver ];then /bin/rm -f mysolver;fi
-	if [ -e sv-shared ];then /bin/rm -f sv-shared;fi
-	if [ -e mypost ];then /bin/rm -f mypost;fi
-	$(RM) $(TOP)/../Tcl/Common/Visualization/tclIndex
-	$(RM) $(TOP)/../Tcl/Common/Vis/tclIndex
-	$(RM) $(TOP)/../Tcl/Common/General/tclIndex
-	$(RM) $(TOP)/../Tcl/SimVascular_2.0/GUI/tclIndex
-	$(RM) $(TOP)/../Tcl/SimVascular_2.0/Core/tclIndex
-	$(RM) $(TOP)/../Tcl/SimVascular_2.0/Plugins/tclIndex
 	/bin/rm -f  ../Code/Source/Include/Make/simvascular_options.h
 	/bin/rm -f  ../Code/Source/Include/Make/simvascular_version.h
 	/bin/rm -f  ../Code/FlowSolvers/Include/Make/cvFlowsolverOptions.h

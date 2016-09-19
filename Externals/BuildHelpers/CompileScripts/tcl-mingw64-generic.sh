@@ -19,7 +19,7 @@ mkdir -p $SV_TCL_INSTALL_FULL_DIR_NAME
 
 chmod a+rx  $SV_TCL_INSTALL_FULL_DIR_NAME
 cd ../tcl-$SV_TCL_VERSION/win
-./configure --prefix=${SV_TCL_INSTALL_FULL_DIR_NAME} --enable-threads --enable-shared --enable-64bit
+./configure --prefix=${SV_TCL_INSTALL_FULL_DIR_NAME} --enable-threads --disable-shared --enable-64bit
 
 make clean
 make binaries libraries
@@ -30,7 +30,7 @@ cd ../..
 cd tk-$SV_TCL_VERSION/win
 ./configure --prefix=${SV_TCL_INSTALL_FULL_DIR_NAME} \
             --with-tcl=${SV_TCL_INSTALL_FULL_DIR_NAME}/lib \
-            --enable-threads --enable-shared --enable-64bit
+            --enable-threads --disable-shared --enable-64bit
 make clean
 make binaries libraries
 make install-binaries install-libraries
