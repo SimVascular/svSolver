@@ -33,6 +33,7 @@ The following packages are required to build svsolver
 
 XCode command line tools are required
 % xcode-select --install
+% sudo xcodebuild -license
 
 MacPorts is required which can be downloaded at https://www.macports.org
 The following packages are required to build simvascular
@@ -40,7 +41,7 @@ The following packages are required to build simvascular
 ### compilers
 % sudo port install gcc5
 % sudo port install gfortran5
-% sudo port install mpich-gcc5
+% sudo port install mpich-devel-clang
 
 2. Checkout svSolver source code
 --------------------------------
@@ -83,6 +84,10 @@ directory and modify as needed, e.g.:
 7. Running developer version
 ----------------------------
 Binaries are in "BuildWithMake/Bin" directory.
+
+You may need to set the path for the intel shared libraries before running svsolver, e.g.:
+
+% export DYLD_LIBRARY_PATH=/opt/intel/compilers_and_libraries_2016.1.111/mac/compiler/lib/
 
 8. Build release (NOTE: out-of-date!)
 -----------------
