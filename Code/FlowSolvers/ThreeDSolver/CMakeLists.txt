@@ -46,9 +46,9 @@ endif()
 
 #-----------------------------------------------------------------------------
 # SolverIO
-if(SV_THREEDSOLVER_USE_SOLVERIO)
-	set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} SolverIO)
-endif()
+#if(SV_THREEDSOLVER_USE_SOLVERIO)
+#	set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} SolverIO)
+#endif()
 #-----------------------------------------------------------------------------
 # Presolver
 if(SV_THREEDSOLVER_USE_SVPRE)
