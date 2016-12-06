@@ -108,9 +108,6 @@ macro(simvascular_external _pkg)
 		option(SV_USE_SYSTEM_${_pkg} "Use system ${_pkg}" OFF)
 	endif()
 
-	mark_as_superbuild(SV_USE_SYSTEM_${_pkg})
-	#message("${_pkg}: ${simvascular_external_SVEXTERN_CONFIG}")
-
 	if((NOT SV_SUPERBUILD AND simvascular_external_SVEXTERN_CONFIG) OR 
 		(simvascular_external_SVEXTERN_CONFIG AND SV_USE_SYSTEM_${_pkg}))
 
@@ -208,7 +205,6 @@ macro(simvascular_third_party _pkg)
 	endif()
 
 	mark_as_advanced(SV_USE_SYSTEM_${_upper})
-	mark_as_superbuild(SV_USE_SYSTEM_${_upper})
 
 	configure_file(${SV_SOURCE_DIR}/${${_upper}_SUBDIR}/simvascular_${_lower}.h.in 
 		${SV_BINARY_DIR}/${${_upper}_SUBDIR}/simvascular_${_lower}.h)
@@ -434,7 +430,6 @@ macro(simvascular_find_config_file pkg)
       math(EXPR LIST_INDEX ${CONFIG_LIST_LENGTH}-1)
       list(GET ${pkg}_CONFIGS ${LIST_INDEX} ${pkg}_CONFIG_FILE)
       get_filename_component(${pkg}_DIR ${${pkg}_CONFIG_FILE} DIRECTORY)
-      mark_as_superbuild(${pkg}_DIR}:PATH)
     endif()
   endif()
 endmacro()

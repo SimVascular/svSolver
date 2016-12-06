@@ -28,15 +28,9 @@
  #
  #=========================================================================#
 set(INDENTS "${INDENTS}    ")
-if(SV_SUPERBUILD)
-	RETURN()
-	###### RETURN_SUPERBUILD ######
-endif()
-if(SV_USE_THREEDSOLVER)
-	message(STATUS "FlowSolvers")
-	message(STATUS "${INDENTS}ThreeDSolver")
-	add_subdirectory(ThreeDSolver)
-endif()
+message(STATUS "FlowSolvers")
+message(STATUS "${INDENTS}ThreeDSolver")
+add_subdirectory(ThreeDSolver)
 
 
 

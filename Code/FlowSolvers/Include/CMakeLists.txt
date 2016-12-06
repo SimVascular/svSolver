@@ -23,6 +23,9 @@ else()
   SET(VER_USE_VTK 0)
 endif()
 
+configure_file(simvascular_version.h.in ${CMAKE_CURRENT_BINARY_DIR}/simvascular_version.h)
+configure_file(simvascular_options.h.in ${CMAKE_CURRENT_BINARY_DIR}/simvascular_options.h)
+
 # Write include file
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/cvFlowsolverOptions.h.in"

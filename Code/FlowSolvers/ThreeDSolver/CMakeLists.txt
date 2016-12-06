@@ -40,24 +40,24 @@ set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svLS)
 #-----------------------------------------------------------------------------
 # Post Solver
 if(SV_THREEDSOLVER_USE_SVPOST)
-	set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svPost)
-	set(SV_THREEDSOLVER_USE_SOLVERIO ON)
+  set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svPost)
+  set(SV_THREEDSOLVER_USE_SOLVERIO ON)
 endif()
 
 #-----------------------------------------------------------------------------
 # SolverIO
 if(SV_THREEDSOLVER_USE_SOLVERIO)
-	set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} SolverIO)
+  set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} SolverIO)
 endif()
 #-----------------------------------------------------------------------------
 # Presolver
 if(SV_THREEDSOLVER_USE_SVPRE)
-	set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svPre)
-	set(SV_THREEDSOLVER_USE_SOLVERIO ON)
+  set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svPre)
+  set(SV_THREEDSOLVER_USE_SOLVERIO ON)
 endif()
 
-if(SV_USE_DUMMY_MPICH2)
-    set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} dummyMPI)
+if(svSolver_USE_DUMMY_MPI)
+  set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} dummyMPI)
 endif()
 
 set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svSolver)
@@ -84,13 +84,11 @@ if(SV_THREEDSOLVER_USE_VTK)
 endif()
 
 foreach(dir ${FLOWSOLVER_SUBDIRS})
-	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${dir})
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${dir})
 endforeach()
 
 message(STATUS "${INDENTS}ThreeDSolver Components")
 foreach(dir ${FLOWSOLVER_SUBDIRS})
-	message(STATUS "${INDENTS}    ${dir}")
-	add_subdirectory(${dir})
+  message(STATUS "${INDENTS}    ${dir}")
+  add_subdirectory(${dir})
 endforeach()
-
-
