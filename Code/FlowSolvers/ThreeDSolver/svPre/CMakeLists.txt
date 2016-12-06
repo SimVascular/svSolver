@@ -33,7 +33,7 @@ SET(CXXSRCS cmd.cxx displacements.cxx helpers.cxx supre-cmds.cxx supre.cxx
 	presolver-vtk-cmds.cxx)
 
 # Add c++ sources for variable wall module
-if(SV_THREEDSOLVER_USE_VARWALL)
+if(SV_USE_VARWALL)
 	SET(CXXSRCS ${CXXSRCS} Laplace_Solve.cxx Transient_Laplace_Solve.cxx displacements_var_prop.cxx)
 endif()
 
@@ -46,7 +46,7 @@ SET(FSRCS stannspcg.f)
 
 # add fortran sources for variable wall module
 # makefile uses .f not .f90, keep consistent
-if(SV_THREEDSOLVER_USE_VARWALL)
+if(SV_USE_VARWALL)
 	SET(FSRCS ${FSRCS} gmresfortran.f)
 endif()
 

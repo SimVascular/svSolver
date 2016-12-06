@@ -12,9 +12,6 @@ endif()
 #-----------------------------------------------------------------------------
 # WIN32
 if(WIN32)
-  option(SV_USE_WIN32_REGISTRY "Use Windows registry to obtain certain settings (install mode)" OFF)
-  mark_as_advanced(SV_USE_WIN32_REGISTRY)
-
   set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DWINDOWS -DWIN32")
   if(NOT IS64)
     if(NOT "${CMAKE_GENERATOR}" MATCHES ".*Win64")

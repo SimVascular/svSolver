@@ -53,11 +53,11 @@ endif()
 
 SET(FSRCS modules.f)
 
-if(SV_THREEDSOLVER_USE_CORONARY)
+if(SV_USE_CORONARY)
   SET(FSRCS ${FSRCS} modules-coronary.f)
 endif()
 
-if (SV_THREEDSOLVER_USE_CLOSEDLOOP)
+if (SV_USE_CLOSEDLOOP)
   SET(FSRCS ${FSRCS} modules-closedloop.f)
 endif()
 
@@ -77,17 +77,17 @@ SET(FSRCS ${FSRCS} addelmpvsqforsvls-closedloop-coronary.f
                    readnblk-varwall.f
                    updhistconv-coronary.f)
 
-if(SV_THREEDSOLVER_USE_CORONARY)
+if(SV_USE_CORONARY)
   SET(FSRCS ${FSRCS} coronary_subroutines.f)
 endif()
 
 # Include files for the CLOSEDLOOP VERSION
-if(SV_THREEDSOLVER_USE_CLOSEDLOOP)
+if(SV_USE_CLOSEDLOOP)
   SET(FSRCS ${FSRCS} closedloop_subroutines.f)
 endif()
 
 # Include files for the VARWALL VERSION
-if (SV_THREEDSOLVER_USE_VARWALL)
+if (SV_USE_VARWALL)
   SET(FSRCS ${FSRCS} varwall_subroutines.f)
 endif()
 
@@ -97,14 +97,14 @@ set(lib_leslib ${SV_LIB_THREEDSOLVER_DUMMY_LESLIB_NAME})
 set(lib_restart ${SV_LIB_THREEDSOLVER_WRITE_RESTART_NAME})
 set(lib_flowsolver ${SV_LIB_THREEDSOLVER_FORTRAN_NAME})
 # Include files for the USE_VTK VERSION
-if (SV_THREEDSOLVER_USE_VTK)
+if (SV_USE_VTK)
   SET(CXXSRCS ${CXXSRCS} use_vtk.cxx)
   ADD_LIBRARY(${lib_vtk} ${SV_LIBRARY_TYPE} use_vtk.cxx)
   target_link_libraries(${lib_vtk}
 	  ${VTK_LIBRARIES})
 endif()
 
-if(SV_THREEDSOLVER_USE_LESLIB)
+if(SV_USE_LESLIB)
   include_directories(${LESLIB_INCLUDE_DIR})
 else()# dummy leslib
   add_library(${lib_leslib} ${SV_LIBRARY_TYPE} leslib_dummy_prototypes.c)
@@ -120,13 +120,12 @@ target_link_libraries(${lib_restart} ${SV_LIB_SOLVERIO_NAME}
 TARGET_LINK_LIBRARIES(${lib_flowsolver} ${SV_MPI_EXTRA_LIBRARY}
 	${SV_MPI_Fortran_LIBRARIES}
 	${SV_LIB_SOLVERIO_NAME} ${lib_restart})
-if(SV_THREEDSOLVER_USE_SVLS)
+if(SV_USE_SVLS)
 	target_link_libraries(${lib_flowsolver} ${SV_LIB_SVLS_NAME})
 endif()
-if(SV_THREEDSOLVER_USE_VTK)
+if(SV_USE_VTK)
 	target_link_libraries(${lib_flowsolver} ${lib_vtk})
 endif()
-message("Libs: ${SV_MPI_EXTRA_LIBRARY} ${SV_MPI_Fortran_LIBRARIES}")
 set(HDRS Input.h ValType.h common_c.h)
 
 simvascular_add_executable(${SV_FLOWSOLVER_EXE}
@@ -136,7 +135,7 @@ simvascular_add_executable(${SV_FLOWSOLVER_EXE}
   INSTALL_COMPONENT ModuleExecutables
   INSTALL_DESTINATION ${SV_INSTALL_RUNTIME_DIR})
 
-if(SV_THREEDSOLVER_USE_VTK)
+if(SV_USE_VTK)
   SET(VTKLIB ${VTK_LIBRARIES})
 else()
   SET(VTKLIB "")
@@ -157,7 +156,7 @@ if(SV_INSTALL_LIBS)
     LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT ModuleLibraries
     ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT ModuleLibraries
     )
-  if(SV_THREEDSOLVER_USE_VTK)
+  if(SV_USE_VTK)
     install(TARGETS ${lib_vtk}
       RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT ModuleExecutables
       LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT ModuleLibraries

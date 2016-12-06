@@ -1,12 +1,6 @@
 #-----------------------------------------------------------------------------
 # Setup SimVascular Install options and directories
 #-----------------------------------------------------------------------------
-#option(SV_SUPERBUILD_INSTALL 
-  #  "Enabling this option will install automatically SimVascular in Superbuild Mode" OFF)
-option(SV_ENABLE_DISTRIBUTION 
-  "Enable Distribution Targets (CPack)" OFF)
-mark_as_advanced(SV_ENABLE_DISTRIBUTION)
-
 if(NOT SV_INSTALL_HOME_DIR)
   set(SV_INSTALL_HOME_DIR ".")
 endif()

@@ -22,6 +22,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake"
 
 #-----------------------------------------------------------------------------
 # Include Macros
+include(SimVascularFunctions)
 include(SimVascularMacros)
 include(CheckLibraryExists)
 
@@ -43,7 +44,6 @@ include(SimVascularDependentOptions)
 
 #-----------------------------------------------------------------------------
 # Set EXE names for the executables
-set(SV_MESHSIM_ADAPTOR_EXE "svadapt")
 set(SV_PRESOLVER_EXE "svpre")
 set(SV_FLOWSOLVER_EXE "svsolver")
 set(SV_POSTSOLVER_EXE "svpost")
@@ -125,20 +125,20 @@ endif()
 #-----------------------------------------------------------------------------
 # Flowsolver
 #-----------------------------------------------------------------------------
-if(SV_THREEDSOLVER_SOLVERIO_REDIRECT)
+if(SV_SOLVERIO_REDIRECT)
   set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DBUILD_WITH_FLOWSOLVER_STDOUT_STDERR_REDIRECT")
 endif()
 
 #-----------------------------------------------------------------------------
 #  SVLS
 # svLS depends on the THREEDSOLVER build state so it must be here.
-if(SV_THREEDSOLVER_USE_SVLS)
+if(SV_USE_SVLS)
   set(SVLS_BUILD_TYPE "Source")
   #simvascular_external(svls SVEXTERN_DEFAULT)
-  set(svSolver_USE_MPI ON)
+  set(SV_USE_MPI ON)
 endif()
 
-if(SV_THREEDSOLVER_USE_LESLIB)
+if(SV_USE_LESLIB)
   find_package(LESLIB REQUIRED)
 endif()
 
@@ -179,8 +179,8 @@ endif()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# Enable Interl Runtime libs if we need or want them
-if(svSolver_USE_INTEL)
+# Enable Intel Runtime libs if we need or want them
+if(SV_USE_INTEL)
   simvascular_external(INTELRUNTIME SYSTEM_DEFAULT SHARED_LIB)
   if(SV_USE_SYSTEM_ZLIB)
     set(INTELRUNTIME_LIB_DIR "" CACHE PATH "A directory where intel runtimes may be, use this if its not in the path")
@@ -200,9 +200,9 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Enable MPI
-if(svSolver_USE_MPI OR USE_MPI)
-  set(svSolver_USE_MPI ON)
-  if (NOT svSolver_USE_DUMMY_MPI)
+if(SV_USE_MPI OR USE_MPI)
+  set(SV_USE_MPI ON)
+  if (NOT SV_USE_DUMMY_MPI)
     simvascular_external(MPI SYSTEM_DEFAULT SHARED_LIB)
     if(MPI_FOUND)
       get_filename_component(MPI_LIBRARY_DIR ${MPI_LIBRARY} PATH)

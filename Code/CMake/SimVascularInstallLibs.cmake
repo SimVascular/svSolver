@@ -86,7 +86,7 @@ endforeach()
 
 #-----------------------------------------------------------------------------
 # MPI
-if(svSolver_USE_MPI AND NOT svSolver_USE_DUMMY_MPI)
+if(SV_USE_MPI AND NOT SV_USE_DUMMY_MPI)
   if(SV_ENABLE_DISTRIBUTION OR NOT SV_USE_SYSTEM_MPI)
     if(NOT WIN32)
       # MPI needs to be insalled, if its not a system LIBRARY.
