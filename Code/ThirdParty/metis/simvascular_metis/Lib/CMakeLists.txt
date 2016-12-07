@@ -34,7 +34,7 @@ if(SV_INSTALL_HEADERS)
   FILE(READ "metis.h" METIS_H_TEMP)
 
   set(filename "macros.h")
-  install(FILES ${filename} DESTINATION ${SV_INSTALL_RUNTIME_DIR} RENAME metis_${filename})
+  install(FILES ${filename} DESTINATION ${SV_INSTALL_INCLUDE_DIR} RENAME metis_${filename})
   STRING(REGEX REPLACE ${filename} metis_${filename} METIS_H_TEMP ${METIS_H_TEMP})
 
   set(filename "defs.h")
@@ -44,18 +44,18 @@ if(SV_INSTALL_HEADERS)
   STRING(REGEX REPLACE ${filename} metis_${filename} METIS_H_TEMP ${METIS_H_TEMP})
 
   set(filename "proto.h")
-  install(FILES ${filename} DESTINATION ${SV_INSTALL_RUNTIME_DIR} RENAME metis_${filename})
+  install(FILES ${filename} DESTINATION ${SV_INSTALL_INCLUDE_DIR} RENAME metis_${filename})
   STRING(REGEX REPLACE ${filename} metis_${filename} METIS_H_TEMP ${METIS_H_TEMP})
 
   set(filename "rename.h")
-  install(FILES ${filename} DESTINATION ${SV_INSTALL_RUNTIME_DIR} RENAME metis_${filename})
+  install(FILES ${filename} DESTINATION ${SV_INSTALL_INCLUDE_DIR} RENAME metis_${filename})
   STRING(REGEX REPLACE ${filename} metis_${filename} METIS_H_TEMP ${METIS_H_TEMP})
 
   set(filename "struct.h")
-  install(FILES ${filename} DESTINATION ${SV_INSTALL_RUNTIME_DIR} RENAME metis_${filename})
+  install(FILES ${filename} DESTINATION ${SV_INSTALL_INCLUDE_DIR} RENAME metis_${filename})
   STRING(REGEX REPLACE ${filename} metis_${filename} METIS_H_TEMP ${METIS_H_TEMP})
 
   set(filename ${TEMP_DIR}/metis.h)
   FILE(WRITE ${filename} ${METIS_H_TEMP})
-  install(FILES ${filename} DESTINATION ${SV_INSTALL_RUNTIME_DIR})
+  install(FILES ${filename} DESTINATION ${SV_INSTALL_INCLUDE_DIR})
 endif()

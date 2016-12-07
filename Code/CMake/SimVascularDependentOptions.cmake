@@ -51,11 +51,13 @@ endif()
 # Visual Studio flags
 if(MSVC)
   set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DMSVC /EHsc")
-endif()
-# Visual Studio Linker Flags
-if(MSVC)
 # SUPPRESS_VC_DEPRECATED_WARNINGS
-  add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
+  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS")
+else()
+  if (BUILD_SHARED_LIBS)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+  endif()
 endif()
 
 # Compiler Flags
@@ -98,10 +100,9 @@ else()
 endif()
 
 #-----------------------------------------------------------------------------
-# Set flags for shared libs
-if(NOT MSVC)
-  if (BUILD_SHARED_LIBS)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-  endif()
+# Flowsolver
+#-----------------------------------------------------------------------------
+if(SV_SOLVERIO_REDIRECT)
+  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DBUILD_WITH_FLOWSOLVER_STDOUT_STDERR_REDIRECT")
 endif()
+

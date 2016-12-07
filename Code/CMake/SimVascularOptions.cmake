@@ -78,3 +78,13 @@ endif()
 # WIN32
 option(SV_USE_WIN32_REGISTRY "Use Windows registry to obtain certain settings (install mode)" OFF)
 mark_as_advanced(SV_USE_WIN32_REGISTRY)
+
+#-----------------------------------------------------------------------------
+# Enable Fortran
+enable_language(Fortran)
+if(CMAKE_Fortran_COMPILER_ID MATCHES "GNU")
+  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -ffixed-line-length-132 -cpp")
+else()
+  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -132 -fpp")
+endif()
+

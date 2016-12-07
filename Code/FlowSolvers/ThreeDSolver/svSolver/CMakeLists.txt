@@ -112,19 +112,19 @@ else()# dummy leslib
 endif()
 add_library(${lib_restart} ${SV_LIBRARY_TYPE} ${CSRCS})
 target_link_libraries(${lib_restart} ${SV_LIB_SOLVERIO_NAME}
-	${lib_leslib}
-	${SV_MPI_EXTRA_LIBRARY} ${SV_MPI_Fortran_LIBRARIES})
+  ${lib_leslib}
+  ${SV_MPI_EXTRA_LIBRARY} ${SV_MPI_Fortran_LIBRARIES})
 
-      ADD_LIBRARY(${lib_flowsolver} ${SV_LIBRARY_TYPE} ${FSRCS})
+  add_library(${lib_flowsolver} ${SV_LIBRARY_TYPE} ${FSRCS})
 #SET_TARGET_PROPERTIES(${lib_flowsolver} PROPERTIES COMPILE_FLAGS "-extend_source 132")
-TARGET_LINK_LIBRARIES(${lib_flowsolver} ${SV_MPI_EXTRA_LIBRARY}
-	${SV_MPI_Fortran_LIBRARIES}
-	${SV_LIB_SOLVERIO_NAME} ${lib_restart})
+  target_link_libraries(${lib_flowsolver} ${SV_MPI_EXTRA_LIBRARY}
+    ${SV_MPI_Fortran_LIBRARIES}
+    ${SV_LIB_SOLVERIO_NAME} ${lib_restart})
 if(SV_USE_SVLS)
-	target_link_libraries(${lib_flowsolver} ${SV_LIB_SVLS_NAME})
+  target_link_libraries(${lib_flowsolver} ${SV_LIB_SVLS_NAME})
 endif()
 if(SV_USE_VTK)
-	target_link_libraries(${lib_flowsolver} ${lib_vtk})
+  target_link_libraries(${lib_flowsolver} ${lib_vtk})
 endif()
 set(HDRS Input.h ValType.h common_c.h)
 
@@ -142,13 +142,13 @@ else()
 endif()
 
 
-TARGET_LINK_LIBRARIES(${SV_FLOWSOLVER_EXE} ${lib_flowsolver}
-                      ${GLOBAL_LIBRARIES} ${INTELRUNTIME_LIBRARIES}
-                      ${METIS_LIBRARY} ${SVLS_LIBRARY}
-		      ${SV_MPI_EXTRA_LIBRARY} ${LESLIB_LIBRARY}
-                      ${NSPCG_LIBRARY} ${SV_LIB_SOLVERIO_NAME}
-                      ${VTKLIB}
-                      )
+target_link_libraries(${SV_FLOWSOLVER_EXE} ${lib_flowsolver}
+  ${GLOBAL_LIBRARIES} ${INTELRUNTIME_LIBRARIES}
+  ${METIS_LIBRARY} ${SVLS_LIBRARY}
+  ${SV_MPI_EXTRA_LIBRARY} ${LESLIB_LIBRARY}
+  ${NSPCG_LIBRARY} ${SV_LIB_SOLVERIO_NAME}
+  ${VTKLIB}
+  )
 
 if(SV_INSTALL_LIBS)
   install(TARGETS ${lib_flowsolver} ${lib_restart} ${lib_leslib}

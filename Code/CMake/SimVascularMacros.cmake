@@ -89,7 +89,6 @@ macro(simvascular_external _pkg)
     NO_CMAKE_MODULE_PATH
     NO_DEFAULT_PATH)
   elseif(NOT SV_SUPERBUILD)
-     #message(" ${_pkg} NOT SV_SUPERBUILD AND NOT simvascular_external_SVEXTERN_CONFIG")
     find_package(${_pkg} ${EXTRA_ARGS})
   elseif(SV_USE_SYSTEM_${_pkg})
     find_package(${_pkg} ${EXTRA_ARGS})
@@ -292,16 +291,9 @@ macro(simvascular_add_executable TARGET_NAME)
   # CHANGE FOR EXECUTABLE RENAME REMOVE (re enable if statement)
   if(simvascular_add_executable_INSTALL_DESTINATION)
     if(APPLE)
-      set_target_properties(${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_NAME "${TARGET_NAME}")
-      set(icon_name "icon.icns")
-      set(icon_full_path "${CMAKE_CURRENT_SOURCE_DIR}/icons/${icon_name}")
-      if(EXISTS "${icon_full_path}")
-        set_target_properties(${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_ICON_FILE "${icon_name}")
-        file(COPY ${icon_full_path} DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_NAME}.app/Contents/Resources/")
-        install(TARGETS ${TARGET_NAME}
-          RUNTIME DESTINATION "${simvascular_add_executable_INSTALL_DESTINATION}"
-          ${_COMPARGS})
-      endif()
+      install(TARGETS ${TARGET_NAME}
+        RUNTIME DESTINATION "${simvascular_add_executable_INSTALL_DESTINATION}"
+        ${_COMPARGS})
     else()
       if(simvascular_add_executable_COMPONENT)
         set(_COMPARGS "COMPONENT ${simvascular_add_executable_COMPONENT}")
