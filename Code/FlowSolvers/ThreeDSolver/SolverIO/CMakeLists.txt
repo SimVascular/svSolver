@@ -29,7 +29,7 @@
  #=========================================================================#
 
 set(lib ${SV_LIB_SOLVERIO_NAME})
-SET(CXXSRCS cvSolverIO.cxx)
+set(CXXSRCS cvSolverIO.cxx)
 set(HDRS cvSolverIO.h)
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})

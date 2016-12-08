@@ -31,39 +31,31 @@
 if(MSVC)
   string(REGEX REPLACE "STACK:10000000,10000000" "STACK:512000000,512000000" CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
 endif()
-  if(CMAKE_Fortran_COMPILER_ID MATCHES "GNU")
-    #set(CMAKE_Fortran_FLAGS_RELWITHDEBINFO "-fbounds-check")
-    set(CMAKE_Fortran_FLAGS "-ffixed-line-length-132 -cpp")
-  else()
-    #set(CMAKE_Fortran_FLAGS_RELWITHDEBINFO "-check bounds")
-
-    set(CMAKE_Fortran_FLAGS "-extend-source 132 -fpp")
-  endif()
 # Include c++ files
-SET(CXXSRCS Cinput.cxx ValType.cxx input_fform.cxx partition.cxx main.cxx)
+set(CXXSRCS Cinput.cxx ValType.cxx input_fform.cxx partition.cxx main.cxx)
 
 # Include c files
-SET(CSRCS getIntPnts.c ShapeFunctions_uniformP.c shptet.c symtri.c symtet.c) # for shape functions
-SET(CSRCS ${CSRCS} write_restart_files.c) # solver io files
-SET(CSRCS ${CSRCS} tmrc.c) # this is dummy timing function and should go away
+set(CSRCS getIntPnts.c ShapeFunctions_uniformP.c shptet.c symtri.c symtet.c) # for shape functions
+set(CSRCS ${CSRCS} write_restart_files.c) # solver io files
+set(CSRCS ${CSRCS} tmrc.c) # this is dummy timing function and should go away
 
 if(NOT (LINUX AND IS64))
-  SET(CSRCS ${CSRCS} missing_win32.c)
+  set(CSRCS ${CSRCS} missing_win32.c)
 endif()
 
-SET(FSRCS modules.f)
+set(FSRCS modules.f)
 
 if(SV_USE_CORONARY)
-  SET(FSRCS ${FSRCS} modules-coronary.f)
+  set(FSRCS ${FSRCS} modules-coronary.f)
 endif()
 
 if (SV_USE_CLOSEDLOOP)
-  SET(FSRCS ${FSRCS} modules-closedloop.f)
+  set(FSRCS ${FSRCS} modules-closedloop.f)
 endif()
 
-SET(FSRCS ${FSRCS} solver_subroutines.f)
+set(FSRCS ${FSRCS} solver_subroutines.f)
 
-SET(FSRCS ${FSRCS} addelmpvsqforsvls-closedloop-coronary.f
+set(FSRCS ${FSRCS} addelmpvsqforsvls-closedloop-coronary.f
                    asbmfg-closedloop-varwall.f
                    asbnabi-closedloop.f
                    asbnasc-closedloop.f
@@ -78,17 +70,17 @@ SET(FSRCS ${FSRCS} addelmpvsqforsvls-closedloop-coronary.f
                    updhistconv-coronary.f)
 
 if(SV_USE_CORONARY)
-  SET(FSRCS ${FSRCS} coronary_subroutines.f)
+  set(FSRCS ${FSRCS} coronary_subroutines.f)
 endif()
 
 # Include files for the CLOSEDLOOP VERSION
 if(SV_USE_CLOSEDLOOP)
-  SET(FSRCS ${FSRCS} closedloop_subroutines.f)
+  set(FSRCS ${FSRCS} closedloop_subroutines.f)
 endif()
 
 # Include files for the VARWALL VERSION
 if (SV_USE_VARWALL)
-  SET(FSRCS ${FSRCS} varwall_subroutines.f)
+  set(FSRCS ${FSRCS} varwall_subroutines.f)
 endif()
 
 # Libraries for the solver
@@ -98,10 +90,10 @@ set(lib_restart ${SV_LIB_THREEDSOLVER_WRITE_RESTART_NAME})
 set(lib_flowsolver ${SV_LIB_THREEDSOLVER_FORTRAN_NAME})
 # Include files for the USE_VTK VERSION
 if (SV_USE_VTK)
-  SET(CXXSRCS ${CXXSRCS} use_vtk.cxx)
-  ADD_LIBRARY(${lib_vtk} ${SV_LIBRARY_TYPE} use_vtk.cxx)
+  set(CXXSRCS ${CXXSRCS} use_vtk.cxx)
+  add_library(${lib_vtk} ${SV_LIBRARY_TYPE} use_vtk.cxx)
   target_link_libraries(${lib_vtk}
-	  ${VTK_LIBRARIES})
+    ${VTK_LIBRARIES})
 endif()
 
 if(SV_USE_LESLIB)
@@ -116,7 +108,7 @@ target_link_libraries(${lib_restart} ${SV_LIB_SOLVERIO_NAME}
   ${SV_MPI_EXTRA_LIBRARY} ${SV_MPI_Fortran_LIBRARIES})
 
   add_library(${lib_flowsolver} ${SV_LIBRARY_TYPE} ${FSRCS})
-#SET_TARGET_PROPERTIES(${lib_flowsolver} PROPERTIES COMPILE_FLAGS "-extend_source 132")
+#set_TARGET_PROPERTIES(${lib_flowsolver} PROPERTIES COMPILE_FLAGS "-extend_source 132")
   target_link_libraries(${lib_flowsolver} ${SV_MPI_EXTRA_LIBRARY}
     ${SV_MPI_Fortran_LIBRARIES}
     ${SV_LIB_SOLVERIO_NAME} ${lib_restart})
@@ -136,11 +128,10 @@ simvascular_add_executable(${SV_FLOWSOLVER_EXE}
   INSTALL_DESTINATION ${SV_INSTALL_RUNTIME_DIR})
 
 if(SV_USE_VTK)
-  SET(VTKLIB ${VTK_LIBRARIES})
+  set(VTKLIB ${VTK_LIBRARIES})
 else()
-  SET(VTKLIB "")
+  set(VTKLIB "")
 endif()
-
 
 target_link_libraries(${SV_FLOWSOLVER_EXE} ${lib_flowsolver}
   ${GLOBAL_LIBRARIES} ${INTELRUNTIME_LIBRARIES}

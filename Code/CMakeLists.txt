@@ -25,10 +25,10 @@ include(SimVascularFunctions)
 include(SimVascularMacros)
 include(CheckLibraryExists)
 
-SET(CMAKE_SKIP_BUILD_RPATH  TRUE)
-SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-SET(CMAKE_INSTALL_RPATH "")
-SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+set(CMAKE_SKIP_BUILD_RPATH  TRUE)
+set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+set(CMAKE_INSTALL_RPATH "")
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 #-----------------------------------------------------------------------------
 # Include Initial Options

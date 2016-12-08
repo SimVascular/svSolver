@@ -28,7 +28,7 @@
  #
  #=========================================================================#
 
-SET(CXXSRCS post_solver.cxx)
+set(CXXSRCS post_solver.cxx)
 
 simvascular_add_executable(${SV_POSTSOLVER_EXE}
   SRCS ${CXXSRCS}
@@ -38,8 +38,8 @@ simvascular_add_executable(${SV_POSTSOLVER_EXE}
   INSTALL_DESTINATION ${SV_INSTALL_RUNTIME_DIR})
 
 target_link_libraries(${SV_POSTSOLVER_EXE}
-			${GLOBAL_LIBRARIES} ${INTELRUNTIME_LIBRARIES} ${ZLIB_LIBRARY}
-			${VTK_LIBRARIES}
-			${SV_LIB_SOLVERIO_NAME})
+  ${GLOBAL_LIBRARIES} ${INTELRUNTIME_LIBRARIES} ${ZLIB_LIBRARY}
+  ${VTK_LIBRARIES}
+  ${SV_LIB_SOLVERIO_NAME})
 
 

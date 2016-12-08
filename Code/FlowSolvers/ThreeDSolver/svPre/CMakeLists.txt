@@ -29,25 +29,25 @@
  #=========================================================================#
 
 # Set c++ sources
-SET(CXXSRCS cmd.cxx displacements.cxx helpers.cxx supre-cmds.cxx supre.cxx
-	presolver-vtk-cmds.cxx)
+set(CXXSRCS cmd.cxx displacements.cxx helpers.cxx supre-cmds.cxx supre.cxx
+  presolver-vtk-cmds.cxx)
 
 # Add c++ sources for variable wall module
 if(SV_USE_VARWALL)
-	SET(CXXSRCS ${CXXSRCS} Laplace_Solve.cxx Transient_Laplace_Solve.cxx displacements_var_prop.cxx)
+  set(CXXSRCS ${CXXSRCS} Laplace_Solve.cxx Transient_Laplace_Solve.cxx displacements_var_prop.cxx)
 endif()
 
 # Add c sources
 set(HDRS cmd.h)
-SET(CSRCS directsolve.c)
+set(CSRCS directsolve.c)
 
 # Add fortran sources
-SET(FSRCS stannspcg.f)
+set(FSRCS stannspcg.f)
 
 # add fortran sources for variable wall module
 # makefile uses .f not .f90, keep consistent
 if(SV_USE_VARWALL)
-	SET(FSRCS ${FSRCS} gmresfortran.f)
+  set(FSRCS ${FSRCS} gmresfortran.f)
 endif()
 
 # Visual Studio Linker Flags
