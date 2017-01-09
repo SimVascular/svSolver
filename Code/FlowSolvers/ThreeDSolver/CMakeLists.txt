@@ -29,7 +29,6 @@
  #=========================================================================#
 
 # Include Flowsolver Configuration File
-include(flowsolverConfig)
 set(INDENTS "${INDENTS}    ")
 # Include svLS Folder
 #include_directories(${SVLS_INCLUDE_DIR})
