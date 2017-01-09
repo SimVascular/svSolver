@@ -55,13 +55,13 @@ macro(svsolver_third_party _pkg)
 
   configure_file(${SV_FLOWSOLVERS_DIR}/../${${_upper}_SUBDIR}/simvascular_${_lower}.h.in
 		${SV_BINARY_DIR}/${${_upper}_SUBDIR}/simvascular_${_lower}.h)
-  include_directories(BEFORE ${SV_BINARY_DIR}/../${${_upper}_SUBDIR} ${SV_FLOWSOLVERS_DIR}/${${_upper}_SUBDIR})
+  include_directories(BEFORE ${SV_BINARY_DIR}/${${_upper}_SUBDIR} ${SV_FLOWSOLVERS_DIR}/../${${_upper}_SUBDIR})
 	if(SV_USE_SYSTEM_${_upper})
 		set(${_upper}_LIBRARIES)
 		set(${_upper}_LIBRARY)
 	else()
     set(${_upper}_LIBRARY_NAME _simvascular_thirdparty_${_lower})
-    include(${SV_FLOWSOLVERS_DIR}/${${_upper}_SUBDIR}/simvascular_${_lower})
+    add_subdirectory(${SV_FLOWSOLVERS_DIR}/../${${_upper}_SUBDIR}/simvascular_${_lower} ${SV_BINARY_DIR}/${${_upper}_SUBDIR}/simvascular_${lower})
 	endif()
 endmacro()
 
