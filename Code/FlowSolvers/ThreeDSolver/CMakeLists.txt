@@ -44,11 +44,11 @@ if(SV_THREEDSOLVER_USE_SVPOST)
 	set(SV_THREEDSOLVER_USE_SOLVERIO ON)
 endif()
 
-#-----------------------------------------------------------------------------
-# SolverIO
-if(SV_THREEDSOLVER_USE_SOLVERIO)
-	set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} SolverIO)
-endif()
+##-----------------------------------------------------------------------------
+## SolverIO
+#if(SV_THREEDSOLVER_USE_SOLVERIO)
+#	set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} SolverIO)
+#endif()
 #-----------------------------------------------------------------------------
 # Presolver
 if(SV_THREEDSOLVER_USE_SVPRE)

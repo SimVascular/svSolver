@@ -149,11 +149,11 @@ endif()
 #-----------------------------------------------------------------------------
 # Plugins
 if(SV_USE_TETGEN)
-	option(SV_USE_TET_ADAPTOR "Option to use open source mesh adaption" OFF)
-	mark_as_superbuild(SV_USE_TET_ADAPTOR)
+	option(SV_USE_TETGEN_ADAPTOR "Option to use open source mesh adaption" OFF)
+	mark_as_superbuild(SV_USE_TETGEN_ADAPTOR)
 endif()
 
-if(SV_USE_TET_ADAPTOR)
+if(SV_USE_TETGEN_ADAPTOR)
 	set(SV_USE_THREEDSOLVER ON)
 endif()
 

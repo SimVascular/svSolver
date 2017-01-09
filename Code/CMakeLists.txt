@@ -74,7 +74,7 @@ set(SV_MESHSIM_ADAPTOR_EXE "svadapt")
 set(SV_PRESOLVER_EXE "svpre")
 set(SV_FLOWSOLVER_EXE "svsolver")
 set(SV_POSTSOLVER_EXE "svpost")
-set(SV_TET_ADAPTOR_EXE "svtetadapt")
+set(SV_TETGEN_ADAPTOR_EXE "svtetadapt")
 
 #-----------------------------------------------------------------------------
 # start internal cache variables
@@ -280,12 +280,12 @@ endif()
 
 if(SV_USE_MESHSIM_ADAPTOR)
     set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/AdaptObject")
-elseif(SV_USE_TET_ADAPTOR)
+elseif(SV_USE_TETGEN_ADAPTOR)
     set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/AdaptObject")
 endif()
 
-if(SV_USE_TET_ADAPTOR)
-	SET(USE_TET_ADAPTOR ON)
+if(SV_USE_TETGEN_ADAPTOR)
+	SET(USE_TETGEN_ADAPTOR ON)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/TetGenAdapt")
 endif()
 
@@ -910,7 +910,7 @@ if(SV_USE_TETGEN)
 	endif()
 endif()
 
-if(SV_USE_TET_ADAPTOR)
+if(SV_USE_TETGEN_ADAPTOR)
 	#set(SV_USE_FORTRAN ON)
 	set(SV_THREEDSOLVER_USE_SOLVERIO ON)
 endif()
