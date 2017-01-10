@@ -28,30 +28,32 @@
  #
  #=========================================================================#
 
-# Include Flowsolver Configuration File
 set(INDENTS "${INDENTS}    ")
-# Include svLS Folder
-#include_directories(${SVLS_INCLUDE_DIR})
 
 set(SVLS_LIBRARY ${SV_LIB_SVLS_NAME})
 set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svLS)
 
 #-----------------------------------------------------------------------------
 # Post Solver
-if(SV_THREEDSOLVER_USE_SVPOST)
-	set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svPost)
-	set(SV_THREEDSOLVER_USE_SOLVERIO ON)
+if(SV_USE_SVPOST)
+  set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svPost)
+  set(SV_USE_SOLVERIO ON)
 endif()
 
 #-----------------------------------------------------------------------------
+# SolverIO
+if(SV_USE_SOLVERIO)
+  set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} SolverIO)
+endif()
+#-----------------------------------------------------------------------------
 # Presolver
-if(SV_THREEDSOLVER_USE_SVPRE)
-	set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svPre)
-	set(SV_THREEDSOLVER_USE_SOLVERIO ON)
+if(SV_USE_SVPRE)
+  set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svPre)
+  set(SV_USE_SOLVERIO ON)
 endif()
 
-if(SV_USE_DUMMY_MPICH2)
-    set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} dummyMPI)
+if(SV_USE_DUMMY_MPI)
+  set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} dummyMPI)
 endif()
 
 set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svSolver)
@@ -61,30 +63,28 @@ dev_message("Flowsolver Header Path:  ${FLOWSOLVER_OPTIONS_HEADER_PATH}" )
 
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 message(STATUS "${INDENTS}ThreeDSolver Options")
-if((SV_THREEDSOLVER_USE_CORONARY EQUAL 0) AND (SV_THREEDSOLVER_USE_CLOSEDLOOP EQUAL 0) AND (VER_VARWALL EQUAL 0) AND (VER_USE_VTK EQUAL 0))
-  MESSAGE(STATUS "${INDENTS}    Compiling baseline version")
+if((SV_USE_CORONARY EQUAL 0) AND (SV_USE_CLOSEDLOOP EQUAL 0) AND (VER_VARWALL EQUAL 0) AND (VER_USE_VTK EQUAL 0))
+  message(STATUS "${INDENTS}    Compiling baseline version")
 endif()
-if(SV_THREEDSOLVER_USE_CORONARY)
-  MESSAGE(STATUS "${INDENTS}    Activating coronary bc feature")
+if(SV_USE_CORONARY)
+  message(STATUS "${INDENTS}    Activating coronary bc feature")
 endif()
-if(SV_THREEDSOLVER_USE_CLOSEDLOOP)
-  MESSAGE(STATUS "${INDENTS}    Activating closed loop bc feature")
+if(SV_USE_CLOSEDLOOP)
+  message(STATUS "${INDENTS}    Activating closed loop bc feature")
 endif()
-if(SV_THREEDSOLVER_USE_VARWALL)
-  MESSAGE(STATUS "${INDENTS}    Activating variable wall feature")
+if(SV_USE_VARWALL)
+  message(STATUS "${INDENTS}    Activating variable wall feature")
 endif()
-if(SV_THREEDSOLVER_USE_VTK)
-  MESSAGE(STATUS "${INDENTS}    Activating using VTK feature")
+if(SV_USE_VTK)
+  message(STATUS "${INDENTS}    Activating using VTK feature")
 endif()
 
 foreach(dir ${FLOWSOLVER_SUBDIRS})
-	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${dir})
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${dir})
 endforeach()
 
 message(STATUS "${INDENTS}ThreeDSolver Components")
 foreach(dir ${FLOWSOLVER_SUBDIRS})
-	message(STATUS "${INDENTS}    ${dir}")
-	add_subdirectory(${dir})
+  message(STATUS "${INDENTS}    ${dir}")
+  add_subdirectory(${dir})
 endforeach()
-
-

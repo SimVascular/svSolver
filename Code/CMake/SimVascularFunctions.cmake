@@ -25,32 +25,40 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #-----------------------------------------------------------------------------
-# These are SimVascular build and version that are presented to the user to modify
-set(SV_RELEASE_TYPE "Release" CACHE STRING "This specificies which install dir and GUIDs to use, is also used in header files")
-set_property(CACHE SV_RELEASE_TYPE PROPERTY STRINGS Release Beta)
-mark_as_advanced(SV_RELEASE_TYPE)
+# getListOfVars -
+#
+function(getListOfVars _prefix _suffix _varResult)
+  get_cmake_property(_vars VARIABLES)
+  string (REGEX MATCHALL "(^|;)${_prefix}[A-Za-z0-9_]*${_suffix}" _matchedVars "${_vars}")
+	set (${_varResult} ${_matchedVars} PARENT_SCOPE)
+endfunction()
 
-set(SV_VERSION "simvascular")
-if(SV_RELEASE_TYPE MATCHES "^Beta$")
- set(SV_VERSION "simvascular-beta")
-endif()
+function(getListOfVars_concat _prefix _suffix _varResult)
+  get_cmake_property(_vars VARIABLES)
+  string (REGEX MATCHALL "(^|;)${_prefix}[A-Za-z0-9_]*${_suffix}" _matchedVars "${_vars}")
+  set (${_varResult} ${${_varResult}} ${_matchedVars} PARENT_SCOPE)
+endfunction()
 
-string(TIMESTAMP DATE_IMESTAMP %y%m%d)
-math(EXPR SV_VERSION_TIMESTAMP "${DATE_IMESTAMP}-140000")
-string(TIMESTAMP SV_RELEASE_TIMESTAMP %y%m%d%H%M%S)
-set(SV_PLATFORM ${ARCH})
-set(SV_MAJOR_VERSION 2)
-set(SV_MINOR_VERSION 0)
-set(SV_PATCH_VERSION ${SV_VERSION_TIMESTAMP})
+function(getListOfVarsPrefix _prefix _varResult)
+  get_cmake_property(_vars VARIABLES)
+  string (REGEX MATCHALL "(^|;)${_prefix}[A-Za-z0-9_]*" _matchedVars "${_vars}")
+  set (${_varResult} ${_matchedVars} PARENT_SCOPE)
+endfunction()
 
+function(getListofVarsCat _varResult)
+  set(options ) 
+  set(oneValueArgs)
+  set(multiValueArgs SUFFIXES PREFIXES)
+  CMAKE_PARSE_ARGUMENTS("" 
+    "${options}"
+    "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
+  set(_ACCUM_VARLIST)
+  foreach(pre ${_PREFIXES})
+    foreach(suf ${_SUFFIXES})
+      getListOfVars("${pre}" "${suf}" _VARLIST)
+      set(_ACCUM_VARLIST ${_ACCUM_VARLIST} ${_VARLIST})
+    endforeach()
+  endforeach()
+  set(_varResult ${_ACCUM_VARLIST} PARENT_SCOPE)
+endfunction()
 
-
-set(SV_RELEASE_BUILD 0)
-set(SV_MAJOR_VER_NO ${SV_MAJOR_VERSION})
-set(SV_FULL_VER_NO
- "${SV_MAJOR_VERSION}.${SV_MINOR_VERSION}")
-set(SV_FULL_VERSION
- "${SV_MAJOR_VERSION}.${SV_MINOR_VERSION}.${SV_PATCH_VERSION}")
-set(SV_REGISTRY_TOPLEVEL "SV")
-
-message(STATUS "SimVascular Version: ${SV_VERSION} ${SV_MAJOR_VERSION}.${SV_MINOR_VERSION}.${SV_PATCH_VERSION}")

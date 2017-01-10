@@ -27,37 +27,9 @@
 include (CMakeParseArguments)
 
 macro(dev_message string)
-	if(SV_DEVELOPER_OUTPUT)
-		message("DEV: ${string}")
-	endif()
-endmacro()
-MACRO(LIST_CONTAINS var value)
-	SET(${var})
-	FOREACH (value2 ${ARGN})
-		IF (${value} STREQUAL ${value2})
-			SET(${var} TRUE)
-		ENDIF (${value} STREQUAL ${value2})
-	ENDFOREACH (value2)
-ENDMACRO(LIST_CONTAINS)
-
-MACRO(glob_dirs _newlist )
-	set(${_newlist})
-	foreach(value ${ARGN})
-		if(IS_DIRECTORY ${value})
-			list(APPEND ${_newlist} ${value})
-		endif()
-	endforeach()
-endmacro()
-
-MACRO(combine_files output_file)
-	set(ACCUM_SCRIPT_STRING)
-	set(TEMP_SCRIPT)
-	foreach(file ${ARGN})
-		dev_message("    Processing file: ${file}")
-		file(READ ${file} TEMP_SCRIPT)
-		set(ACCUM_SCRIPT_STRING "${ACCUM_SCRIPT_STRING}\n${TEMP_SCRIPT}")
-	endforeach()
-	set(${output_file} ${ACCUM_SCRIPT_STRING})
+  if(SV_DEVELOPER_OUTPUT)
+    message("DEV: ${string}")
+  endif()
 endmacro()
 
 #-----------------------------------------------------------------------------
@@ -65,180 +37,174 @@ endmacro()
 # and create the necessary variables to load and link them.
 # 
 macro(simvascular_external _pkg)
-	string(TOLOWER "${_pkg}" _lower)
+  string(TOLOWER "${_pkg}" _lower)
 
-	dev_message("Configuring ${_pkg}")
+  dev_message("Configuring ${_pkg}")
 
-	set(options OPTIONAL VERSION_EXACT 
-		DOWNLOADABLE SYSTEM_DEFAULT 
-		SVEXTERN_CONFIG ADD_INSTALL SHARED_LIB NO_MODULE
-		) 
-	set(oneValueArgs VERSION)
-	set(multiValueArgs PATHS HINTS COMPONENTS)
+  set(options OPTIONAL VERSION_EXACT 
+    DOWNLOADABLE SYSTEM_DEFAULT 
+    SVEXTERN_CONFIG ADD_INSTALL SHARED_LIB NO_MODULE
+    ) 
+  set(oneValueArgs VERSION)
+  set(multiValueArgs PATHS HINTS COMPONENTS)
 
-	CMAKE_PARSE_ARGUMENTS("simvascular_external" 
-		"${options}"
-		"${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
+  cmake_parse_arguments("simvascular_external" 
+    "${options}"
+    "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
-	set(EXTRA_ARGS)
-	if(simvascular_external_COMPONENTS)
-		set(EXTRA_ARGS COMPONENTS ${simvascular_external_COMPONENTS})
-	endif()
-	if(simvascular_external_NO_MODULE)
-		set(EXTRA_ARGS ${EXTRA_ARGS} NO_MODULE)
-	endif()
-	#message("EXTRA_ARGS: ${EXTRA_ARGS}")
-	set(${_pkg}_VERSION ${simvascular_external_VERSION})
-	if(simvascular_external_VERSION_EXACT)
-		set(${_pkg}_VERSION ${${_pkg}_VERSION} EXACT)
-	endif()
+  set(EXTRA_ARGS)
+  if(simvascular_external_COMPONENTS)
+    set(EXTRA_ARGS COMPONENTS ${simvascular_external_COMPONENTS})
+  endif()
 
-	unset(ARG_STRING)
-	set(_paths "${simvascular_external_PATHS}")
-	if(NOT simvascular_external_PATHS)
-		set(_paths "${CMAKE_MODULE_PATH}")
-	endif()
+  if(simvascular_external_NO_MODULE)
+    set(EXTRA_ARGS ${EXTRA_ARGS} NO_MODULE)
+  endif()
 
-	#message(STATUS "Search paths for ${_pkg}Config.cmake: ${_paths}")
+  set(${_pkg}_VERSION ${simvascular_external_VERSION})
+  if(simvascular_external_VERSION_EXACT)
+    set(${_pkg}_VERSION ${${_pkg}_VERSION} EXACT)
+  endif()
 
-	if(simvascular_external_SYSTEM_DEFAULT)
-		option(SV_USE_SYSTEM_${_pkg} "Use system ${_pkg}" ON)
-		mark_as_advanced(SV_USE_SYSTEM_${_pkg})
-	else()
-		option(SV_USE_SYSTEM_${_pkg} "Use system ${_pkg}" OFF)
-	endif()
+  unset(ARG_STRING)
+  set(_paths "${simvascular_external_PATHS}")
+  if(NOT simvascular_external_PATHS)
+    set(_paths "${CMAKE_MODULE_PATH}")
+  endif()
 
-	mark_as_superbuild(SV_USE_SYSTEM_${_pkg})
-	#message("${_pkg}: ${simvascular_external_SVEXTERN_CONFIG}")
+  #message(STATUS "Search paths for ${_pkg}Config.cmake: ${_paths}")
 
-	if((NOT SV_SUPERBUILD AND simvascular_external_SVEXTERN_CONFIG) OR 
-		(simvascular_external_SVEXTERN_CONFIG AND SV_USE_SYSTEM_${_pkg}))
+  if(simvascular_external_SYSTEM_DEFAULT)
+    option(SV_USE_SYSTEM_${_pkg} "Use system ${_pkg}" ON)
+    mark_as_advanced(SV_USE_SYSTEM_${_pkg})
+  else()
+    option(SV_USE_SYSTEM_${_pkg} "Use system ${_pkg}" OFF)
+  endif()
 
-	find_package(${_pkg} ${EXTRA_ARGS} 
-		  PATHS ${CMAKE_CURRENT_SOURCE_DIR}/CMake 
-		  NO_CMAKE_MODULE_PATH
-		  NO_DEFAULT_PATH)
-	elseif(NOT SV_SUPERBUILD)
-		#message(" ${_pkg} NOT SV_SUPERBUILD AND NOT simvascular_external_SVEXTERN_CONFIG")
-		find_package(${_pkg} ${EXTRA_ARGS})
-	elseif(SV_USE_SYSTEM_${_pkg})
-		find_package(${_pkg} ${EXTRA_ARGS})
-	endif()
+  if((NOT SV_SUPERBUILD AND simvascular_external_SVEXTERN_CONFIG) OR 
+    (simvascular_external_SVEXTERN_CONFIG AND SV_USE_SYSTEM_${_pkg}))
 
-	if(simvascular_external_DOWNLOADABLE)
-		set(SV_DEPENDS ${SV_DEPENDS} ${_pkg})
-		list( REMOVE_DUPLICATES SV_DEPENDS )
-	endif()
+  find_package(${_pkg} ${EXTRA_ARGS} 
+    PATHS ${CMAKE_CURRENT_SOURCE_DIR}/CMake 
+    NO_CMAKE_MODULE_PATH
+    NO_DEFAULT_PATH)
+  elseif(NOT SV_SUPERBUILD)
+    find_package(${_pkg} ${EXTRA_ARGS})
+  elseif(SV_USE_SYSTEM_${_pkg})
+    find_package(${_pkg} ${EXTRA_ARGS})
+  endif()
 
-	if(SV_USE_${_pkg})
-		set(USE_${_pkg} ON)
-	endif()
+  if(simvascular_external_DOWNLOADABLE)
+    set(SV_DEPENDS ${SV_DEPENDS} ${_pkg})
+    list( REMOVE_DUPLICATES SV_DEPENDS )
+  endif()
 
-	if(simvascular_external_SHARED_LIB)
-		set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} ${_pkg})
-	endif()
+  if(SV_USE_${_pkg})
+    set(USE_${_pkg} ON)
+  endif()
 
-	if(${_pkg}_FOUND)
-	        message(STATUS "PKG ${_pkg} found!")
-		if( ${_pkg}_INCLUDE_DIR )
-			dev_message("Including dir: ${${_pkg}_INCLUDE_DIR}")
-			# This get many of them
-			include_directories(${${_pkg}_INCLUDE_DIR})
-		endif()
-		if(SV_INSTALL_EXTERNALS)
-			if(simvascular_external_ADD_INSTALL)
-				getListOfVars("${_pkg}" "LIBRARY" ${_pkg}_VARS_INSTALL)
-				# print_vars(${_pkg}_VARS_INSTALL)
-				foreach(lib_install ${${_pkg}_VARS_INSTALL})
-					list(APPEND ${_pkg}_LIBRARY_INSTALL "${${lib_install}}")
-				endforeach()
-				#list(REMOVE_DUPLICATES ${_pkg}_LIBRARY_INSTALL)
-				#message(STATUS "${_pkg}_LIBRARY_INSTALL: ${${_pkg}_LIBRARY_INSTALL}")
-				#install(FILES "${${_pkg}_LIBRARY_INSTALL}" DESTINATION ${SV_INSTALL_EXTERNAL_LIBRARY_DIR})
-			endif()
-		endif()
-	endif()
-	unset(simvascular_external_SVEXTERN_CONFIG)
-	unset(simvascular_external_ADD_INSTALL)
-	if(SV_DEVELOPER_OUTPUT)
-		message(STATUS "Finished Configuring ${_pkg}")
-		message(STATUS "")
-	endif()
+  if(simvascular_external_SHARED_LIB)
+    set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} ${_pkg})
+  endif()
+
+  if(${_pkg}_FOUND)
+    message(STATUS "PKG ${_pkg} found!")
+    if( ${_pkg}_INCLUDE_DIR )
+      dev_message("Including dir: ${${_pkg}_INCLUDE_DIR}")
+      # This get many of them
+      include_directories(${${_pkg}_INCLUDE_DIR})
+    endif()
+    if(SV_INSTALL_EXTERNALS)
+      if(simvascular_external_ADD_INSTALL)
+      	getListOfVars("${_pkg}" "LIBRARY" ${_pkg}_VARS_INSTALL)
+      	foreach(lib_install ${${_pkg}_VARS_INSTALL})
+      	  list(APPEND ${_pkg}_LIBRARY_INSTALL "${${lib_install}}")
+      	endforeach()
+      	#message(STATUS "${_pkg}_LIBRARY_INSTALL: ${${_pkg}_LIBRARY_INSTALL}")
+      	#install(FILES "${${_pkg}_LIBRARY_INSTALL}" DESTINATION ${SV_INSTALL_EXTERNAL_LIBRARY_DIR})
+      endif()
+    endif()
+  endif()
+  unset(simvascular_external_SVEXTERN_CONFIG)
+  unset(simvascular_external_ADD_INSTALL)
+  if(SV_DEVELOPER_OUTPUT)
+    message(STATUS "Finished Configuring ${_pkg}")
+    message(STATUS "")
+  endif()
 endmacro()
 #-----------------------------------------------------------------------------
 # unset_simvascular_external
 #
 macro(unset_simvascular_external _pkg)
-	string(TOLOWER "${_pkg}" _lower)
+  string(TOLOWER "${_pkg}" _lower)
 
-	set(options OPTIONAL VERSION_EXACT DOWNLOADABLE SVEXTERN_DEFAULT SVEXTERN_CONFIG)
-	set(oneValueArgs VERSION)
-	set(multiValueArgs PATHS HINTS)
+  set(options OPTIONAL VERSION_EXACT DOWNLOADABLE SVEXTERN_DEFAULT SVEXTERN_CONFIG)
+  set(oneValueArgs VERSION)
+  set(multiValueArgs PATHS HINTS)
 
-	CMAKE_PARSE_ARGUMENTS("simvascular_external" 
-		"${options}"
-		"${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
+  cmake_parse_arguments("simvascular_external" 
+    "${options}"
+    "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
-	unset(SV_USE_SYSTEM_${_pkg})
-	list(REMOVE_ITEM SV_DEPENDS ${_pkg})
+  unset(SV_USE_SYSTEM_${_pkg})
+  list(REMOVE_ITEM SV_DEPENDS ${_pkg})
 endmacro()
 
 #-----------------------------------------------------------------------------
 # simvascular_third_party
 #
 macro(simvascular_third_party _pkg)
-	string(TOLOWER "${_pkg}" _lower)
-	string(TOUPPER "${_pkg}" _upper)
+  string(TOLOWER "${_pkg}" _lower)
+  string(TOUPPER "${_pkg}" _upper)
 
-	set(options OPTIONAL VERSION_EXACT 
-		DOWNLOADABLE SYSTEM_DEFAULT 
-		SVEXTERN_CONFIG ADD_INSTALL
-		)
-	set(oneValueArgs VERSION)
-	set(multiValueArgs PATHS HINTS COMPONENTS)
-	
-	CMAKE_PARSE_ARGUMENTS("simvascular_third_party" 
-		"${options}"
-		"${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
-	set(${_upper}_SUBDIR ThirdParty/${_pkg})
-	if(simvascular_third_party_SYSTEM_DEFAULT)
-		option(SV_USE_SYSTEM_${_upper} "Use system ${_pkg}" ON)
-	else()
-		option(SV_USE_SYSTEM_${_upper} "Use system ${_pkg}" OFF)
-	endif()
+  set(options OPTIONAL VERSION_EXACT 
+    DOWNLOADABLE SYSTEM_DEFAULT 
+    SVEXTERN_CONFIG ADD_INSTALL
+    )
+  set(oneValueArgs VERSION)
+  set(multiValueArgs PATHS HINTS COMPONENTS)
+  
+  cmake_parse_arguments("simvascular_third_party" 
+    "${options}"
+    "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
+  set(${_upper}_SUBDIR ThirdParty/${_pkg})
+  if(simvascular_third_party_SYSTEM_DEFAULT)
+    option(SV_USE_SYSTEM_${_upper} "Use system ${_pkg}" ON)
+  else()
+    option(SV_USE_SYSTEM_${_upper} "Use system ${_pkg}" OFF)
+  endif()
 
-	mark_as_advanced(SV_USE_SYSTEM_${_upper})
-	mark_as_superbuild(SV_USE_SYSTEM_${_upper})
+  mark_as_advanced(SV_USE_SYSTEM_${_upper})
 
-	configure_file(${SV_SOURCE_DIR}/${${_upper}_SUBDIR}/simvascular_${_lower}.h.in 
-		${SV_BINARY_DIR}/${${_upper}_SUBDIR}/simvascular_${_lower}.h)
-	include_directories(BEFORE ${SV_BINARY_DIR}/${${_upper}_SUBDIR} ${SV_SOURCE_DIR}/${${_upper}_SUBDIR})
-	if(SV_USE_SYSTEM_${_upper})
-		set(${_upper}_LIBRARIES)
-		set(${_upper}_LIBRARY)
-	else()
-		if(NOT SV_SUPERBUILD)
-			set(${_upper}_LIBRARY_NAME _simvascular_thirdparty_${_lower})
-			add_subdirectory(${${_upper}_SUBDIR}/simvascular_${_lower})
-		endif()
-	endif()
+  configure_file(${SV_SOURCE_DIR}/${${_upper}_SUBDIR}/simvascular_${_lower}.h.in 
+    ${SV_BINARY_DIR}/${${_upper}_SUBDIR}/simvascular_${_lower}.h)
+  include_directories(BEFORE ${SV_BINARY_DIR}/${${_upper}_SUBDIR} ${SV_SOURCE_DIR}/${${_upper}_SUBDIR})
+  if(SV_USE_SYSTEM_${_upper})
+    set(${_upper}_LIBRARIES)
+    set(${_upper}_LIBRARY)
+  else()
+    if(NOT SV_SUPERBUILD)
+      set(${_upper}_LIBRARY_NAME _simvascular_thirdparty_${_lower})
+      add_subdirectory(${${_upper}_SUBDIR}/simvascular_${_lower})
+    endif()
+  endif()
 endmacro()
 #-----------------------------------------------------------------------------
 # print_vars - THis is a simple marco to print out a list of variables
 # with their names and value, used mostly for debugging
 #
 macro(print_vars _VARLIST)
-	foreach(var ${${_VARLIST}})
-		message(STATUS "${var}: ${${var}}")
-	endforeach()
-	message(STATUS "")
+  foreach(var ${${_VARLIST}})
+    message(STATUS "${var}: ${${var}}")
+  endforeach()
+  message(STATUS "")
 endmacro()
 
 macro(dev_print_vars _VARLIST)
-	foreach(var ${${_VARLIST}})
-		dev_message("${var}: ${${var}}")
-	endforeach()
-	message(STATUS "")
+  foreach(var ${${_VARLIST}})
+    dev_message("${var}: ${${var}}")
+  endforeach()
+  message(STATUS "")
 endmacro()
 
 
@@ -247,196 +213,97 @@ endmacro()
 # with their names and value, used mostly for debugging
 #
 macro(listvars2vals _VARLIST _VALS)
-	foreach(var ${${_VARLIST}})
-		set(_vals ${_vals} ${${var}})
-	endforeach()
-	list(REMOVE_DUPLICATES _vals)
-	set(${_VALS} ${_vals})
-	unset(_vals)
+  foreach(var ${${_VARLIST}})
+    set(_vals ${_vals} ${${var}})
+  endforeach()
+  list(REMOVE_DUPLICATES _vals)
+  set(${_VALS} ${_vals})
+  unset(_vals)
 endmacro()
-
-#-----------------------------------------------------------------------------
-# create_GUID -
-#
-macro(create_GUID GUID)
-	file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/temp "")
-	file(TIMESTAMP ${CMAKE_CURRENT_BINARY_DIR}/temp TIME %S%M%H%j%y UTC)
-	file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/temp "${TIME}")
-	file(MD5 ${CMAKE_CURRENT_BINARY_DIR}/temp TIME)
-	string(SUBSTRING ${TIME} 0 6 ${GUID})
-	file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/temp)
-endmacro()
-
-#-----------------------------------------------------------------------------
-# getListOfVars -
-#
-function (getListOfVars _prefix _suffix _varResult)
-	get_cmake_property(_vars VARIABLES)
-	string (REGEX MATCHALL "(^|;)${_prefix}[A-Za-z0-9_]*${_suffix}" _matchedVars "${_vars}")
-	set (${_varResult} ${_matchedVars} PARENT_SCOPE)
-endfunction()
-
-function (getListOfVars_concat _prefix _suffix _varResult)
-	get_cmake_property(_vars VARIABLES)
-	string (REGEX MATCHALL "(^|;)${_prefix}[A-Za-z0-9_]*${_suffix}" _matchedVars "${_vars}")
-	set (${_varResult} ${${_varResult}} ${_matchedVars} PARENT_SCOPE)
-endfunction()
-
-function (getListOfVarsPrefix _prefix _varResult)
-	get_cmake_property(_vars VARIABLES)
-	string (REGEX MATCHALL "(^|;)${_prefix}[A-Za-z0-9_]*" _matchedVars "${_vars}")
-	set (${_varResult} ${_matchedVars} PARENT_SCOPE)
-endfunction()
-
-function(getListofVarsCat _varResult)
-	set(options ) 
-	set(oneValueArgs)
-	set(multiValueArgs SUFFIXES PREFIXES)
-	CMAKE_PARSE_ARGUMENTS("" 
-		"${options}"
-		"${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
-	set(_ACCUM_VARLIST)
-	foreach(pre ${_PREFIXES})
-		foreach(suf ${_SUFFIXES})
-			getListOfVars("${pre}" "${suf}" _VARLIST)
-			set(_ACCUM_VARLIST ${_ACCUM_VARLIST} ${_VARLIST})
-		endforeach()
-	endforeach()
-	set(_varResult ${_ACCUM_VARLIST} PARENT_SCOPE)
-endfunction()
 
 #-----------------------------------------------------------------------------
 # check_library_exists_concat -
 #
-MACRO (check_library_exists_concat LIBRARY SYMBOL VARIABLE)
-	check_library_exists ("${LIBRARY};${LINK_LIBS}" ${SYMBOL} "" ${VARIABLE})
-	IF (${VARIABLE})
-		SET (LINK_LIBS ${LINK_LIBS} ${LIBRARY})
-	ENDIF (${VARIABLE})
-ENDMACRO ()
+macro(check_library_exists_concat LIBRARY SYMBOL VARIABLE)
+  check_library_exists("${LIBRARY};${LINK_LIBS}" ${SYMBOL} "" ${VARIABLE})
+  if(${VARIABLE})
+    set(LINK_LIBS ${LINK_LIBS} ${LIBRARY})
+  endif(${VARIABLE})
+endmacro ()
+
 #-----------------------------------------------------------------------------
 # simvascular_add_executable -
 #
 macro(simvascular_add_executable TARGET_NAME)
-	set(options NO_SCRIPT) 
-	set(oneValueArgs DEV_SCRIPT_NAME INSTALL_SCRIPT_NAME COMPONENT INSTALL_DESTINATION)
-	set(multiValueArgs SRCS)
-	
-	unset(simvascular_add_executable_INSTALL_SCRIPT_NAME)
-	unset(simvascular_add_executable_DEV_SCRIPT_NAME)
-	unset(simvascular_add_executable_NO_SCRIPT)
+  set(options NO_SCRIPT) 
+  set(oneValueArgs DEV_SCRIPT_NAME INSTALL_SCRIPT_NAME COMPONENT INSTALL_DESTINATION)
+  set(multiValueArgs SRCS)
+  
+  unset(simvascular_add_executable_INSTALL_SCRIPT_NAME)
+  unset(simvascular_add_executable_DEV_SCRIPT_NAME)
+  unset(simvascular_add_executable_NO_SCRIPT)
 
-	CMAKE_PARSE_ARGUMENTS("simvascular_add_executable" 
-		"${options}"
-		"${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
+  cmake_parse_arguments("simvascular_add_executable" 
+    "${options}"
+    "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
-        set(WINDOWS_ICON_RESOURCE_FILE "")
-        if(WIN32)
-          if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/icons/${TARGET_NAME}.rc")
-            set(WINDOWS_ICON_RESOURCE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/icons/${TARGET_NAME}.rc")
-          endif()
-        endif()
-
-        set(_app_compile_flags )
-        if(WIN32)
-          set(_app_compile_flags "${_app_compile_flags} -DPOCO_NO_UNWINDOWS -DWIN32_LEAN_AND_MEAN")
-        endif()
-
-        if(WIN32)
-          add_executable(${TARGET_NAME} WIN32 ${simvascular_add_executable_SRCS} ${WINDOWS_ICON_RESOURCE_FILE})
-        else()
-          add_executable(${TARGET_NAME} ${simvascular_add_executable_SRCS} ${WINDOWS_ICON_RESOURCE_FILE})
-        endif()
-
-        set_target_properties(${TARGET_NAME} PROPERTIES
-                      COMPILE_FLAGS "${_app_compile_flags}")
-
-	if(simvascular_add_executable_NO_SCRIPT)
-		if(	simvascular_add_executable_DEV_SCRIPT_NAME OR simvascular_add_executable_INSTALL_SCRIPT_NAME )
-			message(ERROR "Cannot specify no script and specify script names!")
-		endif()
-		set(${TARGET_NAME}_EXECUTABLE_NAME ${TARGET_NAME} CACHE INTERNAL "" FORCE)
-	endif()
-	if(NOT simvascular_add_executable_NO_SCRIPT)
-		IF(simvascular_add_executable_DEV_SCRIPT_NAME)
-			set(SV_SCRIPT_TARGETS_WORK ${SV_SCRIPT_TARGETS})
-			list(APPEND SV_SCRIPT_TARGETS_WORK "${TARGET_NAME}")
-			list(REMOVE_DUPLICATES SV_SCRIPT_TARGETS_WORK)
-			set(SV_SCRIPT_TARGETS ${SV_SCRIPT_TARGETS_WORK} CACHE INTERNAL "" FORCE)
-			set(${TARGET_NAME}_DEVELOPER_SCRIPT_NAME ${simvascular_add_executable_DEV_SCRIPT_NAME} CACHE INTERNAL "" FORCE)
-			set(${TARGET_NAME}_EXECUTABLE_NAME ${${TARGET_NAME}_DEVELOPER_SCRIPT_NAME} CACHE INTERNAL "" FORCE)
-		endif()
-		if(simvascular_add_executable_INSTALL_SCRIPT_NAME)
-			set(${TARGET_NAME}_INSTALL_SCRIPT_NAME ${simvascular_add_executable_INSTALL_SCRIPT_NAME} CACHE INTERNAL "" FORCE)
-		endif()
-
-	endif()
-	# CHANGE FOR EXECUTABLE RENAME REMOVE (re enable if statement)
-	if(simvascular_add_executable_INSTALL_DESTINATION)
-          if(APPLE)
-            set_target_properties(${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_NAME "${TARGET_NAME}")
-            set(icon_name "icon.icns")
-            set(icon_full_path "${CMAKE_CURRENT_SOURCE_DIR}/icons/${icon_name}")
-            if(EXISTS "${icon_full_path}")
-              set_target_properties(${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_ICON_FILE "${icon_name}")
-              file(COPY ${icon_full_path} DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_NAME}.app/Contents/Resources/")
-              install(TARGETS ${TARGET_NAME}
-                      RUNTIME DESTINATION "${simvascular_add_executable_INSTALL_DESTINATION}"
-                      ${_COMPARGS})
-                    #install(FILES ${icon_full_path} DESTINATION "${simvascular_add_executable_INSTALL_DESTINATION}/${TARGET_NAME}.app/Contents/Resources/")
-            endif()
-          else()
-            if(simvascular_add_executable_COMPONENT)
-                    set(_COMPARGS "COMPONENT ${simvascular_add_executable_COMPONENT}")
-            endif()
-            install(TARGETS ${TARGET_NAME}
-                    RUNTIME DESTINATION ${simvascular_add_executable_INSTALL_DESTINATION}
-                    ${_COMPARGS})
-          endif()
-	endif()
-
-endmacro()
-
-function(sv_list_match resultVar str)
-  set(result)
-  foreach(ITR ${ARGN})
-  dev_message("${str} ITR: ${ITR}")
-    if(ITR MATCHES "${str}")
-      list(APPEND result ${ITR})
-    endif()
-  endforeach()
-  set(${resultVar} ${result} PARENT_SCOPE)
-endfunction()
-
-function(simvascular_dir_switch DIR_ONE DIR_TWO)
-  set(TMP_DIR ${${DIR_ONE}})
-  set(${DIR_ONE} ${${DIR_TWO}} PARENT_SCOPE)
-  set(${DIR_TWO} ${TMP_DIR} PARENT_SCOPE)
-endfunction()
-
-macro(simvascular_find_package pkg)
-  if(${pkg}_CONFIG_DIR)
-    simvascular_dir_switch(${pkg}_DIR ${pkg}_CONFIG_DIR)
-  endif()
-
-  find_package(${pkg} ${ARGN})
-
-  if(${pkg}_CONFIG_DIR)
-    simvascular_dir_switch(${pkg}_DIR ${pkg}_CONFIG_DIR)
-  endif()
-endmacro()
-
-macro(simvascular_find_config_file pkg)
-  if(SV_${pkg}_DIR AND (NOT "${SV_${pkg}_DIR}" STREQUAL ""))
-    file(GLOB_RECURSE ${pkg}_CONFIGS ${${pkg}_DIR} ${${pkg}_DIR}/${pkg}Config.cmake*)
-    if(${pkg}_CONFIGS)
-      list(LENGTH ${pkg}_CONFIGS CONFIG_LIST_LENGTH)
-      math(EXPR LIST_INDEX ${CONFIG_LIST_LENGTH}-1)
-      list(GET ${pkg}_CONFIGS ${LIST_INDEX} ${pkg}_CONFIG_FILE)
-      get_filename_component(${pkg}_DIR ${${pkg}_CONFIG_FILE} DIRECTORY)
-      mark_as_superbuild(${pkg}_DIR}:PATH)
+  set(WINDOWS_ICON_RESOURCE_FILE "")
+  if(WIN32)
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/icons/${TARGET_NAME}.rc")
+      set(WINDOWS_ICON_RESOURCE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/icons/${TARGET_NAME}.rc")
     endif()
   endif()
+
+  set(_app_compile_flags )
+  if(WIN32)
+    set(_app_compile_flags "${_app_compile_flags} -DPOCO_NO_UNWINDOWS -DWIN32_LEAN_AND_MEAN")
+  endif()
+
+  if(WIN32)
+    add_executable(${TARGET_NAME} WIN32 ${simvascular_add_executable_SRCS} ${WINDOWS_ICON_RESOURCE_FILE})
+  else()
+    add_executable(${TARGET_NAME} ${simvascular_add_executable_SRCS} ${WINDOWS_ICON_RESOURCE_FILE})
+  endif()
+
+  set_target_properties(${TARGET_NAME} PROPERTIES
+    COMPILE_FLAGS "${_app_compile_flags}")
+
+  if(simvascular_add_executable_NO_SCRIPT)
+    if(	simvascular_add_executable_DEV_SCRIPT_NAME OR simvascular_add_executable_INSTALL_SCRIPT_NAME )
+      message(ERROR "Cannot specify no script and specify script names!")
+    endif()
+    set(${TARGET_NAME}_EXECUTABLE_NAME ${TARGET_NAME} CACHE INTERNAL "" FORCE)
+  endif()
+  if(NOT simvascular_add_executable_NO_SCRIPT)
+    if(simvascular_add_executable_DEV_SCRIPT_NAME)
+      set(SV_SCRIPT_TARGETS_WORK ${SV_SCRIPT_TARGETS})
+      list(APPEND SV_SCRIPT_TARGETS_WORK "${TARGET_NAME}")
+      list(REMOVE_DUPLICATES SV_SCRIPT_TARGETS_WORK)
+      set(SV_SCRIPT_TARGETS ${SV_SCRIPT_TARGETS_WORK} CACHE INTERNAL "" FORCE)
+      set(${TARGET_NAME}_DEVELOPER_SCRIPT_NAME ${simvascular_add_executable_DEV_SCRIPT_NAME} CACHE INTERNAL "" FORCE)
+      set(${TARGET_NAME}_EXECUTABLE_NAME ${${TARGET_NAME}_DEVELOPER_SCRIPT_NAME} CACHE INTERNAL "" FORCE)
+    endif()
+    if(simvascular_add_executable_INSTALL_SCRIPT_NAME)
+      set(${TARGET_NAME}_INSTALL_SCRIPT_NAME ${simvascular_add_executable_INSTALL_SCRIPT_NAME} CACHE INTERNAL "" FORCE)
+    endif()
+  endif()
+
+  # CHANGE FOR EXECUTABLE RENAME REMOVE (re enable if statement)
+  if(simvascular_add_executable_INSTALL_DESTINATION)
+    if(APPLE)
+      install(TARGETS ${TARGET_NAME}
+        RUNTIME DESTINATION "${simvascular_add_executable_INSTALL_DESTINATION}"
+        ${_COMPARGS})
+    else()
+      if(simvascular_add_executable_COMPONENT)
+        set(_COMPARGS "COMPONENT ${simvascular_add_executable_COMPONENT}")
+      endif()
+      install(TARGETS ${TARGET_NAME}
+        RUNTIME DESTINATION ${simvascular_add_executable_INSTALL_DESTINATION}
+        ${_COMPARGS})
+    endif()
+  endif()
+
 endmacro()
 
 macro(simvascular_get_external_path_from_include_dir pkg)
@@ -457,35 +324,6 @@ macro(simvascular_get_external_path_from_include_dir pkg)
     message("${pkg}_INCLUDE_DIR is not set")
   else()
     set(SV_${pkg}_DIR ${TMP_DIR})
-  endif()
-endmacro()
-
-macro(simvascular_download_and_extract_tar url destination)
-  get_filename_component(tar_file ${url} NAME)
-  set(tar_file "${destination}/${tar_file}")
-  if(NOT EXISTS ${destination})
-    file(MAKE_DIRECTORY ${destination})
-  endif()
-
-  if(NOT EXISTS ${tar_file})
-    file(DOWNLOAD "${url}" "${tar_file}" STATUS status)
-    list(GET status 0 error_code)
-    list(GET status 1 error_msg)
-    if(error_code)
-      message(FATAL_ERROR "error: Failed to download ${url} - ${error_msg}")
-    endif()
-  endif()
-
-  set(check_extract_file "${tar_file}.extracted")
-  if(NOT EXISTS ${check_extract_file})
-    execute_process(COMMAND ${CMAKE_COMMAND} -E tar xzf ${tar_file}
-                    WORKING_DIRECTORY ${destination}
-                    RESULT_VARIABLE result
-                    ERROR_VARIABLE err_msg)
-    if(result)
-      message(FATAL_ERROR "error: Failed to Unpack ${tar_name} - ${err_msg}")
-    endif()
-    file(WRITE ${check_extract_file} "# ${tar_file} extracted")
   endif()
 endmacro()
 

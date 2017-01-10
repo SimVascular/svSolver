@@ -1,4 +1,4 @@
-SET(VTK_EXTRA_LIBS vtkCommonCoreTCL vtkCommonMathTCL  
+set(VTK_EXTRA_LIBS vtkCommonCoreTCL vtkCommonMathTCL  
 	 vtkCommonMiscTCL vtkCommonSystemTCL  
 	 vtkCommonTransformsTCL vtkCommonDataModelTCL  
 	 vtkCommonColorTCL vtkCommonExecutionModelTCL  

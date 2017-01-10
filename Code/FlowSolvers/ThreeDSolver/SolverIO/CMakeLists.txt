@@ -29,14 +29,10 @@
  #=========================================================================#
 
 set(lib ${SV_LIB_SOLVERIO_NAME})
-SET(CXXSRCS cvSolverIO.cxx)
+set(CXXSRCS cvSolverIO.cxx)
 set(HDRS cvSolverIO.h)
 
-if(SV_USE_THREEDSOLVER_SHARED_LIBRARIES)
-  add_library(${lib} SHARED ${CXXSRCS})
-else()
-  add_library(${lib} STATIC ${CXXSRCS})
-endif()
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
 
 target_link_libraries(${lib} ${INTELRUNTIME_LIBRARIES} ${ZLIB_LIBRARY})
 

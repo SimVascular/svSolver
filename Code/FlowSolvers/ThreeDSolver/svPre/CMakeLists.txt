@@ -29,72 +29,68 @@
  #=========================================================================#
 
 # Set c++ sources
-SET(CXXSRCS cmd.cxx displacements.cxx helpers.cxx supre-cmds.cxx supre.cxx
-	presolver-vtk-cmds.cxx)
+set(CXXSRCS cmd.cxx displacements.cxx helpers.cxx supre-cmds.cxx supre.cxx
+  presolver-vtk-cmds.cxx)
 
 # Add c++ sources for variable wall module
-if(SV_THREEDSOLVER_USE_VARWALL)
-	SET(CXXSRCS ${CXXSRCS} Laplace_Solve.cxx Transient_Laplace_Solve.cxx displacements_var_prop.cxx)
+if(SV_USE_VARWALL)
+  set(CXXSRCS ${CXXSRCS} Laplace_Solve.cxx Transient_Laplace_Solve.cxx displacements_var_prop.cxx)
 endif()
 
 # Add c sources
 set(HDRS cmd.h)
-SET(CSRCS directsolve.c)
+set(CSRCS directsolve.c)
 
 # Add fortran sources
-SET(FSRCS stannspcg.f)
+set(FSRCS stannspcg.f)
 
 # add fortran sources for variable wall module
 # makefile uses .f not .f90, keep consistent
-if(SV_THREEDSOLVER_USE_VARWALL)
-	SET(FSRCS ${FSRCS} gmresfortran.f)
+if(SV_USE_VARWALL)
+  set(FSRCS ${FSRCS} gmresfortran.f)
 endif()
 
 # Visual Studio Linker Flags
 
 
 
-if(SV_USE_THREEDSOLVER_SHARED_LIBRARIES)
-  ADD_LIBRARY(${SV_LIB_PRESOLVER_NAME} SHARED ${FSRCS})
-else()
-  ADD_LIBRARY(${SV_LIB_PRESOLVER_NAME} STATIC ${FSRCS})
-endif()
+add_library(${SV_LIB_PRESOLVER_NAME} ${SV_LIBRARY_TYPE} ${FSRCS})
 
 simvascular_add_executable(${SV_PRESOLVER_EXE}
-	SRCS ${CXXSRCS} ${CSRCS}
-	DEV_SCRIPT_NAME "mypre"
-	INSTALL_SCRIPT_NAME "svpre"
-	INSTALL_COMPONENT ModuleExecutables
-	INSTALL_DESTINATION ${SV_INSTALL_RUNTIME_DIR})
+  SRCS ${CXXSRCS} ${CSRCS}
+  DEV_SCRIPT_NAME "mypre"
+  INSTALL_SCRIPT_NAME "svpre"
+  INSTALL_COMPONENT ModuleExecutables
+  INSTALL_DESTINATION ${SV_INSTALL_RUNTIME_DIR})
 
-TARGET_LINK_LIBRARIES(${SV_PRESOLVER_EXE} ${SV_LIB_PRESOLVER_NAME}
-	${GLOBAL_LIBRARIES} ${INTELRUNTIME_LIBRARIES}
-	${METIS_LIBRARY} ${SPARSE_LIBRARY}
-	${NSPCG_LIBRARY} ${VTK_LIBRARIES}
-	${SV_LIB_SOLVERIO_NAME})
+target_link_libraries(${SV_PRESOLVER_EXE} ${SV_LIB_PRESOLVER_NAME}
+  ${GLOBAL_LIBRARIES} ${INTELRUNTIME_LIBRARIES}
+  ${METIS_LIBRARY} ${SPARSE_LIBRARY}
+  ${NSPCG_LIBRARY} ${VTK_LIBRARIES}
+  ${SV_LIB_SOLVERIO_NAME})
 
-TARGET_LINK_LIBRARIES(${SV_LIB_PRESOLVER_NAME} ${NSPCG_LIBRARY})
+target_link_libraries(${SV_LIB_PRESOLVER_NAME} ${NSPCG_LIBRARY})
 
-if(NOT MSVC)
-	SET_TARGET_PROPERTIES(${SV_LIB_PRESOLVER_NAME} PROPERTIES LINKER_LANGUAGE Fortran)
-	SET_TARGET_PROPERTIES(${SV_PRESOLVER_EXE} PROPERTIES LINKER_LANGUAGE Fortran)
-endif()
+#if(NOT MSVC)
+#  set_target_properties(${SV_LIB_PRESOLVER_NAME} PROPERTIES LINKER_LANGUAGE Fortran)
+#  set_target_properties(${SV_PRESOLVER_EXE} PROPERTIES LINKER_LANGUAGE Fortran)
+#endif()
 
 if(${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
-	SET_TARGET_PROPERTIES(${SV_PRESOLVER_EXE} PROPERTIES LINK_FLAGS -nofor-main)
+  set_target_properties(${SV_PRESOLVER_EXE} PROPERTIES LINK_FLAGS -nofor-main)
 endif()
 
 if(SV_INSTALL_LIBS)
-	install(TARGETS ${SV_LIB_PRESOLVER_NAME}
-		RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT ModuleExecutables
-		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT ModuleLibraries
-		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT ModuleLibraries
-		)
+  install(TARGETS ${SV_LIB_PRESOLVER_NAME}
+    RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT ModuleExecutables
+    LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT ModuleLibraries
+    ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT ModuleLibraries
+    )
 endif()
 if(SV_INSTALL_HEADERS)
-	install(FILES ${HDRS}
-		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
-		)
+  install(FILES ${HDRS}
+    DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
+    )
 endif()
 
 
