@@ -64,8 +64,6 @@ CXXSRCS = Cinput.cxx ValType.cxx input_fform.cxx \
 CSRCS    = getIntPnts.c ShapeFunctions_uniformP.c \
           shptet.c symtri.c symtet.c
 
-#CSRCS  += missing_mingw_and_CL.c
-
 # solver io files
 CSRCS   += write_restart_files.c
 

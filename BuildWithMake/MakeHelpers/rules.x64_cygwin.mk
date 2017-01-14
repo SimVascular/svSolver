@@ -60,7 +60,7 @@ $(BUILD_MPI_DIR)/%.obj: %.f
 	$(F90) $(FFLAGS) -c $< /Fd:$(BUILD_MPI_DIR)/vc.pdb /module:$(BUILD_MPI_DIR) /Fo$@
 $(BUILD_MPI_DIR)/%.obj: %.f90
 	mkdir -p $(dir $@)
-	$(F90) $(FFLAGS) -c $< /Fd:$(BUILD_MPI_DIR)/vc.pdb /module:$(BUILD_MPI_DIR) /Fo$@
+	$(F90) $(F90FLAGS) -c $< /Fd:$(BUILD_MPI_DIR)/vc.pdb /module:$(BUILD_MPI_DIR) /Fo$@
 endif
 
 endif

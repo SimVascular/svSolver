@@ -49,13 +49,11 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(SOLVERIO_INCDIR) $(THREEDSOLVER_INCDIR) $(VTK_INCDIRS) $(NSPCG_INCDIR) $(ZLIB_INCDIR) -I../../Include -I../../Include/Make
 CCFLAGS  = $(GLOBAL_CCFLAGS) $(SPARSE_INCDIR) $(ZLIB_INCDIR) $(THREEDSOLVER_INCDIR) -I../../Include -I../../Include/Make
 FFLAGS   = $(GLOBAL_FFLAGS) $(NSPCG_INCDIR) $(THREEDSOLVER_INCDIR) -I../../Include -I../../Include/Make
+F90FLAGS   = $(BUILDFLAGS) $(DEBUG_FFLAGS) $(OPT_FFLAGS) -I../../Include -I../../Include/Make
 
 HDRS	= cmd.h
 
 CSRCS   = directsolve.c
-
-#CSRCS   += missing_mingw_and_CL.c
-
 
 CXXSRCS = cmd.cxx displacements.cxx helpers.cxx supre-cmds.cxx supre.cxx \
 	  presolver-vtk-cmds.cxx
@@ -69,7 +67,7 @@ FSRCS   = stannspcg.f
 
 # not sure what the differences are between gmresfortran.f and rmresfortran.f90
 #if(VER_VARWALL == 1)
- FSRCS += gmresfortran.f 
+ F90SRCS += gmresfortran.f90 
 #endif
 
 
@@ -79,7 +77,8 @@ DEPS	= $(CSRCS:.c=.d) $(CXXSRCS:.cxx=.d)
 
 OBJS    = $(addprefix $(BUILD_DIR)/,$(CXXSRCS:.cxx=.$(OBJECTEXT))) \
           $(addprefix $(BUILD_DIR)/,$(CSRCS:.c=.$(OBJECTEXT))) \
-          $(addprefix $(BUILD_DIR)/,$(FSRCS:.f=.$(OBJECTEXT)))
+          $(addprefix $(BUILD_DIR)/,$(FSRCS:.f=.$(OBJECTEXT))) \
+          $(addprefix $(BUILD_DIR)/,$(F90SRCS:.f90=.$(OBJECTEXT)))
 
 TARGET_EXE_FULL = $(TOP)/Bin/presolver-$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION).exe
 TARGET_EXE = $(TOP)/Bin/presolver.exe

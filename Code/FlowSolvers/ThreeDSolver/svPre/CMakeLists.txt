@@ -45,9 +45,8 @@ set(CSRCS directsolve.c)
 set(FSRCS stannspcg.f)
 
 # add fortran sources for variable wall module
-# makefile uses .f not .f90, keep consistent
 if(SV_USE_VARWALL)
-  set(FSRCS ${FSRCS} gmresfortran.f)
+  set(FSRCS ${FSRCS} gmresfortran.f90)
 endif()
 
 # Visual Studio Linker Flags

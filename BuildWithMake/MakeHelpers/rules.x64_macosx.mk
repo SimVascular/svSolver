@@ -45,6 +45,6 @@ $(BUILD_MPI_DIR)/%.o: %.f
 
 $(BUILD_MPI_DIR)/%.o: %.f90
 	mkdir -p $(dir $@)
-	$(F90) $(FFLAGS) -c $< -o $@
+	$(F90) $(F90FLAGS) -c $< -o $@
 
 endif
