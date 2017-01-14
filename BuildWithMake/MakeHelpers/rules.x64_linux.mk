@@ -29,7 +29,7 @@ $(BUILD_DIR)/%.o: %.f
 	$(F90) $(FFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/%.o: %.f90
-	$(F90) $(FFLAGS) -c $< -o $@
+	$(F90) $(F90FLAGS) -c $< -o $@
 
 $(BUILD_MPI_DIR)/%.o: %.cxx
 	mkdir -p $(dir $@)
