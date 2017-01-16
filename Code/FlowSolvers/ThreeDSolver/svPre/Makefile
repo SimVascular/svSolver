@@ -80,8 +80,8 @@ OBJS    = $(addprefix $(BUILD_DIR)/,$(CXXSRCS:.cxx=.$(OBJECTEXT))) \
           $(addprefix $(BUILD_DIR)/,$(FSRCS:.f=.$(OBJECTEXT))) \
           $(addprefix $(BUILD_DIR)/,$(F90SRCS:.f90=.$(OBJECTEXT)))
 
-TARGET_EXE_FULL = $(TOP)/Bin/presolver-$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION).exe
-TARGET_EXE = $(TOP)/Bin/presolver.exe
+TARGET_EXE_FULL = $(TOP)/Bin/svpre-$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION).exe
+TARGET_EXE = $(TOP)/Bin/svpre.exe
 
 static: directories $(TARGET_EXE_FULL)
 

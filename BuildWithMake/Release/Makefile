@@ -73,7 +73,7 @@ ifeq ($(CLUSTER),x64_cygwin)
 	-subst P: $(shell cygpath -w `pwd`)
 endif
 
-veryclean: use_subst msiclean msiclean-svsolver msi-bundle-clean
+veryclean: use_subst msiclean-svsolver msi-bundle-clean
 	-rm -f tar_files/*.tar
 	-rm -f tar_files/*.tar.gz
 	-rm -Rf $(DIST_DIR_TOP)
@@ -135,6 +135,7 @@ mksedscript:
 	-echo "puts \"s/REPLACE_TCL_VERSION_NO/$(notdir $(TCL_LIBRARY))/g\"" | tclsh | cat >> tmp/sedscript
 	-echo "puts \"s/REPLACE_TK_VERSION_NO/$(notdir $(TK_LIBRARY))/g\"" | tclsh | cat >> tmp/sedscript
 	-echo "puts \"s/REPLACE_TCLSH/$(notdir $(TCLSH))/g\"" | tclsh | cat >> tmp/sedscript
+	-echo "puts \"s/REPLACE_MPI_NAME/$(MPI_NAME)/g\"" | tclsh | cat >> tmp/sedscript
 
 common-pre-distribution: tmp/sedscript
 	-date > tmp/release-date
@@ -148,9 +149,10 @@ common-pre-distribution: tmp/sedscript
 	-cp -f License.rtf $(DIST_DIR)
 
 copy-sv-executables:
-	-cp -f $(TOP)/Bin/presolver.exe $(DIST_DIR)/presolver-bin.exe
-	-cp -f $(TOP)/Bin/postsolver.exe $(DIST_DIR)/postsolver-bin.exe
-	-cp -f $(TOP)/Bin/flowsolver-$(MPI_NAME).exe $(DIST_DIR)/flowsolver-bin.exe
+	-cp -f $(TOP)/Bin/svpre.exe $(DIST_DIR)/svpre-bin.exe
+	-cp -f $(TOP)/Bin/svpost.exe $(DIST_DIR)/svpost-bin.exe
+	-cp -f $(TOP)/Bin/svsolver-nompi.exe $(DIST_DIR)/svsolver-nompi-bin.exe
+	-cp -f $(TOP)/Bin/svsolver-$(MPI_NAME).exe $(DIST_DIR)/svsolver-$(MPI_NAME)-bin.exe
 	-cp -f $(TOP)/../Code/FlowSolvers/ThreeDSolver/svsolver/default.inp $(DIST_DIR)
 	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_*.$(SOEXT)* $(DIST_DIR)
 
@@ -173,22 +175,24 @@ endif
 copy-external-libs-linux-only:
 
 generate-wrapper-scripts:
-	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-core-script > $(DIST_DIR)/flowsolver$(SV_POSTFIX)
-	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-core-script > $(DIST_DIR)/presolver$(SV_POSTFIX)
-	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-core-script > $(DIST_DIR)/postsolver$(SV_POSTFIX)
-	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-flowsolver-script >> $(DIST_DIR)/flowsolver$(SV_POSTFIX)
-	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-presolver-script >> $(DIST_DIR)/presolver$(SV_POSTFIX)
-	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-postsolver-script >> $(DIST_DIR)/postsolver$(SV_POSTFIX)
+	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-core-script > $(DIST_DIR)/svsolver-nompi
+	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-core-script > $(DIST_DIR)/svsolver-$(MPI_NAME)
+	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-core-script > $(DIST_DIR)/svpre
+	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-core-script > $(DIST_DIR)/svpost
+	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-svsolver-nompi-script >> $(DIST_DIR)/svsolver-nompi
+	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-svsolver-mpi-script >> $(DIST_DIR)/svsolver-$(MPI_NAME)
+	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-svpre-script >> $(DIST_DIR)/svpre
+	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-svpost-script >> $(DIST_DIR)/svpost
 
 common-post-distribution:
-	-sed -f tmp/sedscript platform_independent_scripts/post-solver-install.sh > $(DIST_DIR)/post-solver-install.sh
+	-sed -f tmp/sedscript platform_independent_scripts/post-svsolver-install.sh > $(DIST_DIR)/post-svsolver-install.sh
 	-sed -f tmp/sedscript platform_independent_scripts/generic-launch-script > $(DIST_DIR)/generic_launch_script
 	-chmod -f a+rx $(DIST_DIR)/*.$(SOEXT)
 	-chmod -f a+rx $(DIST_DIR)/*.sh
 	-chmod -f a+rx $(DIST_DIR)/generic_launch_script
-	-chmod -f a+rx $(DIST_DIR)/flowsolver$(SV_POSTFIX)
-	-chmod -f a+rx $(DIST_DIR)/presolver$(SV_POSTFIX)
-	-chmod -f a+rx $(DIST_DIR)/postsolver$(SV_POSTFIX)
+	-chmod -f a+rx $(DIST_DIR)/svsolver$(SV_POSTFIX)
+	-chmod -f a+rx $(DIST_DIR)/svpre$(SV_POSTFIX)
+	-chmod -f a+rx $(DIST_DIR)/svpost$(SV_POSTFIX)
 	-chmod -f a+rx $(DIST_DIR)/*.$(SOEXT)*
 	-chmod -f -R a+rx $(DIST_DIR)
 	-chmod -f -R u+w $(DIST_DIR)

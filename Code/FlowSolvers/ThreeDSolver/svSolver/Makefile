@@ -141,8 +141,8 @@ OBJS    = $(addprefix $(BUILD_MPI_DIR)/,$(CXXSRCS:.cxx=.$(OBJECTEXT))) \
           $(addprefix $(BUILD_MPI_DIR)/,$(CSRCS:.c=.$(OBJECTEXT))) \
           $(addprefix $(BUILD_MPI_DIR)/,$(FSRCS:.f=.$(OBJECTEXT)))
 
-TARGET_EXE_FULL = $(TOP)/Bin/flowsolver-$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION)-$(MPI_NAME).exe
-TARGET_EXE = $(TOP)/Bin/flowsolver-$(MPI_NAME).exe
+TARGET_EXE_FULL = $(TOP)/Bin/svsolver-$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION)-$(MPI_NAME).exe
+TARGET_EXE = $(TOP)/Bin/svsolver-$(MPI_NAME).exe
 
 static: directories $(TARGET_EXE_FULL) 
 
