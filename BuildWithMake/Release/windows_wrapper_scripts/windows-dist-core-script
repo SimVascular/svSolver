@@ -1,6 +1,6 @@
 #!/bin/bash -f
 
-export SV_HOME=/usr/local/package/REPLACE_SV_VERSION/REPLACE_TIMESTAMP
+export SV_HOME=/usr/local/package/svsolver/REPLACE_TIMESTAMP
 export SV_RELEASE_BUILD=REPLACE_SV_PLATFORM
 export SV_OS=REPLACE_SV_OS
 
@@ -14,19 +14,10 @@ export SV_RELEASED_MODE=1
 # SV additions (parasolid, tcltk, etc.)
 export LD_LIBRARY_PATH=$SV_HOME:$LD_LIBRARY_PATH
 
-# MeshSim license file
-export SIM_LICENSE_FILE=$SV_HOME/meshsim-license.dat
-
 # Tcl/Tk additions
 export TCL_LIBRARY=$SV_HOME/lib/REPLACE_TCL_VERSION_NO
 export TK_LIBRARY=$SV_HOME/lib/REPLACE_TK_VERSION_NO
 export LD_LIBRARY_PATH=$SV_HOME/lib:$LD_LIBRARY_PATH
-
-# GDCM additions
-#export LD_LIBRARY_PATH=$SV_HOME:$LD_LIBRARY_PATH
-
-# PARASOLID additions
-export P_SCHEMA=$SV_HOME/schema
 
 # MPICH2 additions
 export LD_LIBRARY_PATH=$SV_HOME/mpi/lib:$LD_LIBRARY_PATH
@@ -40,8 +31,6 @@ case "$SV_OS" in
 export SV_HOME=`cygpath --windows -t mixed "$SV_HOME"`
 export TCL_LIBRARY=`cygpath --windows -t mixed "$TCL_LIBRARY"`
 export TK_LIBRARY=`cygpath --windows -t mixed "$TK_LIBRARY"`
-export P_SCHEMA=`cygpath --windows -t mixed "$P_SCHEMA"`
-export SIM_LICENSE_FILE=`cygpath --windows -t mixed "$SIM_LICENSE_FILE"`
 export PATH=$LD_LIBRARY_PATH:$PATH
 ;;
 esac

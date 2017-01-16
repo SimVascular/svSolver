@@ -33,4 +33,4 @@ export LD_LIBRARY_PATH=/usr/lib:$LD_LIBRARY_PATH
 # intel compiler additions
 export LD_LIBRARY_PATH=$OPEN_SOFTWARE_BINARIES_TOPLEVEL/intel_compiler_libs/intel64:$LD_LIBRARY_PATH
 
-$SV_HOME/BuildWithMake/Bin/flowsolver.exe $*
+$SV_HOME/BuildWithMake/Bin/svsolver-REPLACE_MPI_NAME.exe $*

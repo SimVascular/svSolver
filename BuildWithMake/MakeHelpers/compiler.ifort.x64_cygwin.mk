@@ -19,4 +19,5 @@ endif
 ifeq ($(LINK_WITH_DEBUG),1)
     GLOBAL_LFLAGS   += /DEBUG
 endif
+    F90_LIBS        = libifcore.lib libifport.lib libmmds.lib svml_disp.lib
 endif

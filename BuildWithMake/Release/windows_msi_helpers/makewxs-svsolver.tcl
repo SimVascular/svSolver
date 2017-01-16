@@ -26,11 +26,9 @@
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-set SV_VERSION [lindex $argv 0]
-set SV_PLATFORM [lindex $argv 1]
-#set SV_TIMESTAMP [file tail [glob [lindex $argv 2]/*]]
-set SV_RELEASE_VERSION_NO [lindex $argv 3]
-set MESHSIM_LICENSE_FILE [lindex $argv 4]
+set SV_TIMESTAMP [lindex $argv 0]
+set SV_RELEASE_VERSION_NO [lindex $argv 1]
+set package_path [lindex $argv 2]
 
 global pwd
 if {$tcl_platform(platform) == "windows"} {
@@ -47,8 +45,8 @@ set outputRegistry 0
 proc file_find {dir wildcard args} {
 
   global pwd
-  global SV_SHORT_NAME
-
+  global SV_TIMESTAMP
+  
   if {[llength $args] == 0} {
      set rtnme {}
   } else {
@@ -57,6 +55,7 @@ proc file_find {dir wildcard args} {
 
   foreach j $dir {
     set files [glob -nocomplain [file join $j $wildcard]]
+    puts "files: $files"
     # print out headers
     global idno
     global outfp
@@ -69,17 +68,17 @@ proc file_find {dir wildcard args} {
     if {!$outputRegistry} {
         set outputRegistry 1
         set regid 11
-        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Modules\\ParasolidAndMeshSim' Name='SV_MESHSIM_DISCRETE_DLL' Action='write' Type='string' Value='\[INSTALLDIR\]lib_simvascular_meshsim_discrete_solid.dll' />"
+        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\svSolver' Name='SVSOLVER_HOME' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP' />"
         incr regid
-	puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Modules\\ParasolidAndMeshSim' Name='SV_MESHSIM_SOLID_DLL' Action='write' Type='string' Value='\[INSTALLDIR\]lib_simvascular_meshsim_solid.dll' />"
-        incr regid
-        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Modules\\ParasolidAndMeshSim' Name='SV_MESHSIM_MESH_DLL' Action='write' Type='string' Value='\[INSTALLDIR\]lib_simvascular_meshsim_mesh.dll' />"
-        incr regid
-        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Modules\\ParasolidAndMeshSim' Name='SV_PARASOLID_DLL' Action='write' Type='string' Value='\[INSTALLDIR\]lib_simvascular_parasolid_solid.dll'  />"
-        incr regid
-        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Modules\\ParasolidAndMeshSim' Name='SV_PARASOLID_PSCHEMA_DIR' Action='write' Type='string' Value='\[INSTALLDIR\]\schema' />"
+	puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\svSolver' Name='TimeStamp' Action='write' Type='string' Value='$SV_TIMESTAMP' />"
 	incr regid
-        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Modules\\ParasolidAndMeshSim' Name='SV_MESHSIM_ADAPT_DLL' Action='write' Type='string' Value='\[INSTALLDIR\]lib_simvascular_meshsim_adaptor.dll' />"
+	puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\svSolver' Name='SVPRE_EXE' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\svpre-bin.exe' />"
+        incr regid
+        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\svSolver' Name='SVPOST_EXE' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\svpost-bin.exe' />"
+        incr regid
+        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\svSolver' Name='SVSOLVER_NOMPI_EXE' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\svsolver-nompi-bin.exe'  />"
+        incr regid
+	puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\svSolver' Name='SVSOLVER_MSMPI_EXE' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\svsolver-msmpi-bin.exe'  />"
         incr regid
     }
     foreach i $files {
@@ -124,15 +123,14 @@ set component_ids {}
 
 set idno 1000
 
-set outfp [open tmp/simvascular-meshsim-and-parasolid.wxs w]
+set outfp [open tmp/simvascular-svsolver.wxs w]
 
 puts $outfp "<?xml version='1.0' encoding='windows-1252'?>"
 puts $outfp "<Wix xmlns=\"http://schemas.microsoft.com/wix/2006/wi\""
 puts $outfp "     xmlns:util=\"http://schemas.microsoft.com/wix/UtilExtension\">"
 
-puts $outfp "<Product Name='SimVascular Licensed Modules' Id='84AE32E4-7A5E-45B4-BDA5-08046B90B2DD' UpgradeCode='93A386BE-02E9-4D0C-B0CD-D44AD83F9F33' Language='1033' Codepage='1252' Version='$SV_RELEASE_VERSION_NO' Manufacturer='SimVascular'>"
-
-puts $outfp "<Package Id='585A82F4-077B-4857-9E0A-B0C87A49DE83' Keywords='Installer' Description='SimVascular Licensed Modules Installer' Comments='SimVascular Licensed Modules' Manufacturer='SimVascular' InstallerVersion='100' Languages='1033' Compressed='yes' SummaryCodepage='1252' />"
+puts $outfp "<Product Name='SimVascular svSolver' Id='8FFBE76E-B138-4A14-A739-67B4586049F7' UpgradeCode='834D3954-D7B7-445B-8D83-D9EA5DB7CA41' Language='1033' Codepage='1252' Version='$SV_RELEASE_VERSION_NO' Manufacturer='SimVascular'>"
+puts $outfp "<Package Id='B616A852-61B7-41D6-8E28-A22E126074E3' Keywords='Installer' Description='SimVascular svSolver Installer' Comments='SimVascular svSolver' Manufacturer='SimVascular' InstallerVersion='100' Languages='1033' Compressed='yes' SummaryCodepage='1252' />"
 
 puts $outfp "<WixVariable Id=\"WixUILicenseRtf\" Value=\"License.rtf\" />"
 puts $outfp "<WixVariable Id=\"WixUIBannerBmp\" Value=\"windows_msi_helpers/msi-banner.bmp\" />"
@@ -145,8 +143,8 @@ puts $outfp "<Property Id='ALLUSERS' Value='1' />"
 puts $outfp "<Directory Id='TARGETDIR' Name='SourceDir'>"
 puts $outfp "\t<Directory Id='ProgramFilesFolder' Name='PFiles'>"
 puts $outfp "\t\t<Directory Id='id19' Name='SimVascular'>"
-puts $outfp "\t\t<Directory Id='id911' Name='Modules'>"
-puts $outfp "\t\t\t<Directory Id='INSTALLDIR' Name='ParasolidAndMeshSim'>"
+puts $outfp "\t\t<Directory Id='id911' Name='svSolver'>"
+puts $outfp "\t\t\t<Directory Id='INSTALLDIR' Name='Releases'>"
 
 #puts $outfp "<Component Id='ain_id23' Guid='A7FFADE1-74BB-4CC8-8052-06B214B93701'>"
 
@@ -155,7 +153,7 @@ puts $outfp "\t\t\t<Directory Id='INSTALLDIR' Name='ParasolidAndMeshSim'>"
 #set guid [exec tmp/uuidgen.exe 1]
 #puts $outfp "<Component Id='id[format %04i $id]' Guid='$guid'>"
 
-file_find package-release-meshsim-and-parasolid/ *
+file_find $package_path *
 
 #    set id [incr idno]
 #    puts $outfp "<RemoveFile Id='id[format %04i $id]' On='uninstall' Name='*.*' />"
@@ -177,12 +175,12 @@ puts $outfp "</Directory>"
 #puts $outfp "\t\t\t<RemoveFolder Id='RemoveProgramMenuDir' Directory='ProgramMenuDir' On='uninstall' />"
 #puts $outfp "\t\t</Component>"
 #puts $outfp "<Directory Id='ProgramMenuFolder' LongName='Programs'>"
-#puts $outfp "\t<Directory Id='ProgramMenuDir' Name='$SV_VERSION Modules'>"
+#puts $outfp "\t<Directory Id='ProgramMenuDir' Name='svSolver'>"
 
 #puts $outfp "\t</Directory>"
 #puts $outfp "</Directory>"
 
-puts $outfp "<Feature Id='Complete' Title='$SV_VERSION Modules' Description='The complete package.' Display='expand' Level='1' ConfigurableDirectory='INSTALLDIR'>"
+puts $outfp "<Feature Id='Complete' Title='svSolver' Description='The complete package.' Display='expand' Level='1' ConfigurableDirectory='INSTALLDIR'>"
 puts $outfp "\t<Feature Id='Main' Title='Main' Description='Required Files' Display='expand' Level='1'>"
 
 # need components to match directories above!

@@ -54,8 +54,8 @@ OBJS    = $(addprefix $(BUILD_DIR)/,$(CXXSRCS:.cxx=.$(OBJECTEXT))) \
           $(addprefix $(BUILD_DIR)/,$(CSRCS:.c=.$(OBJECTEXT))) \
           $(addprefix $(BUILD_DIR)/,$(FSRCS:.f=.$(OBJECTEXT)))
 
-TARGET_EXE_FULL = $(TOP)/Bin/postsolver-$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION).exe
-TARGET_EXE = $(TOP)/Bin/postsolver.exe
+TARGET_EXE_FULL = $(TOP)/Bin/svpost-$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION).exe
+TARGET_EXE = $(TOP)/Bin/svpost.exe
 
 static: directories $(TARGET_EXE_FULL)
 
