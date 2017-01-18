@@ -2,7 +2,7 @@
      xmlns:bal="http://schemas.microsoft.com/wix/BalExtension"
      xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
 
-  <Bundle Name="SimVascular Complete Windows Installer (64-bit)" Version="REPLACE_SV_FULL_VER_NO" Manufacturer="simvascular.org" UpgradeCode="85E8D8C7-FDF1-4D3B-9B5C-3E5CA3551E56" Copyright="2016" IconSourceFile="windows_msi_helpers/simvascular.ico" AboutUrl="http://www.simvascular.org">
+  <Bundle Name="SimVascular svSolver Complete Windows Installer (64-bit)" Version="REPLACE_SV_FULL_VER_NO" Manufacturer="simvascular.org" UpgradeCode="E278326B-9FAA-4D85-8B3E-F105C1CE824A" Copyright="2016" IconSourceFile="windows_msi_helpers/simvascular.ico" AboutUrl="http://www.simvascular.org">
 
      <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense">
         <bal:WixStandardBootstrapperApplication LicenseFile="License.rtf" LogoFile="windows_installer_packages/msi-logo.png" />
@@ -24,7 +24,7 @@
          DetectCondition="(MSMPI_EXISTS)" Permanent="yes"
      />
 
-     <MsiPackage Id="MainPackage" SourceFile="simvascular.msi" Vital="yes" DisplayInternalUI="yes"/>
+     <MsiPackage Id="MainPackage" SourceFile="simvascular-svsolver.msi" Vital="yes" DisplayInternalUI="yes"/>
       
     </Chain>
 
