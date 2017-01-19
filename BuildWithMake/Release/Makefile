@@ -53,27 +53,27 @@ REAL_DIST_DIR_TOP = package/svsolver
 REAL_DIST_DIR := $(DIST_DIR_TOP)/$(SV_TIMESTAMP)
 
 ifeq ($(CLUSTER), x64_cygwin)
-  DIST_DIR_TOP := /cygdrive/p/package/svsolver
-  DIST_DIR := /cygdrive/p/package/svsolver/$(SV_TIMESTAMP)
-  DIST_DIR_WIN := "P:/package/svsolver/$(SV_TIMESTAMP)"
+  DIST_DIR_TOP := /cygdrive/q/package/svsolver
+  DIST_DIR := /cygdrive/q/package/svsolver/$(SV_TIMESTAMP)
+  DIST_DIR_WIN := "Q:/package/svsolver/$(SV_TIMESTAMP)"
 else
   DIST_DIR_TOP := $(REAL_DIST_DIR_TOP)
   DIST_DIR := $(REAL_DIST_DIR) 
 endif
 
 ifneq ($(CLUSTER),x64_linux)
-  all: use_subst windows-distribution msi
+  all: use_subst windows-distribution msi msi-bundle-svsolver
 else
   all: linux-distribution taritup taritup-svsolver
 endif
 
 use_subst:
 ifeq ($(CLUSTER),x64_cygwin)
-	-subst P: /D
-	-subst P: $(shell cygpath -w `pwd`)
+	-subst Q: /D
+	-subst Q: $(shell cygpath -w `pwd`)
 endif
 
-veryclean: use_subst msiclean-svsolver msi-bundle-clean
+veryclean: use_subst msiclean-svsolver msi-bundle-svsolver-clean
 	-rm -f tar_files/*.tar
 	-rm -f tar_files/*.tar.gz
 	-rm -Rf $(DIST_DIR_TOP)
@@ -105,19 +105,19 @@ endif
 	-echo "Run light..."
 	-$(WIXUI_PATH)/light.exe -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out simvascular-svsolver.msi tmp/simvascular-svsolver.wixobj
 
-msi-bundle-clean:
+msi-bundle-svsolver-clean:
 	-rm -f tmp/bundle.wixobj
-	-rm -f simvascular-bundle.wixpdb
-	-rm -f simvascular-bundle.exe
-	-rm -f tmp/wix-simvascular-bundle.wxs
+	-rm -f simvascular-svsolver-bundle.wixpdb
+	-rm -f simvascular-svsolver-bundle.exe
+	-rm -f tmp/wix-simvascular-svsolver-bundle.wxs
 
-msi-bundle: msi-bundle-clean mksedscript
+msi-bundle-svsolver: msi-bundle-svsolver-clean mksedscript
 	-echo "Create WXS file..."
-	-sed -f tmp/sedscript windows_installer_packages/wix-simvascular-bundle.wxs > tmp/wix-simvascular-bundle.wxs
+	-sed -f tmp/sedscript windows_installer_packages/wix-simvascular-svsolver-bundle.wxs > tmp/wix-simvascular-svsolver-bundle.wxs
 	-echo "Run candle..."
-	-$(WIXUI_PATH)/candle.exe -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out tmp/bundle.wixobj tmp/wix-simvascular-bundle.wxs
+	-$(WIXUI_PATH)/candle.exe -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out tmp/bundle.wixobj tmp/wix-simvascular-svsolver-bundle.wxs
 	-echo "Run light..."
-	-$(WIXUI_PATH)/light.exe tmp/bundle.wixobj -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out simvascular-bundle.exe
+	-$(WIXUI_PATH)/light.exe tmp/bundle.wixobj -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out simvascular-svsolver-bundle.exe
 
 msi: msiclean-svsolver msi-svsolver
 
