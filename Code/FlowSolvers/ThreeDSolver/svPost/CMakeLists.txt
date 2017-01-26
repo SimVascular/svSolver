@@ -34,7 +34,7 @@ simvascular_add_executable(${SV_POSTSOLVER_EXE}
   SRCS ${CXXSRCS}
   DEV_SCRIPT_NAME "mypost"
   INSTALL_SCRIPT_NAME "svpost"
-  INSTALL_COMPONENT ModuleExecutables
+  INSTALL_COMP CoreExecutables
   INSTALL_DESTINATION ${SV_INSTALL_RUNTIME_DIR})
 
 target_link_libraries(${SV_POSTSOLVER_EXE}

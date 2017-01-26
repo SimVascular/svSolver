@@ -25,18 +25,20 @@ endif()
 
 #-----------------------------------------------------------------------------
 # VTK
-simvascular_external(VTK COMPONENTS
-  vtkFiltersFlowPaths vtkWrappingTcl vtkRenderingTk
-  vtkCommonDataModel vtkCommonCore vtkChartsCore vtkCommonExecutionModel
-  vtkFiltersCore vtkIOLegacy vtkIOXML)
-include(${VTK_USE_FILE})
-if(SV_USE_VTK_SHARED)
-  set(SV_INSTALL_EXTERNALS ON)
-  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} VTK)
-  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_VTK_SHARED")
-endif()
-if(${VTK_DIR} MATCHES "intel")
-  set(VTK_LIBRARIES ${VTK_LIBRARIES} ${INTELRUNTIME_LIBRARIES})
+if (SV_USE_VTK)
+  simvascular_external(VTK COMPONENTS
+    vtkFiltersFlowPaths vtkCommonDataModel vtkFiltersModeling
+    vtkCommonCore vtkChartsCore vtkCommonExecutionModel
+    vtkFiltersCore vtkIOLegacy vtkIOXML)
+  include(${VTK_USE_FILE})
+  if(SV_USE_VTK_SHARED)
+    set(SV_INSTALL_EXTERNALS ON)
+    set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} VTK)
+    set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_VTK_SHARED")
+  endif()
+  if(${VTK_DIR} MATCHES "intel")
+    set(VTK_LIBRARIES ${VTK_LIBRARIES} ${INTELRUNTIME_LIBRARIES})
+  endif()
 endif()
 
 #-----------------------------------------------------------------------------

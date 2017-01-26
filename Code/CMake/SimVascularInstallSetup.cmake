@@ -14,27 +14,27 @@ if(NOT SV_INSTALL_SCRIPT_DIR)
 endif()
 
 if(NOT SV_INSTALL_RUNTIME_DIR)
-  set(SV_INSTALL_RUNTIME_DIR "Bin")
+  set(SV_INSTALL_RUNTIME_DIR bin)
 endif()
 
 if(NOT SV_INSTALL_LIBRARY_DIR)
-  set(SV_INSTALL_LIBRARY_DIR Lib)
+  set(SV_INSTALL_LIBRARY_DIR lib)
 endif()
 
 if(NOT SV_INSTALL_ARCHIVE_DIR)
-  set(SV_INSTALL_ARCHIVE_DIR Lib)
+  set(SV_INSTALL_ARCHIVE_DIR lib)
 endif()
 
 if(NOT SV_INSTALL_INCLUDE_DIR)
-  set(SV_INSTALL_INCLUDE_DIR include/)
+  set(SV_INSTALL_INCLUDE_DIR include)
 endif()
 
 if(NOT SV_INSTALL_DATA_DIR)
-  set(SV_INSTALL_DATA_DIR data/)
+  set(SV_INSTALL_DATA_DIR data)
 endif()
 
 if(NOT SV_INSTALL_DOC_DIR)
- set(SV_INSTALL_DOC_DIR doc/)
+ set(SV_INSTALL_DOC_DIR doc)
 endif()
 
 if(NOT SV_INSTALL_DOXYGEN_DIR)
@@ -45,11 +45,7 @@ endif()
 # Third Party install locations
 #-----------------------------------------------------------------------------
 if(NOT SV_INSTALL_MPI_RUNTIME_DIR)
-  if(WIN32)
-    set(SV_INSTALL_MPI_RUNTIME_DIR lib)
-  else()
-    set(SV_INSTALL_MPI_RUNTIME_DIR lib)
-  endif()
+  set(SV_INSTALL_MPI_RUNTIME_DIR lib)
 endif()
 
 if(NOT SV_INSTALL_MPI_LIBRARY_DIR)
@@ -86,8 +82,8 @@ endif()
 # Setup Output directories for compiling
 #-----------------------------------------------------------------------------
 if(NOT DEFINED OUTBIN_DIR OR NOT DEFINED OUTLIB_DIR)
-  set(OUTBIN_DIR "${SV_BINARY_DIR}/Bin")
-  set(OUTLIB_DIR ${SV_BINARY_DIR}/Lib)
+  set(OUTBIN_DIR "${SV_BINARY_DIR}/bin")
+  set(OUTLIB_DIR ${SV_BINARY_DIR}/lib)
 endif()
 
 if(NOT DEFINED SV_DEVELOPER_SCRIPT_DIR)

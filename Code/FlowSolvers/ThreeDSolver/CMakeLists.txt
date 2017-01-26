@@ -35,6 +35,7 @@ set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svLS)
 
 #-----------------------------------------------------------------------------
 # Post Solver
+#-----------------------------------------------------------------------------
 if(SV_USE_SVPOST)
   set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svPost)
   set(SV_USE_SOLVERIO ON)
@@ -42,25 +43,40 @@ endif()
 
 #-----------------------------------------------------------------------------
 # SolverIO
+#-----------------------------------------------------------------------------
 if(SV_USE_SOLVERIO)
   set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} SolverIO)
 endif()
+
 #-----------------------------------------------------------------------------
 # Presolver
+#-----------------------------------------------------------------------------
 if(SV_USE_SVPRE)
   set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svPre)
   set(SV_USE_SOLVERIO ON)
 endif()
 
+#-----------------------------------------------------------------------------
+# Dummy MPI
+#-----------------------------------------------------------------------------
 if(SV_USE_DUMMY_MPI)
   set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} dummyMPI)
 endif()
 
+#-----------------------------------------------------------------------------
+# svSolver
+#-----------------------------------------------------------------------------
 set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svSolver)
 
+#-----------------------------------------------------------------------------
+# Optional header path
+#-----------------------------------------------------------------------------
 set(FLOWSOLVER_OPTIONS_HEADER_PATH ${CMAKE_CURRENT_BINARY_DIR} CACHE INTERNAL "" FORCE)
 dev_message("Flowsolver Header Path:  ${FLOWSOLVER_OPTIONS_HEADER_PATH}" )
 
+#-----------------------------------------------------------------------------
+# Solver feature support
+#-----------------------------------------------------------------------------
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 message(STATUS "${INDENTS}ThreeDSolver Options")
 if((SV_USE_CORONARY EQUAL 0) AND (SV_USE_CLOSEDLOOP EQUAL 0) AND (VER_VARWALL EQUAL 0) AND (VER_USE_VTK EQUAL 0))
@@ -79,6 +95,9 @@ if(SV_USE_VTK)
   message(STATUS "${INDENTS}    Activating using VTK feature")
 endif()
 
+#-----------------------------------------------------------------------------
+# Include and add subdirs
+#-----------------------------------------------------------------------------
 foreach(dir ${FLOWSOLVER_SUBDIRS})
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${dir})
 endforeach()
