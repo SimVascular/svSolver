@@ -14,16 +14,9 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
       "MinSizeRel" "RelWithDebInfo")
 endif()
 
-# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${METIS_BINARY_DIR}")
-# set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${METIS_BINARY_DIR}")
-# set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${METIS_BINARY_DIR}")
-
 if(WIN32)
   add_definitions("/Zi")
   add_definitions("-DWINDOWS")
 endif()
 
 add_subdirectory(Lib)
-
-#add_subdirectory(Programs)
-#add_subdirectory(Test)

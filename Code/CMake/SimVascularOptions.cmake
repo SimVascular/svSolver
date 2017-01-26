@@ -1,4 +1,4 @@
-# Initial SV Options 
+# Initial SV Options
 #-----------------------------------------------------------------------------
 # Developer flag (Output extra info during configure)
 option(SV_DEVELOPER_OUTPUT "This is a developer mode to print extra messages during configure" OFF)

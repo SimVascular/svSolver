@@ -33,22 +33,22 @@ macro(dev_message string)
 endmacro()
 
 #-----------------------------------------------------------------------------
-# simvascular_external - Macro to find libraries needed by simvascular 
+# simvascular_external - Macro to find libraries needed by simvascular
 # and create the necessary variables to load and link them.
-# 
+#
 macro(simvascular_external _pkg)
   string(TOLOWER "${_pkg}" _lower)
 
   dev_message("Configuring ${_pkg}")
 
-  set(options OPTIONAL VERSION_EXACT 
-    DOWNLOADABLE SYSTEM_DEFAULT 
+  set(options OPTIONAL VERSION_EXACT
+    DOWNLOADABLE SYSTEM_DEFAULT
     SVEXTERN_CONFIG ADD_INSTALL SHARED_LIB NO_MODULE
-    ) 
+    )
   set(oneValueArgs VERSION)
   set(multiValueArgs PATHS HINTS COMPONENTS)
 
-  cmake_parse_arguments("simvascular_external" 
+  cmake_parse_arguments("simvascular_external"
     "${options}"
     "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
@@ -81,11 +81,11 @@ macro(simvascular_external _pkg)
     option(SV_USE_SYSTEM_${_pkg} "Use system ${_pkg}" OFF)
   endif()
 
-  if((NOT SV_SUPERBUILD AND simvascular_external_SVEXTERN_CONFIG) OR 
+  if((NOT SV_SUPERBUILD AND simvascular_external_SVEXTERN_CONFIG) OR
     (simvascular_external_SVEXTERN_CONFIG AND SV_USE_SYSTEM_${_pkg}))
 
-  find_package(${_pkg} ${EXTRA_ARGS} 
-    PATHS ${CMAKE_CURRENT_SOURCE_DIR}/CMake 
+  find_package(${_pkg} ${EXTRA_ARGS}
+    PATHS ${CMAKE_CURRENT_SOURCE_DIR}/CMake
     NO_CMAKE_MODULE_PATH
     NO_DEFAULT_PATH)
   elseif(NOT SV_SUPERBUILD)
@@ -142,7 +142,7 @@ macro(unset_simvascular_external _pkg)
   set(oneValueArgs VERSION)
   set(multiValueArgs PATHS HINTS)
 
-  cmake_parse_arguments("simvascular_external" 
+  cmake_parse_arguments("simvascular_external"
     "${options}"
     "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
@@ -157,14 +157,14 @@ macro(simvascular_third_party _pkg)
   string(TOLOWER "${_pkg}" _lower)
   string(TOUPPER "${_pkg}" _upper)
 
-  set(options OPTIONAL VERSION_EXACT 
-    DOWNLOADABLE SYSTEM_DEFAULT 
+  set(options OPTIONAL VERSION_EXACT
+    DOWNLOADABLE SYSTEM_DEFAULT
     SVEXTERN_CONFIG ADD_INSTALL
     )
   set(oneValueArgs VERSION)
   set(multiValueArgs PATHS HINTS COMPONENTS)
-  
-  cmake_parse_arguments("simvascular_third_party" 
+
+  cmake_parse_arguments("simvascular_third_party"
     "${options}"
     "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
   set(${_upper}_SUBDIR ThirdParty/${_pkg})
@@ -176,7 +176,7 @@ macro(simvascular_third_party _pkg)
 
   mark_as_advanced(SV_USE_SYSTEM_${_upper})
 
-  configure_file(${SV_SOURCE_DIR}/${${_upper}_SUBDIR}/simvascular_${_lower}.h.in 
+  configure_file(${SV_SOURCE_DIR}/${${_upper}_SUBDIR}/simvascular_${_lower}.h.in
     ${SV_BINARY_DIR}/${${_upper}_SUBDIR}/simvascular_${_lower}.h)
   include_directories(BEFORE ${SV_BINARY_DIR}/${${_upper}_SUBDIR} ${SV_SOURCE_DIR}/${${_upper}_SUBDIR})
   if(SV_USE_SYSTEM_${_upper})
@@ -235,15 +235,15 @@ endmacro ()
 # simvascular_add_executable -
 #
 macro(simvascular_add_executable TARGET_NAME)
-  set(options NO_SCRIPT) 
-  set(oneValueArgs DEV_SCRIPT_NAME INSTALL_SCRIPT_NAME COMPONENT INSTALL_DESTINATION)
+  set(options NO_SCRIPT)
+  set(oneValueArgs DEV_SCRIPT_NAME INSTALL_SCRIPT_NAME INSTALL_COMP INSTALL_DESTINATION)
   set(multiValueArgs SRCS)
-  
+
   unset(simvascular_add_executable_INSTALL_SCRIPT_NAME)
   unset(simvascular_add_executable_DEV_SCRIPT_NAME)
   unset(simvascular_add_executable_NO_SCRIPT)
 
-  cmake_parse_arguments("simvascular_add_executable" 
+  cmake_parse_arguments("simvascular_add_executable"
     "${options}"
     "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
@@ -290,14 +290,14 @@ macro(simvascular_add_executable TARGET_NAME)
 
   # CHANGE FOR EXECUTABLE RENAME REMOVE (re enable if statement)
   if(simvascular_add_executable_INSTALL_DESTINATION)
+    if(simvascular_add_executable_INSTALL_COMP)
+      set(_COMPARGS COMPONENT ${simvascular_add_executable_INSTALL_COMP})
+    endif()
     if(APPLE)
       install(TARGETS ${TARGET_NAME}
-        RUNTIME DESTINATION "${simvascular_add_executable_INSTALL_DESTINATION}"
+        RUNTIME DESTINATION ${simvascular_add_executable_INSTALL_DESTINATION}
         ${_COMPARGS})
     else()
-      if(simvascular_add_executable_COMPONENT)
-        set(_COMPARGS "COMPONENT ${simvascular_add_executable_COMPONENT}")
-      endif()
       install(TARGETS ${TARGET_NAME}
         RUNTIME DESTINATION ${simvascular_add_executable_INSTALL_DESTINATION}
         ${_COMPARGS})

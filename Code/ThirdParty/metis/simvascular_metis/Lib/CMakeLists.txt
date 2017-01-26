@@ -19,9 +19,9 @@ endif()
 
 if(SV_INSTALL_LIBS)
   install(TARGETS ${METIS_LIBRARY_NAME}
-  RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT PluginExecutables
-  LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT PluginLibraries
-  ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT PluginLibraries)
+  RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT ThirdPartyExecutables
+  LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT ThirdPartyLibraries
+  ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT ThirdPartyLibraries)
 endif()
 
 if(SV_INSTALL_HEADERS)
@@ -32,7 +32,8 @@ if(SV_INSTALL_HEADERS)
   file(READ "metis.h" METIS_H_TEMP)
 
   set(filename "macros.h")
-  install(FILES ${filename} DESTINATION ${SV_INSTALL_INCLUDE_DIR} RENAME metis_${filename})
+  install(FILES ${filename} DESTINATION ${SV_INSTALL_INCLUDE_DIR}/thirdparty/metis RENAME metis_${filename}
+    COMPONENT ThirdPartyHeaders)
   string(REGEX REPLACE ${filename} metis_${filename} METIS_H_TEMP ${METIS_H_TEMP})
 
   set(filename "defs.h")
@@ -42,18 +43,22 @@ if(SV_INSTALL_HEADERS)
   string(REGEX REPLACE ${filename} metis_${filename} METIS_H_TEMP ${METIS_H_TEMP})
 
   set(filename "proto.h")
-  install(FILES ${filename} DESTINATION ${SV_INSTALL_INCLUDE_DIR} RENAME metis_${filename})
+  install(FILES ${filename} DESTINATION ${SV_INSTALL_INCLUDE_DIR}/thirdparty/metis RENAME metis_${filename}
+    COMPONENT ThirdPartyHeaders)
   string(REGEX REPLACE ${filename} metis_${filename} METIS_H_TEMP ${METIS_H_TEMP})
 
   set(filename "rename.h")
-  install(FILES ${filename} DESTINATION ${SV_INSTALL_INCLUDE_DIR} RENAME metis_${filename})
+  install(FILES ${filename} DESTINATION ${SV_INSTALL_INCLUDE_DIR}/thirdparty/metis RENAME metis_${filename}
+    COMPONENT ThirdPartyHeaders)
   string(REGEX REPLACE ${filename} metis_${filename} METIS_H_TEMP ${METIS_H_TEMP})
 
   set(filename "struct.h")
-  install(FILES ${filename} DESTINATION ${SV_INSTALL_INCLUDE_DIR} RENAME metis_${filename})
+  install(FILES ${filename} DESTINATION ${SV_INSTALL_INCLUDE_DIR}/thirdparty/metis RENAME metis_${filename}
+    COMPONENT ThirdPartyHeaders)
   string(REGEX REPLACE ${filename} metis_${filename} METIS_H_TEMP ${METIS_H_TEMP})
 
   set(filename ${TEMP_DIR}/metis.h)
   file(WRITE ${filename} ${METIS_H_TEMP})
-  install(FILES ${filename} DESTINATION ${SV_INSTALL_INCLUDE_DIR})
+  install(FILES ${filename} DESTINATION ${SV_INSTALL_INCLUDE_DIR}/thirdparty/metis
+    COMPONENT ThirdPartyHeaders)
 endif()
