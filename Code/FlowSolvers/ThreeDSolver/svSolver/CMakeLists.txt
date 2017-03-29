@@ -84,10 +84,10 @@ if (SV_USE_VARWALL)
 endif()
 
 # Libraries for the solver
-set(lib_vtk ${SV_LIB_THREEDSOLVER_VTK_NAME})
-set(lib_leslib ${SV_LIB_THREEDSOLVER_DUMMY_LESLIB_NAME})
-set(lib_restart ${SV_LIB_THREEDSOLVER_WRITE_RESTART_NAME})
-set(lib_flowsolver ${SV_LIB_THREEDSOLVER_FORTRAN_NAME})
+set(lib_vtk ${SV_LIB_THREEDSOLVER_VTK_NAME}${SV_MPI_NAME_EXT})
+set(lib_leslib ${SV_LIB_THREEDSOLVER_DUMMY_LESLIB_NAME}${SV_MPI_NAME_EXT})
+set(lib_restart ${SV_LIB_THREEDSOLVER_WRITE_RESTART_NAME}${SV_MPI_NAME_EXT})
+set(lib_flowsolver ${SV_LIB_THREEDSOLVER_FORTRAN_NAME}${SV_MPI_NAME_EXT})
 # Include files for the USE_VTK VERSION
 if (SV_USE_VTK)
   set(CXXSRCS ${CXXSRCS} use_vtk.cxx)
@@ -104,26 +104,38 @@ else()# dummy leslib
 endif()
 add_library(${lib_restart} ${SV_LIBRARY_TYPE} ${CSRCS})
 target_link_libraries(${lib_restart} ${SV_LIB_SOLVERIO_NAME}
-  ${lib_leslib}
-  ${SV_MPI_EXTRA_LIBRARY} ${SV_MPI_Fortran_LIBRARIES})
+  ${lib_leslib})
+if(SV_USE_DUMMY_MPI)
+  target_link_libraries(${lib_restart}
+    ${SV_LIB_DUMMY_MPI_NAME} ${SV_LIB_DUMMY_FORTRAN_MPI_NAME})
+else()
+  target_link_libraries(${lib_restart}
+    ${SV_MPI_EXTRA_LIBRARY} ${SV_MPI_Fortran_LIBRARIES})
+endif()
 
-  add_library(${lib_flowsolver} ${SV_LIBRARY_TYPE} ${FSRCS})
+add_library(${lib_flowsolver} ${SV_LIBRARY_TYPE} ${FSRCS})
 #set_TARGET_PROPERTIES(${lib_flowsolver} PROPERTIES COMPILE_FLAGS "-extend_source 132")
-  target_link_libraries(${lib_flowsolver} ${SV_MPI_EXTRA_LIBRARY}
-    ${SV_MPI_Fortran_LIBRARIES}
+  target_link_libraries(${lib_flowsolver}
     ${SV_LIB_SOLVERIO_NAME} ${lib_restart})
 if(SV_USE_SVLS)
-  target_link_libraries(${lib_flowsolver} ${SV_LIB_SVLS_NAME})
+  target_link_libraries(${lib_flowsolver} ${SV_LIB_SVLS_NAME}${SV_MPI_NAME_EXT})
 endif()
 if(SV_USE_VTK)
   target_link_libraries(${lib_flowsolver} ${lib_vtk})
 endif()
+if(SV_USE_DUMMY_MPI)
+  target_link_libraries(${lib_flowsolver} ${SV_LIB_DUMMY_MPI_NAME}
+    ${SV_LIB_DUMMY_FORTRAN_MPI_NAME})
+else()
+  target_link_libraries(${lib_flowsolver} ${SV_MPI_EXTRA_LIBRARY}
+    ${SV_MPI_Fortran_LIBRARIES})
+endif()
 set(HDRS Input.h ValType.h common_c.h)
 
-simvascular_add_executable(${SV_FLOWSOLVER_EXE}
+simvascular_add_executable(${SV_FLOWSOLVER_EXE}${SV_MPI_NAME_EXT}
   SRCS ${CXXSRCS} ${CSRCS}
-  DEV_SCRIPT_NAME "mysolver"
-  INSTALL_SCRIPT_NAME "svsolver"
+  DEV_SCRIPT_NAME "mysolver${SV_MPI_NAME_EXT}"
+  INSTALL_SCRIPT_NAME "svsolver${SV_MPI_NAME_EXT}"
   INSTALL_COMP CoreExecutables
   INSTALL_DESTINATION ${SV_INSTALL_RUNTIME_DIR})
 
@@ -133,13 +145,19 @@ else()
   set(VTKLIB "")
 endif()
 
-target_link_libraries(${SV_FLOWSOLVER_EXE} ${lib_flowsolver}
+target_link_libraries(${SV_FLOWSOLVER_EXE}${SV_MPI_NAME_EXT} ${lib_flowsolver}
   ${GLOBAL_LIBRARIES} ${INTELRUNTIME_LIBRARIES}
-  ${METIS_LIBRARY} ${SVLS_LIBRARY}
-  ${SV_MPI_EXTRA_LIBRARY} ${LESLIB_LIBRARY}
+  ${METIS_LIBRARY} ${SV_LIB_SVLS_NAME}${SV_MPI_NAME_EXT}
+  ${LESLIB_LIBRARY}
   ${NSPCG_LIBRARY} ${SV_LIB_SOLVERIO_NAME}
   ${VTKLIB}
   )
+if(SV_USE_DUMMY_MPI)
+  target_link_libraries(${SV_FLOWSOLVER_EXE}${SV_MPI_NAME_EXT} ${SV_LIB_DUMMY_MPI_NAME}
+    ${SV_LIB_DUMMY_FORTRAN_MPI_NAME})
+else()
+  target_link_libraries(${SV_FLOWSOLVER_EXE}${SV_MPI_NAME_EXT} ${SV_MPI_EXTRA_LIBRARY})
+endif()
 
 if(SV_INSTALL_LIBS)
   install(TARGETS ${lib_flowsolver} ${lib_restart} ${lib_leslib}

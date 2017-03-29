@@ -14,7 +14,7 @@ install(PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
 #-----------------------------------------------------------------------------
 # Platform independent options
 #-----------------------------------------------------------------------------
-set(CPACK_PACKAGE_NAME "SimVascular")
+set(CPACK_PACKAGE_NAME "svSolver")
 set(CPACK_PACKAGE_VENDOR "SimVascular.org")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "SimVascular - Cardiovascular Modeling and Simulation Application")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/license.txt")
@@ -30,7 +30,7 @@ set(CPACK_COMPONENTS_ALL CoreExecutables CoreLibraries CoreHeaders
 #-----------------------------------------------------------------------------
 if(WIN32)
   # Package name
-   set(CPACK_PACKAGE_FILE_NAME "${PACKAGE_NAME}-${SV_FULL_VERSION}-Win-x64${INSTALL_TYPE_STR}")
+   set(CPACK_PACKAGE_FILE_NAME "svsolver-windows-win-x64-${SV_FULL_VERSION}${INSTALL_TYPE_STR}")
 
   # MPI dlls
   find_path(INTEL_REDIST_DIR names fmpich2.dll PATHS $ENV{PATH})
@@ -80,14 +80,14 @@ endif()
 #-----------------------------------------------------------------------------
 if(LINUX)
   # Package name
-  set(CPACK_PACKAGE_FILE_NAME "svsolver-${SV_FULL_VERSION}-Linux-x64${INSTALL_TYPE_STR}")
+  set(CPACK_PACKAGE_FILE_NAME "svsolver-linux-x64-${SV_FULL_VERSION}${INSTALL_TYPE_STR}")
 
   # Cpack install help
-  set(CPACK_GENERATOR "TGZ")
+  set(CPACK_GENERATOR "DEB")
   set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY ON)
 
   # Install location
-  set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/local/sv")
+  set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/local/sv/svsolver/${SV_INSTALL_VERSION_DIR}")
 endif()
 
 
@@ -96,7 +96,7 @@ endif()
 #-----------------------------------------------------------------------------
 if(APPLE)
   # Package name
-  set(CPACK_PACKAGE_FILE_NAME "svsolver-${SV_FULL_VERSION}-darwin-x86_64${INSTALL_TYPE_STR}")
+  set(CPACK_PACKAGE_FILE_NAME "svsolver-darwin-x64-${SV_FULL_VERSION}${INSTALL_TYPE_STR}")
 
   # Cpack install help
   set(CPACK_GENERATOR "productbuild")
@@ -104,7 +104,7 @@ if(APPLE)
   #  ${CMAKE_CURRENT_BINARY_DIR}/OSX/Info.plist @ONLY)
 
   # Install location
-  set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/local/sv")
+  set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/local/sv/svsolver/${SV_INSTALL_VERSION_DIR}")
 endif()
 
 if(CPACK_PACKAGE_FILENAME_TAG)

@@ -30,7 +30,5 @@
 set(INDENTS "${INDENTS}    ")
 message(STATUS "FlowSolvers")
 message(STATUS "${INDENTS}ThreeDSolver")
+
 add_subdirectory(ThreeDSolver)
-
-
-
