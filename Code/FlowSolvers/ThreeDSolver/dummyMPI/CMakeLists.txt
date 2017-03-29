@@ -1,8 +1,8 @@
 set(FSRCS mpi_stubs.f)
 set(CSRCS mpi_stubs_c.c)
 
-add_library(lib_fortran_simvascular_dummympi ${SV_LIBRARY_TYPE} ${FSRCS})
-add_library(lib_extra_simvascular_dummympi ${SV_LIBRARY_TYPE} ${CSRCS})
+add_library(${SV_LIB_DUMMY_FORTRAN_MPI_NAME} ${SV_LIBRARY_TYPE} ${FSRCS})
+add_library(${SV_LIB_DUMMY_MPI_NAME} ${SV_LIBRARY_TYPE} ${CSRCS})
 
 if(SV_INSTALL_LIBS)
   install(TARGETS ${lib}

@@ -30,7 +30,6 @@
 
 set(INDENTS "${INDENTS}    ")
 
-set(SVLS_LIBRARY ${SV_LIB_SVLS_NAME})
 set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svLS)
 
 #-----------------------------------------------------------------------------
@@ -107,3 +106,19 @@ foreach(dir ${FLOWSOLVER_SUBDIRS})
   message(STATUS "${INDENTS}    ${dir}")
   add_subdirectory(${dir})
 endforeach()
+
+#-----------------------------------------------------------------------------
+# Special option to also build a no mpi version!!
+if(NOT SV_USE_DUMMY_MPI)
+  if(SV_BUILD_ADDITIONAL_NOMPI_VERSION)
+    set(SV_USE_DUMMY_MPI ON)
+    set(SV_MPI_NAME_EXT "-nompi")
+    add_subdirectory(dummyMPI)
+    add_subdirectory(svLS svLS${SV_MPI_NAME_EXT})
+    add_subdirectory(svSolver svSolver${SV_MPI_NAME_EXT})
+    set(SV_USE_DUMMY_MPI OFF)
+  endif()
+endif()
+#-----------------------------------------------------------------------------
+
+

@@ -1,4 +1,4 @@
-set(lib ${SVLS_LIBRARY})
+set(lib ${SV_LIB_SVLS_NAME}${SV_MPI_NAME_EXT})
 
 set(FSRCS ADDBCMUL.f
   BC.f
@@ -22,7 +22,11 @@ set(FSRCS ADDBCMUL.f
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${FSRCS})
 
-target_link_libraries(${lib} ${MPI_LIBRARY} ${MPI_Fortran_LIBRARIES})
+if(SV_USE_DUMMY_MPI)
+  target_link_libraries(${lib} ${SV_LIB_DUMMY_FORTRAN_MPI_NAME})
+else()
+  target_link_libraries(${lib} ${MPI_LIBRARY} ${MPI_Fortran_LIBRARIES})
+endif()
 
 if(SV_INSTALL_LIBS)
   install(TARGETS ${lib}

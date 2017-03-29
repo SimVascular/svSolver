@@ -31,6 +31,7 @@ option(SV_SUPPRESS_WARNINGS "Option to suppress all compiler warnings while comp
 option(SV_USE_MPI "Use MSMPI" ON)
 option(SV_USE_DUMMY_MPI "Use Dummy MPI" OFF)
 option(SV_USE_MSMPI "Use MSMPI" OFF)
+option(SV_BUILD_ADDITIONAL_NOMPI_VERSION "Distribute an additional nompi version of svsolver" ON)
 
 #-----------------------------------------------------------------------------
 # ThirdParty
