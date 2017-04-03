@@ -50,6 +50,25 @@ set(PREAMBLE_DEVELOPER_FILE "${TEMP_DIR}/developer-preample")
 set(PREAMBLE_INSTALL_FILE "${TEMP_DIR}/install-preample")
 set(EXE_FILE_STRING "")
 
+#----------------------------------------------------------------------------
+# add runtime and lib paths
+if(WIN32)
+  set(developer_script_string "${developer_script_string}\nREM svSolver runtime and library locations\n")
+  set(install_script_string "${install_script_string}\nREM svSolver runtime and library locations\n")
+else()
+  set(developer_script_string "${developer_script_string}\n# svSolver runtime and library locations\n")
+  set(install_script_string "${install_script_string}\n# svSolver runtime and library locations\n")
+endif()
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_LIBRARY_DIR}" install_script_string)
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_HOME_DIR}" install_script_string)
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_RUNTIME_DIR}" install_script_string)
+
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/bin" developer_script_string)
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/lib" developer_script_string)
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/bin/RelWithDebInfo" developer_script_string)
+#----------------------------------------------------------------------------
+
+
 file(WRITE ${PREAMBLE_DEVELOPER_FILE} "${core_str}\n")
 file(APPEND ${PREAMBLE_DEVELOPER_FILE} "${developer_script_string}\n")
 
