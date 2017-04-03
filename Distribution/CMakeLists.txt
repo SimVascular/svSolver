@@ -23,7 +23,8 @@ set(CPACK_PACKAGE_VERSION_MINOR ${SV_MINOR_VERSION})
 set(CPACK_PACKAGE_VERSION_PATCH ${SV_PATCH_VERSION})
 set(INSTALL_TYPE_STR)
 set(CPACK_COMPONENTS_ALL CoreExecutables CoreLibraries CoreHeaders
-  ThirdPartyLibraries ThirdPartyHeaders MPIExecutables MPILibraries)
+  ThirdPartyLibraries ThirdPartyHeaders MPIExecutables MPILibraries
+  ExecutableScripts)
 
 #-----------------------------------------------------------------------------
 # WINDOWS
