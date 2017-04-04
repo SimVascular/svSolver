@@ -261,7 +261,7 @@ int PostSolver::QueryNumberOfSolutionVariables(int stepNumber) {
     /* scanning restart.<stepnum>.1 for numvar_ */
     sprintf(filename,"%srestart.%d.1",indir_,stepNumber);
     cout << "Opening " << filename << " to scan for number of variables..."<<endl;
-    if (openfile_(filename, "read", &irstin   ) !=  CVSOLVER_IO_OK) {
+    if (openfilewithspaces_(filename, "read", &irstin ) !=  CVSOLVER_IO_OK) {
         return CV_ERROR;
     }
     readheader_(&irstin,"solution",(void*)intfromfile,&ithree_,"double",iotype_);
@@ -284,7 +284,7 @@ int PostSolver::QueryNumberOfProcessors() {
 
     sprintf(filename,"%sgeombc.dat.%d",indir_,1); /* geometry and bc database */
     cout << "Opening " << filename << " to scan for number of processors and global modes..."<<endl;
-    if (openfile_(filename, "read", &igeom) !=  CVSOLVER_IO_OK) {
+    if (openfilewithspaces_(filename, "read", &igeom ) !=  CVSOLVER_IO_OK) {
         return CV_ERROR;
     }
     readheader_(&igeom,"number of processors",(void*)iarray,&ione_,"integer",iotype_);
@@ -307,7 +307,7 @@ int PostSolver::QueryFluidProperties(){
 
     sprintf(filename,"%sgeombc.dat.%d",indir_,1); /* geometry and bc database */
     cout << "Opening " << filename << " to scan for material properties..."<<endl;
-    if (openfile_(filename, "read", &igeom) !=  CVSOLVER_IO_OK) {
+    if (openfilewithspaces_(filename, "read", &igeom ) !=  CVSOLVER_IO_OK) {
         return CV_ERROR;
     }
     iarray[0]=0;
@@ -354,7 +354,7 @@ int PostSolver::ReadConnectivity() {
     for(i=0; i< numprocs_; i++){
         filename[0]='\0';
         sprintf(filename,"%sgeombc.dat.%d",indir_,i+1); /* geometry and bc database */
-        if (openfile_(filename, "read", &igeom) !=  CVSOLVER_IO_OK) {
+        if (openfilewithspaces_(filename, "read", &igeom ) !=  CVSOLVER_IO_OK) {
             return CV_ERROR;
         }
         readheader_(&igeom,"number of interior elements",(void*)iarray,&ione_,"integer",iotype_);
@@ -395,7 +395,7 @@ int PostSolver::ReadConnectivity() {
         /* open geom file  and read header*/
         sprintf(filename,"%sgeombc.dat.%d",indir_,i+1);
         cout << "Reducing : " << filename << endl;
-        if (openfile_( filename, "read", &igeom ) !=  CVSOLVER_IO_OK) {
+        if (openfilewithspaces_( filename, "read", &igeom ) !=  CVSOLVER_IO_OK) {
             return CV_ERROR;
         }
         readheader_(&igeom,"number of nodes",(void*)iarray,&ione_,"integer", iotype_);
@@ -514,7 +514,7 @@ int PostSolver::QueryWallProperties(){
     for(i=0; i< numprocs_; i++){
         sprintf(filename,"%sgeombc.dat.%d",indir_,i+1);
         cout << "Reducing : wall properties from " << filename << endl;
-        if (openfile_( filename, "read", &igeom ) !=  CVSOLVER_IO_OK) {
+        if (openfilewithspaces_( filename, "read", &igeom ) !=  CVSOLVER_IO_OK) {
             delete [] wpglobal_;
             delete [] wplocal_;
             wpglobal_=NULL;
@@ -966,7 +966,7 @@ int PostSolver::ExportFlowSolverFileFormat(int lstep, int newstepnumber, bool Re
     }
 
     sprintf(rfile,"%srestart.%d.%d",outdir,lstep,i+1);
-    if (openfile_(rfile, "write" , &irstin) !=  CVSOLVER_IO_OK) {
+    if (openfilewithspaces_(rfile, "write" , &irstin ) !=  CVSOLVER_IO_OK) {
         return CV_ERROR;
     }
 
@@ -1108,7 +1108,7 @@ int PostSolver::ExportYBar(int stepnumber, int numy, double* yglobal, const char
     int* mptr = &magic_number;
 
     sprintf(rfile,"%s%s.%d.0",outdir,"ybar",stepnumber);
-    if (openfile_(rfile, "write" , &irstin) !=  CVSOLVER_IO_OK) {
+    if (openfilewithspaces_(rfile, "write" , &irstin ) !=  CVSOLVER_IO_OK) {
         return CV_ERROR;
     }
 
@@ -1206,7 +1206,7 @@ int PostSolver::ParseRestartFile( int stepNumber, const char* field , int *numva
         // read in solution for current processor
         sprintf(filename,"%srestart.%d.%d",indir_,stepNumber, i+1);
         cout << "Reducing (" << field << ") results : " << filename << endl;
-        if (openfile_(filename, "read", &irstin   ) !=  CVSOLVER_IO_OK) {
+        if (openfilewithspaces_(filename, "read", &irstin ) !=  CVSOLVER_IO_OK) {
             return CV_ERROR;
         }
 
