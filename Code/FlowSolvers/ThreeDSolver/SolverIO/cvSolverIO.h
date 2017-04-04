@@ -89,7 +89,7 @@ public:
     ~cvsolverIO();
 
     // file control
-    int openFile (const char* filename, const char *mode);
+    int openFile (const char* filename, const char *mode, int keepspaces = 0);
     int closeFile ();
     int rewindFile();
 
@@ -157,7 +157,11 @@ extern "C" {
 
 int openfile_( const char* filename,
                 const char* mode,
-                int*  fileDescriptor );
+                int*  fileDescriptor);
+
+int openfilewithspaces_( const char* filename,
+                const char* mode,
+                int*  fileDescriptor);
 
 void closefile_( int* fileDescriptor,
                  const char* mode );

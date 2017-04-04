@@ -77,15 +77,19 @@ cvsolverIO::~cvsolverIO () {
 //  File Control
 //
 
-int cvsolverIO::openFile (const char *filename, const char *mode) {
+int cvsolverIO::openFile (const char *filename, const char *mode, int keepspaces) {
 
     filePointer_=Z_NULL ;
 
-//    fname_ = StringStripper( filename );
-    int namelength = strlen(filename);
-    fname_ = new char [ namelength+1 ];
-    strncpy( fname_, filename , namelength );
-    fname_ [ namelength ] = '\0';
+    if(!keepspaces)
+        fname_ = StringStripper( filename );
+    else
+    {
+        int namelength = strlen(filename);
+        fname_ = new char [ namelength+1 ];
+        strncpy( fname_, filename , namelength );
+        fname_ [ namelength ] = '\0';
+    }
     mode_ = StringStripper( mode );
 
     if ( cscompare( mode_, "read" ) ) 
@@ -570,7 +574,7 @@ void cvsolverIO::SwapArrayByteOrder( void* array, int nbytes, int nItems ) {
 
 int openfile_( const char* filename, 
                 const char* mode,
-                int*  fileDescriptor ) {
+                int*  fileDescriptor) {
 
     int i;
 
@@ -585,7 +589,43 @@ int openfile_( const char* filename,
     for (i = 1; i < 2048; i++) {
       if (cvsolverIOfp[i] == NULL) {
         cvsolverIOfp[i] = new cvsolverIO();
-        if (cvsolverIOfp[i]->openFile(filename, mode) == CVSOLVER_IO_ERROR) {
+        if (cvsolverIOfp[i]->openFile(filename, mode ) == CVSOLVER_IO_ERROR) {
+            delete cvsolverIOfp[i];
+            cvsolverIOfp[i] = NULL;
+            *fileDescriptor = 0;
+            return CVSOLVER_IO_ERROR;
+        }
+        *fileDescriptor = i;
+        //fprintf(stdout,"file pointer (%i) opened\n",(*fileDescriptor));
+        return CVSOLVER_IO_OK;
+      }
+    }
+
+    fprintf(stderr,"ERROR:  could not open file.\n");
+    fprintf(stderr,"        maximum number of files exceeded.\n");
+    exit(-1);
+    return CVSOLVER_IO_ERROR;
+
+}
+
+int openfilewithspaces_( const char* filename,
+                const char* mode,
+                int*  fileDescriptor) {
+
+    int i;
+
+    // hard code allowable number of open files to 2048
+    if (cvsolverIOfp == NULL) {
+        cvsolverIOfp = new cvsolverIO* [2048];
+        for (i = 0; i < 2048; i++) {
+            cvsolverIOfp[i] = NULL;
+        }
+    }
+    // skip 0 so it can be returned as an error code
+    for (i = 1; i < 2048; i++) {
+      if (cvsolverIOfp[i] == NULL) {
+        cvsolverIOfp[i] = new cvsolverIO();
+        if (cvsolverIOfp[i]->openFile(filename, mode, 1) == CVSOLVER_IO_ERROR) {
             delete cvsolverIOfp[i];
             cvsolverIOfp[i] = NULL;
             *fileDescriptor = 0;
