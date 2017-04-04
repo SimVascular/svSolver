@@ -81,7 +81,11 @@ int cvsolverIO::openFile (const char *filename, const char *mode) {
 
     filePointer_=Z_NULL ;
 
-    fname_ = StringStripper( filename );
+//    fname_ = StringStripper( filename );
+    int namelength = strlen(filename);
+    fname_ = new char [ namelength+1 ];
+    strncpy( fname_, filename , namelength );
+    fname_ [ namelength ] = '\0';
     mode_ = StringStripper( mode );
 
     if ( cscompare( mode_, "read" ) ) 
