@@ -2418,21 +2418,37 @@ int create_bct(BCTData& bct,char *faceFile, char *flowFile,double rho, double mu
     nrmave[2]=nrmave[2]/numNodes;
 
     //set the average normal as outward
-    //pd->GetCellData()->SetActiveScalars("GlobalElementID");
-    int elementId=pd->GetCellData()->GetScalars("GlobalElementID")->GetTuple1(0);
-    int n0,n1,n2,n3;
-    for (i = 0; i < numBoundaryFaces_; i++) {
-        if (boundaryElementsIds_[i] == (elementId - 1)) {
-            n0=boundaryElements_[0][i];
-            n1=boundaryElements_[1][i];
-            n2=boundaryElements_[2][i];
-            n3=boundaryElements_[3][i];
-        }
+    vtkCellArray *cells=pd->GetPolys();
+    cells->InitTraversal();
+
+    vtkIdList* ptids = vtkIdList::New();
+    ptids->Allocate(10, 10);
+    ptids->Initialize();
+    ptids->Reset();
+    cells->GetCell(0, ptids);
+    if (ptids->GetNumberOfIds() != 3) {
+        fprintf(stderr, "ERROR:  invalid number of ids in cell (%i)!",
+                ptids->GetNumberOfIds());
+        return CV_ERROR;
     }
+
+    int n0,n1,n2,n3;
+    int elementId=pd->GetCellData()->GetScalars("GlobalElementID")->GetTuple1(0);
+    n0 = pd->GetPointData()->GetScalars("GlobalNodeID")->GetTuple1(ptids->GetId(0));
+    n1 = pd->GetPointData()->GetScalars("GlobalNodeID")->GetTuple1(ptids->GetId(1));
+    n2 = pd->GetPointData()->GetScalars("GlobalNodeID")->GetTuple1(ptids->GetId(2));
+    n3=-1;
+
+    int j0 = 0;
+    int j1 = 0;
+    int j2 = 0;
+    int j3 = 0;
+
+    check_node_order(n0, n1, n2, n3, elementId, &j0, &j1, &j2, &j3);
 
     double dotProduct = 0.0;
     for(i=0;i<3;i++){
-        dotProduct = dotProduct + nrmave[i]*(nodes_[i*numNodes_+n3-1]-nodes_[i*numNodes_+n0-1]);
+        dotProduct = dotProduct + nrmave[i]*(nodes_[i*numNodes_+j3-1]-nodes_[i*numNodes_+j0-1]);
     }
 
     if(dotProduct>0.0){
