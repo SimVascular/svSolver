@@ -24,7 +24,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-macro(simvascular_install_prereqs tar location)
+macro(simvascular_install_prereqs tar location component)
   get_prerequisites(${tar} DEPENDENCIES 1 1 "" "")
   foreach(DEPENDENCY ${DEPENDENCIES})
     get_filename_component(DEPENDENCY_NAME "${DEPENDENCY}" NAME)
@@ -34,6 +34,7 @@ macro(simvascular_install_prereqs tar location)
     install(FILES "${DEPENDENCY_ACTUAL}"
       DESTINATION "${location}"
       RENAME "${DEPENDENCY_NAME}"
+      COMPONENT "${component}"
       )
   endforeach()
 endmacro()
@@ -67,8 +68,8 @@ foreach(var ${SV_EXTERNAL_SHARED_LIBS})
             FILE(GLOB lib "${lib_path}/${lib_name_we}*")
           endif()
           dev_message("Installing ${lib}")
-          install(FILES ${lib} DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT "ExternalLibraries")
-          simvascular_install_prereqs(${lib} ${SV_INSTALL_EXTERNALS_RUNTIME_DIR})
+          install(FILES ${lib} DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT ExternalLibraries)
+          simvascular_install_prereqs(${lib} ${SV_INSTALL_EXTERNALS_RUNTIME_DIR} ExternalLibraries)
         else()
           dev_message("[${var}]  ${lib_name} is not a shared lib, removing ${lib_name}, EXT ${_EXT}, do not install")
           list(REMOVE_ITEM ${var}_DLL_LIBRARIES ${lib})
@@ -116,7 +117,7 @@ if(SV_USE_MPI AND NOT SV_USE_DUMMY_MPI)
       install(FILES ${MPI_INSTALL_LIBS}
         DESTINATION ${SV_INSTALL_MPI_LIBRARY_DIR} COMPONENT MPILibraries)
       foreach(lib ${MPI_INSTALL_LIBS})
-      simvascular_install_prereqs(${lib} ${SV_INSTALL_MPI_RUNTIME_DIR})
+        simvascular_install_prereqs(${lib} ${SV_INSTALL_MPI_RUNTIME_DIR} MPILibraries)
     endforeach()
     endif()
     #find MPIEXEC's path, and install it and everything with MPI or hydra in the name
