@@ -22,9 +22,6 @@ set(CPACK_PACKAGE_VERSION_MAJOR ${SV_MAJOR_VERSION})
 set(CPACK_PACKAGE_VERSION_MINOR ${SV_MINOR_VERSION})
 set(CPACK_PACKAGE_VERSION_PATCH ${SV_PATCH_VERSION})
 set(INSTALL_TYPE_STR)
-set(CPACK_COMPONENTS_ALL CoreExecutables CoreLibraries CoreHeaders
-  ThirdPartyLibraries ThirdPartyHeaders MPIExecutables MPILibraries
-  ExecutableScripts)
 
 #-----------------------------------------------------------------------------
 # WINDOWS
@@ -83,9 +80,9 @@ if(LINUX)
   # Package name
   set(CPACK_PACKAGE_FILE_NAME "svsolver-linux-x64-${SV_FULL_VERSION}${INSTALL_TYPE_STR}")
 
-  # Cpack install help
+  ## Debian specific settings
+  set(CPACK_DEBIAN_PACKAGE_MAINTAINER "SimVascular")
   set(CPACK_GENERATOR "DEB")
-  set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY ON)
 
   # Install location
   set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/local/sv/svsolver/${SV_INSTALL_VERSION_DIR}")
@@ -98,6 +95,11 @@ endif()
 if(APPLE)
   # Package name
   set(CPACK_PACKAGE_FILE_NAME "svsolver-darwin-x64-${SV_FULL_VERSION}${INSTALL_TYPE_STR}")
+
+  # Components
+  set(CPACK_COMPONENTS_ALL CoreExecutables CoreLibraries CoreHeaders
+    ThirdPartyLibraries ThirdPartyHeaders MPIExecutables MPILibraries
+    ExecutableScripts)
 
   # Cpack install help
   set(CPACK_GENERATOR "productbuild")
