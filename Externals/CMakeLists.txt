@@ -25,6 +25,16 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #-----------------------------------------------------------------------------
+# This is SimVascular's CMakeLists.txt for downloading/building the externals
+# needed for SimVacular. Pre-built binaries are only available for certain
+# versions of the libraries on certain operating systems. To build your own,
+# you must turn off downloading of the specific external. In this case,
+# you should be able to build another version of the external so long that
+# the external is being cloned from git and the version provided is an
+# existing tag.
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.12)
 
 if (POLICY CMP0040)
