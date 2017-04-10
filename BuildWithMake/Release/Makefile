@@ -45,7 +45,8 @@ WIXUI_PATH := /cygdrive/c/Program\ Files\ \(x86\)/WiX\ Toolset\ v3.9/bin
 WIXUI_WIN_PATH = C:/Program\ Files\ \(x86\)/WiX\ Toolset\ v3.9/bin
 endif
 
-SV_TIMESTAMP := $(shell echo "puts \"[clock seconds]\"" | tclsh)
+SV_TIMESTAMP := $(shell date +"%Y-%m-%d")
+SV_TIMESTAMP_PERIOD := $(shell date +"%y.%m.%d")
 DIST_DIR_TOP = package/svsolver
 DIST_DIR := $(DIST_DIR_TOP)/$(SV_TIMESTAMP)
 
@@ -99,7 +100,7 @@ else
 	CL /Fetmp/uuidgen.exe /Fotmp/uuidgen.obj windows_msi_helpers/uuidgen.c ole32.lib
 endif
 	-echo "Create WXS file..."
-	-tclsh windows_msi_helpers/makewxs-svsolver.tcl $(SV_TIMESTAMP) 2.17.01.10 $(REAL_DIST_DIR_TOP) 
+	-tclsh windows_msi_helpers/makewxs-svsolver.tcl $(SV_TIMESTAMP) $(SV_TIMESTAMP_PERIOD) $(REAL_DIST_DIR_TOP) 
 	-echo "Run candle..."
 	-$(WIXUI_PATH)/candle.exe -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out tmp/simvascular-svsolver.wixobj tmp/simvascular-svsolver.wxs
 	-echo "Run light..."

@@ -68,17 +68,17 @@ proc file_find {dir wildcard args} {
     if {!$outputRegistry} {
         set outputRegistry 1
         set regid 11
-        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\svSolver' Name='SVSOLVER_HOME' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP' />"
+        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\svSolver\\$SV_TIMESTAMP' Name='SVSOLVER_HOME' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP' />"
         incr regid
-	puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\svSolver' Name='TimeStamp' Action='write' Type='string' Value='$SV_TIMESTAMP' />"
+	puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\svSolver\\$SV_TIMESTAMP' Name='TimeStamp' Action='write' Type='string' Value='$SV_TIMESTAMP' />"
 	incr regid
-	puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\svSolver' Name='SVPRE_EXE' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\svpre-bin.exe' />"
+	puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\svSolver\\$SV_TIMESTAMP' Name='SVPRE_EXE' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\svpre-bin.exe' />"
         incr regid
-        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\svSolver' Name='SVPOST_EXE' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\svpost-bin.exe' />"
+        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\svSolver\\$SV_TIMESTAMP' Name='SVPOST_EXE' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\svpost-bin.exe' />"
         incr regid
-        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\svSolver' Name='SVSOLVER_NOMPI_EXE' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\svsolver-nompi-bin.exe'  />"
+        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\svSolver\\$SV_TIMESTAMP' Name='SVSOLVER_NOMPI_EXE' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\svsolver-nompi-bin.exe'  />"
         incr regid
-	puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\svSolver' Name='SVSOLVER_MSMPI_EXE' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\svsolver-msmpi-bin.exe'  />"
+	puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\svSolver\\$SV_TIMESTAMP' Name='SVSOLVER_MSMPI_EXE' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\svsolver-msmpi-bin.exe'  />"
         incr regid
     }
     foreach i $files {
@@ -129,8 +129,12 @@ puts $outfp "<?xml version='1.0' encoding='windows-1252'?>"
 puts $outfp "<Wix xmlns=\"http://schemas.microsoft.com/wix/2006/wi\""
 puts $outfp "     xmlns:util=\"http://schemas.microsoft.com/wix/UtilExtension\">"
 
-puts $outfp "<Product Name='SimVascular svSolver' Id='8FFBE76E-B138-4A14-A739-67B4586049F7' UpgradeCode='834D3954-D7B7-445B-8D83-D9EA5DB7CA41' Language='1033' Codepage='1252' Version='$SV_RELEASE_VERSION_NO' Manufacturer='SimVascular'>"
-puts $outfp "<Package Id='B616A852-61B7-41D6-8E28-A22E126074E3' Keywords='Installer' Description='SimVascular svSolver Installer' Comments='SimVascular svSolver' Manufacturer='SimVascular' InstallerVersion='100' Languages='1033' Compressed='yes' SummaryCodepage='1252' />"
+set product_id [exec tmp/uuidgen.exe 1]
+set package_id [exec tmp/uuidgen.exe 1]
+set upgrade_id [exec tmp/uuidgen.exe 1]
+
+puts $outfp "<Product Name='SimVascular svSolver' Id='$product_id' UpgradeCode='$upgrade_id' Language='1033' Codepage='1252' Version='$SV_RELEASE_VERSION_NO' Manufacturer='SimVascular'>"
+puts $outfp "<Package Id='$package_id' Keywords='Installer' Description='SimVascular svSolver Installer' Comments='SimVascular svSolver' Manufacturer='SimVascular' InstallerVersion='100' Languages='1033' Compressed='yes' Platform='x64' SummaryCodepage='1252' />"
 
 puts $outfp "<WixVariable Id=\"WixUILicenseRtf\" Value=\"License.rtf\" />"
 puts $outfp "<WixVariable Id=\"WixUIBannerBmp\" Value=\"windows_msi_helpers/msi-banner.bmp\" />"
@@ -141,10 +145,10 @@ puts $outfp "<Property Id='INSTALLLEVEL' Value='999' />"
 puts $outfp "<Property Id='ALLUSERS' Value='1' />" 
 
 puts $outfp "<Directory Id='TARGETDIR' Name='SourceDir'>"
-puts $outfp "\t<Directory Id='ProgramFilesFolder' Name='PFiles'>"
+puts $outfp "\t<Directory Id='ProgramFiles64Folder' Name='PFiles'>"
 puts $outfp "\t\t<Directory Id='id19' Name='SimVascular'>"
-puts $outfp "\t\t<Directory Id='id911' Name='svSolver'>"
-puts $outfp "\t\t\t<Directory Id='INSTALLDIR' Name='Releases'>"
+#puts $outfp "\t\t<Directory Id='id911' Name='svSolver'>"
+puts $outfp "\t\t\t<Directory Id='INSTALLDIR' Name='svSolver'>"
 
 #puts $outfp "<Component Id='ain_id23' Guid='A7FFADE1-74BB-4CC8-8052-06B214B93701'>"
 
@@ -164,7 +168,7 @@ file_find $package_path *
 #puts $outfp "</Component>"
 puts $outfp "\t\t\t</Directory>"
 puts $outfp "\t\t\t</Directory>"
-puts $outfp "\t\t</Directory>"
+#puts $outfp "\t\t</Directory>"
 puts $outfp "\t</Directory>"
 puts $outfp "</Directory>"
 
