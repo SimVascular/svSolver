@@ -34,7 +34,7 @@ set(${proj}_DEPENDENCIES "")
 # Git info
 set(SV_EXTERNALS_${proj}_GIT_URL "${SV_EXTERNALS_GIT_URL}/VTK.git" CACHE STRING "Location of ${proj}, can be web address or local path")
 mark_as_advanced(SV_EXTERNALS_${proj}_GIT_URL)
-set(SV_EXTERNALS_${proj}_GIT_TAG "7.0" CACHE STRING "Tag for ${proj}")
+set(SV_EXTERNALS_${proj}_GIT_TAG "v${SV_EXTERNALS_${proj}_VERSION}" CACHE STRING "Tag for ${proj}")
 mark_as_advanced(SV_EXTERNALS_${proj}_GIT_TAG)
 
 # Platform specific additions

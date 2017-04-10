@@ -25,16 +25,6 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #-----------------------------------------------------------------------------
-# This is SimVascular's true CMakeLists.txt. It contains all the options,
-# variables, nuances, and wonders of building SimVascular. The externals
-# are not included here! You can obtain your own versions and manually
-# specify to SimVascular here; however, if you want to use pre-built versions
-# you need to move yourself back one directory to the SV_TOP project which
-# gets the Externals for you and then builds the SimVascular project using
-# those externals.
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.12)
 
 if (POLICY CMP0040)
@@ -50,7 +40,6 @@ if (POLICY CMP0054)
   cmake_policy(SET CMP0054 OLD)
 endif()
 #-----------------------------------------------------------------------------
-
 
 #-----------------------------------------------------------------------------
 Project(SV_EXTERNALS)
@@ -76,9 +65,9 @@ include(ExternalProject)
 #-----------------------------------------------------------------------------
 # SimVascular Includes
 include(SimVascularMacros)
+include(SimVascularFunctions)
 include(SimVascularSystemSetup)
 include(SimVascularFunctionCheckCompilerFlags)
-include(SimVascularInstallSetup)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -106,7 +95,7 @@ endforeach()
 #-----------------------------------------------------------------------------
 # Tar up everything
 simvascular_today(YEAR MONTH DAY)
-set(SV_EXTERNALS_EVERYTHING_TAR_INSTALL_NAME ${SV_PLATFORM_DIR}.${SV_COMPILER_DIR}.${SV_ARCH_DIR}.everything-BUILD${YEAR}.${MONTH}.${DAY})
+set(SV_EXTERNALS_EVERYTHING_TAR_INSTALL_NAME ${SV_PLATFORM_DIR}.${SV_PLATFORM_VERSION_DIR}.${SV_COMPILER_DIR}.${SV_COMPILER_VERSION_DIR}.${SV_ARCH_DIR}.${SV_BUILD_TYPE_DIR}.${YEAR}.${MONTH}.${DAY}.everything)
 if(EXISTS "${SV_EXTERNALS_TAR_INSTALL_DIR}")
   install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E tar -czvf ${SV_EXTERNALS_TAR_INSTALL_DIR}/${SV_EXTERNALS_EVERYTHING_TAR_INSTALL_NAME}.tar.gz ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}
     WORKING_DIRECTORY ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/../)")

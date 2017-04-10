@@ -26,16 +26,28 @@ endif()
 #-----------------------------------------------------------------------------
 # VTK
 if (SV_USE_VTK)
+  # If using toplevel dir, foce VTK_DIR to be the SV_VTK_DIR set by the
+  if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
+    set(VTK_DIR ${SV_VTK_DIR}/lib/cmake/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION} CACHE PATH "Force VTK dir to externals" FORCE)
+  endif()
+
+  # Find VTK, specific components
   simvascular_external(VTK COMPONENTS
     vtkFiltersFlowPaths vtkCommonDataModel vtkFiltersModeling
     vtkCommonCore vtkChartsCore vtkCommonExecutionModel
     vtkFiltersCore vtkIOLegacy vtkIOXML)
+
+  # Include cmake file provided by VTK to define libs and include dirs
   include(${VTK_USE_FILE})
+
+  # Shared
   if(SV_USE_VTK_SHARED)
     set(SV_INSTALL_EXTERNALS ON)
     set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} VTK)
     set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_VTK_SHARED")
   endif()
+
+  # Intel
   if(${VTK_DIR} MATCHES "intel")
     set(VTK_LIBRARIES ${VTK_LIBRARIES} ${INTELRUNTIME_LIBRARIES})
   endif()

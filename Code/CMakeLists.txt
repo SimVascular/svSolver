@@ -42,56 +42,69 @@ endif()
 #-----------------------------------------------------------------------------
 Project(SV)
 #-----------------------------------------------------------------------------
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake"
-  "${CMAKE_MODULE_PATH}")
 
 #-----------------------------------------------------------------------------
-# Include Macros
-include(SimVascularFunctions)
-include(SimVascularMacros)
-include(CheckLibraryExists)
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake"
+  "${CMAKE_MODULE_PATH}")
+#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
+# CMake Includes
+include(CheckLibraryExists)
+include(GetPrerequisites)
+include(GenerateExportHeader)
+include(ExternalProject)
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# SimVascular Includes
+include(SimVascularMacros)
+include(SimVascularFunctions)
+include(SimVascularSystemSetup)
+include(SimVascularFunctionCheckCompilerFlags)
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# RPATH handling
+# Skip the full RPATH for the build tree
 set(CMAKE_SKIP_BUILD_RPATH  TRUE)
+# Use the install RPATH
 set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+# The RPATH that will be used when installing
 set(CMAKE_INSTALL_RPATH "")
+# Automatically add determined parts of the RPATH which point to
+# directories outside the build tree to the install tree
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Include Initial Options
 include(SimVascularOptions)
-include(SimVascularSystemCheck)
-include(SimVascularVersion)
-include(SimVascularInternals)
-include(SimVascularFunctionCheckCompilerFlags)
-#-----------------------------------------------------------------------------
-# Include Dependent Options
 include(SimVascularDependentOptions)
+include(SimVascularInstallSetup)
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Set EXE names for the executables
 set(SV_PRESOLVER_EXE "svpre")
 set(SV_FLOWSOLVER_EXE "svsolver")
 set(SV_POSTSOLVER_EXE "svpost")
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# start internal cache variables
-set(SV_INCLUDE_DIRS "")
-
+# Include SimVascular Internals
+include(SimVascularInternals)
 #-----------------------------------------------------------------------------
-# Includes
-#-----------------------------------------------------------------------------
-include(SimVascularInstallSetup)
-include(SimVascularHomeSetup)
 
 #-----------------------------------------------------------------------------
 # Externals
-#-----------------------------------------------------------------------------
 include(SimVascularExternals)
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # ThirdParty
-#-----------------------------------------------------------------------------
 include(SimVascularThirdParty)
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Add GLOBAL_DEFINES to definitions
@@ -100,17 +113,20 @@ if(GLOBAL_DEFINES)
   list(REMOVE_DUPLICATES GLOBAL_DEFINES)
 endif()
 add_definitions(${GLOBAL_DEFINES})
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Add Local Includes
 set(LOCAL_LIBDIR Lib)
 set(SV_SCRIPT_TARGETS "" CACHE INTERNAL "" FORCE)
 set(INDENTS "")
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Include the Core subdirs
 # These are handled here because other sub directories depend on them
 # set
+set(SV_INCLUDE_DIRS "")
 set(SV_INCLUDE_DIRS ${SV_INCLUDE_DIRS}
   "FlowSolvers/Include"
   )
@@ -119,19 +135,23 @@ foreach(dir ${SV_INCLUDE_DIRS})
   add_subdirectory(${dir})
   include_directories(${SV_SOURCE_DIR}/${dir} ${SV_BINARY_DIR}/${dir})
 endforeach()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Add directories
 # Modules
 add_subdirectory(FlowSolvers)
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Enable distribution if turned on
 if(SV_ENABLE_DISTRIBUTION)
   add_subdirectory(${SV_DISTRIBUTION_DIR} ${SV_BINARY_DISTRIBUTION_DIR})
 endif()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Configure Exe Scripts, this should be the last subdirectory
 include(SimVascularInstallLibs)
 add_subdirectory(Scripts)
+#-----------------------------------------------------------------------------
