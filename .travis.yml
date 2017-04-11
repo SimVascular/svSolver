@@ -6,28 +6,19 @@ env:
   - WITH_CMAKE=true BUILD_VTK=false
 matrix:
  allow_failures:
-  - env: WITH_CMAKE=false BUILD_VTK=false
+  - env: WITH_CMAKE=true BUILD_VTK=false
 
 language: cpp
 
 compiler: gcc
-
-install:
-#  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
 
 addons:
   apt:
     packages:
     - gfortran
     - libglu1-mesa-dev
-    - libxt-dev
-    - libxi-dev
     - libgl1-mesa-dev
     - libmpich2-dev
-
-    sources:
-    - ubuntu-toolchain-r-test
-    - kubuntu-backports
 
 git:
   submodules: false
@@ -36,20 +27,8 @@ before_install:
   - export NUM_THREADS=4
   - export cwd=$(pwd)
   - export SCRIPTS=$cwd/travis
-  - export EXTERNALS_TOP=$cwd/ext
-  - $SCRIPTS/travis_get_qt.sh
-  - $SCRIPTS/travis_get_externals.sh
   - export BUILD_DIR=$cwd/build
   - export SV_TOP_DIR=$cwd/Code
-  - export SV_TEST_DIR=$HOME/test/
-  - if $BUILD_TEST; then $SCRIPTS/travis_get_test_data.sh; fi
-  - echo "CLUSTER=x64_linux" > BuildWithMake/cluster_overrides.mk
-  - echo "CXX_COMPILER_VERSION=gcc" >> BuildWithMake/cluster_overrides.mk
-  - echo "FORTRAN_COMPILER_VERSION=gfortran" >> BuildWithMake/cluster_overrides.mk
-  - echo "OPEN_SOFTWARE_BINARIES_TOPLEVEL=$EXTERNALS_TOP/bin/gnu/4.8/x64" > BuildWithMake/global_overrides.mk
-  - echo "OPEN_SOFTWARE_BUILDS_TOPLEVEL=" >> BuildWithMake/global_overrides.mk
-  - echo "OPEN_SOFTWARE_SOURCES_TOPLEVEL=" >> BuildWithMake/global_overrides.mk
-  - echo "LICENSED_SOFTWARE_TOPLEVEL=" >> BuildWithMake/global_overrides.mk
   - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
 
 cache:
