@@ -3,9 +3,6 @@ sudo: required
 
 env:
   - WITH_CMAKE=true BUILD_VTK=true
-matrix:
- allow_failures:
-  - env: WITH_CMAKE=false BUILD_TEST=false
 
 language: cpp
 
