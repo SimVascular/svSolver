@@ -63,5 +63,5 @@ mark_as_advanced(SV_EXTERNALS_GIT_URL)
 # and optional install dirname. Order matters; put independent packages first
 #-----------------------------------------------------------------------------
 # VTK
-sv_externals_add_new_external(VTK 7.0.0 ON OFF vtk vtk)
+sv_externals_add_new_external(VTK 6.2.0 ON OFF vtk vtk)
 #-----------------------------------------------------------------------------
