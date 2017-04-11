@@ -3,6 +3,10 @@ sudo: required
 
 env:
   - WITH_CMAKE=true BUILD_VTK=true
+  - WITH_CMAKE=true BUILD_VTK=false
+matrix:
+ allow_failures:
+  - env: WITH_CMAKE=false BUILD_VTK=false
 
 language: cpp
 
@@ -21,6 +25,10 @@ addons:
     - libgl1-mesa-dev
     - libmpich2-dev
 
+    sources:
+    - ubuntu-toolchain-r-test
+    - kubuntu-backports
+
 git:
   submodules: false
 
@@ -28,9 +36,13 @@ before_install:
   - export NUM_THREADS=4
   - export cwd=$(pwd)
   - export SCRIPTS=$cwd/travis
-  - $SCRIPTS/travis_before_script_cleanup.sh
+  - export EXTERNALS_TOP=$cwd/ext
+  - $SCRIPTS/travis_get_qt.sh
+  - $SCRIPTS/travis_get_externals.sh
   - export BUILD_DIR=$cwd/build
-  - export SV_TOP_DIR=$cwd
+  - export SV_TOP_DIR=$cwd/Code
+  - export SV_TEST_DIR=$HOME/test/
+  - if $BUILD_TEST; then $SCRIPTS/travis_get_test_data.sh; fi
   - echo "CLUSTER=x64_linux" > BuildWithMake/cluster_overrides.mk
   - echo "CXX_COMPILER_VERSION=gcc" >> BuildWithMake/cluster_overrides.mk
   - echo "FORTRAN_COMPILER_VERSION=gfortran" >> BuildWithMake/cluster_overrides.mk
