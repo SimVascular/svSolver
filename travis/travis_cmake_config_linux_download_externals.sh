@@ -4,6 +4,7 @@ pushd $BUILD_DIR
 export CC="gcc"
 export CXX="g++"
 
+echo SV_EXTERNALS_ARGS: $SV_EXTERNALS_ARGS
 #cmake
 export REPLACEME_SV_CMAKE_CMD="cmake"
 export REPLACEME_SV_CMAKE_GENERATOR="Unix Makefiles"

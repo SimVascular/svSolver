@@ -11,7 +11,6 @@ if $WITH_CMAKE; then
      SV_EXTERNALS_ARGS="-DSV_EXTERNALS_DOWNLOAD_VTK:BOOL=OFF"
   fi
   export SV_EXTERNALS_ARGS=$SV_EXTERNALS_ARGS
-  echo SV_EXTERNALS_ARGS: $SV_EXTERNALS_ARGS
   source $SCRIPTS/travis_cmake_config_linux_download_externals.sh
   pushd $BUILD_DIR
   $MAKE
