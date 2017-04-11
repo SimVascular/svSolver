@@ -1,0 +1,45 @@
+dist: trusty
+sudo: required
+
+env:
+  - WITH_CMAKE=true BUILD_VTK=true
+matrix:
+ allow_failures:
+  - env: WITH_CMAKE=false BUILD_TEST=false
+
+language: cpp
+
+compiler: gcc
+
+install:
+#  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
+
+addons:
+  apt:
+    packages:
+    - gfortran
+    - libgl-dev
+    - libmpich
+
+git:
+  submodules: false
+
+before_install:
+  - export NUM_THREADS=4
+  - export cwd=$(pwd)
+  - export SCRIPTS=$cwd/travis
+  - export EXTERNALS_TOP=$cwd/ext
+  - export BUILD_DIR=$cwd/build
+  - export SV_TOP_DIR=$cwd
+  - if $BUILD_TEST; then $SCRIPTS/travis_get_test_data.sh; fi
+  - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
+
+cache:
+  directories:
+
+before_script:
+  - $SCRIPTS/travis_before_script_cleanup.sh
+  #- if ! $WITH_CMAKE; then $ fi
+
+script: $SCRIPTS/travis_build_and_test.sh
+
