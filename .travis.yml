@@ -16,6 +16,10 @@ addons:
     - libgl1-mesa-dev
     - libmpich2-dev
 
+    sources:
+    - ubuntu-toolchain-r-test
+    - kubuntu-backports
+
 git:
   submodules: false
 
