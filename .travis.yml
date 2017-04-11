@@ -8,6 +8,8 @@ language: cpp
 
 compiler: gcc
 
+install:
+
 addons:
   apt:
     packages:
