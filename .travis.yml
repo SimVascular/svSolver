@@ -28,7 +28,7 @@ before_install:
   - export cwd=$(pwd)
   - export SCRIPTS=$cwd/travis
   - export BUILD_DIR=$cwd/build
-  - export SV_TOP_DIR=$cwd/Code
+  - export SV_TOP_DIR=$cwd
   - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
 
 cache:
