@@ -12,7 +12,8 @@ addons:
   apt:
     packages:
     - gfortran
-    - libgl-dev
+    - libglu1-mesa-dev
+    - libgl1-mesa-dev
     - libmpich
 
 git:
