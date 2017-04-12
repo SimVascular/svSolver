@@ -5,7 +5,7 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]
 then
   export CC="gcc"
   export CXX="g++"
-elif [[ "$TRAVIS_OS_NAME" == "linux" ]]
+elif [[ "$TRAVIS_OS_NAME" == "osx" ]]
   export CC="clang"
   export CXX="clang++"
 fi
