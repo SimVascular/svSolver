@@ -26,10 +26,8 @@ matrix:
   exclude:
     - os: linux
       compiler: clang
-      osx_image: xcode7.3
     - os: osx
       compiler: gcc
-      dist: trusty
 
 language: cpp
 
