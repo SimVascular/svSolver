@@ -1,5 +1,21 @@
-dist: trusty
-sudo: required
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: required
+      compiler: gcc
+      addons:
+        apt:
+          packages:
+          - gfortran
+          - libglu1-mesa-dev
+          - libgl1-mesa-dev
+          - libmpich2-dev
+    - os: osx
+      osx_image: xcode7.3
+      compiler: clang
+
+language: cpp
 
 env:
   - WITH_CMAKE=true BUILD_VTK=true
@@ -7,18 +23,6 @@ env:
 matrix:
  allow_failures:
   - env: WITH_CMAKE=true BUILD_VTK=false
-
-language: cpp
-
-compiler: gcc
-
-addons:
-  apt:
-    packages:
-    - gfortran
-    - libglu1-mesa-dev
-    - libgl1-mesa-dev
-    - libmpich2-dev
 
 git:
   submodules: false
@@ -29,7 +33,7 @@ before_install:
   - export SCRIPTS=$cwd/travis
   - export BUILD_DIR=$cwd/build
   - export SV_TOP_DIR=$cwd
-  - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"; fi
 
 cache:
   directories:

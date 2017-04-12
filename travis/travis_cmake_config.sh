@@ -1,8 +1,14 @@
 pushd $BUILD_DIR
 
 #compilers
-export CC="gcc"
-export CXX="g++"
+if [[ "$TRAVIS_OS_NAME" == "linux" ]]
+then
+  export CC="gcc"
+  export CXX="g++"
+elif [[ "$TRAVIS_OS_NAME" == "linux" ]]
+  export CC="clang"
+  export CXX="clang++"
+fi
 
 echo SV_EXTERNALS_ARGS: $SV_EXTERNALS_ARGS
 #cmake
