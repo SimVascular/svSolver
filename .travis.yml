@@ -10,20 +10,34 @@ dist:
   - trusty
 
 osx_image:
-  - xcode7.3
+  -xcode7.3
 
 sudo:
   - required
 
-addons:
-apt:
-  packages:
-  - gfortran
-  - libglu1-mesa-dev
-  - libgl1-mesa-dev
-  - libmpich2-dev
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: required
+    - os: osx
+      osx_image: xcode7.3
+  exclude:
+    - os: linux
+      compiler: clang
+    - os: osx
+      compiler: gcc
 
 language: cpp
+
+addons:
+  # Apparently apt only goes on linux
+  apt:
+    packages:
+    - gfortran
+    - libglu1-mesa-dev
+    - libgl1-mesa-dev
+    - libmpich2-dev
 
 env:
   - WITH_CMAKE=true BUILD_VTK=true
