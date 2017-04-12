@@ -1,9 +1,5 @@
 language: cpp
 
-env:
-  - WITH_CMAKE=true BUILD_VTK=true
-  - WITH_CMAKE=true BUILD_VTK=false
-
 matrix:
   include:
     - os: linux
