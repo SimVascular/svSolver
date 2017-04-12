@@ -6,6 +6,7 @@ then
   export CC="gcc"
   export CXX="g++"
 elif [[ "$TRAVIS_OS_NAME" == "osx" ]]
+then
   export CC="clang"
   export CXX="clang++"
 fi
