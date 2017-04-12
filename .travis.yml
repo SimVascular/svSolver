@@ -10,7 +10,7 @@ dist:
   - trusty
 
 osx_image:
-  -xcode7.3
+  - xcode7.3
 
 sudo:
   - required
@@ -18,6 +18,9 @@ sudo:
 env:
   - WITH_CMAKE=true BUILD_VTK=true
   - WITH_CMAKE=true BUILD_VTK=false
+
+language:
+  - cpp
 
 matrix:
   allow_failures:
@@ -28,8 +31,6 @@ matrix:
       compiler: clang
     - os: osx
       compiler: gcc
-
-language: cpp
 
 addons:
   apt:
@@ -48,12 +49,8 @@ before_install:
   - export SCRIPTS=$cwd/travis
   - export BUILD_DIR=$cwd/build
   - export SV_TOP_DIR=$cwd
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update          ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install gfortran; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install mpich   ; fi
-
-before_script:
-  - $SCRIPTS/travis_before_script_cleanup.sh
-  #- if ! $WITH_CMAKE; then $ fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update       ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install gcc  ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install mpich; fi
 
 script: $SCRIPTS/travis_build.sh
