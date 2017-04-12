@@ -1,21 +1,26 @@
+os:
+  - linux
+  - osx
+
 matrix:
   include:
     - os: linux
       dist: trusty
       sudo: required
       compiler: gcc
-      addons:
-        apt:
-          packages:
-          - gfortran
-          - libglu1-mesa-dev
-          - libgl1-mesa-dev
-          - libmpich2-dev
     - os: osx
       osx_image: xcode7.3
       compiler: clang
 
 language: cpp
+
+addons:
+apt:
+  packages:
+  - gfortran
+  - libglu1-mesa-dev
+  - libgl1-mesa-dev
+  - libmpich2-dev
 
 env:
   - WITH_CMAKE=true BUILD_VTK=true
