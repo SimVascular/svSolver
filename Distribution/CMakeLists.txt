@@ -16,12 +16,14 @@ install(PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
 #-----------------------------------------------------------------------------
 set(CPACK_PACKAGE_NAME "svSolver")
 set(CPACK_PACKAGE_VENDOR "SimVascular.org")
+set(CPACK_PACKAGE_CONTACT "SimVascular<sv@simvascular.org>")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "SimVascular - Cardiovascular Modeling and Simulation Application")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/license.txt")
 set(CPACK_PACKAGE_VERSION_MAJOR ${SV_MAJOR_VERSION})
 set(CPACK_PACKAGE_VERSION_MINOR ${SV_MINOR_VERSION})
 set(CPACK_PACKAGE_VERSION_PATCH ${SV_PATCH_VERSION})
 set(INSTALL_TYPE_STR)
+string(REPLACE "." "" SV_INSTALL_VERSION_DIR ${SV_FULL_VERSION})
 
 #-----------------------------------------------------------------------------
 # WINDOWS
@@ -81,13 +83,11 @@ if(LINUX)
   set(CPACK_PACKAGE_FILE_NAME "svsolver-linux-x64-${SV_FULL_VERSION}${INSTALL_TYPE_STR}")
 
   ## Debian specific settings
-  set(CPACK_DEBIAN_PACKAGE_MAINTAINER "SimVascular")
   set(CPACK_GENERATOR "DEB")
 
   # Install location
   set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/local/sv/svsolver/${SV_INSTALL_VERSION_DIR}")
 endif()
-
 
 #-----------------------------------------------------------------------------
 # APPLE
