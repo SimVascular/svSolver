@@ -11,6 +11,11 @@ install(PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
   DESTINATION ${SV_INSTALL_RUNTIME_DIR}
   COMPONENT CoreExecutables)
 
+if(LINUX)
+  set(SV_INSTALLER_TYPE DEB CACHE STRING "When distributing, specify the installer package type.")
+    set_property(CACHE SV_INSTALLER_TYPE PROPERTY STRINGS DEB TGZ)
+endif()
+
 #-----------------------------------------------------------------------------
 # Platform independent options
 #-----------------------------------------------------------------------------
@@ -82,11 +87,13 @@ if(LINUX)
   # Package name
   set(CPACK_PACKAGE_FILE_NAME "svsolver-linux-x64-${SV_FULL_VERSION}${INSTALL_TYPE_STR}")
 
-  ## Debian specific settings
-  set(CPACK_GENERATOR "DEB")
-
-  # Install location
-  set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/local/sv/svsolver/${SV_INSTALL_VERSION_DIR}")
+    if(SV_INSTALLER_TYPE STREQUAL DEB)
+        set(CPACK_GENERATOR "DEB")
+        set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/local/sv/svsolver/${SV_INSTALL_VERSION_DIR}")
+    elseif(SV_INSTALLER_TYPE STREQUAL TGZ)
+      set(CPACK_GENERATOR "TGZ")
+      set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY ON)
+    endif()
 endif()
 
 #-----------------------------------------------------------------------------
