@@ -1,4 +1,15 @@
-pushd $BUILD_DIR
+### install more recent version of CMake for Ubuntu 14.04
+if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+  wget http://simvascular.stanford.edu/downloads/public/open_source/linux/cmake/cmake-3.6.1-Linux-x86_64.sh
+  chmod a+rx ./cmake-3.6.1-Linux-x86_64.sh
+  sudo mkdir -p /usr/local/package/cmake-3.6.1
+  sudo ./cmake-3.6.1-Linux-x86_64.sh --prefix=/usr/local/package/cmake-3.6.1 --skip-license
+  sudo ln -s /usr/local/package/cmake-3.6.1/bin/ccmake    /usr/local/bin/ccmake
+  sudo ln -s /usr/local/package/cmake-3.6.1/bin/cmake     /usr/local/bin/cmake
+  sudo ln -s /usr/local/package/cmake-3.6.1/bin/cmake-gui /usr/local/bin/cmake-gui
+  sudo ln -s /usr/local/package/cmake-3.6.1/bin/cpack     /usr/local/bin/cpack
+  sudo ln -s /usr/local/package/cmake-3.6.1/bin/ctest     /usr/local/bin/ctest
+fi
 
 #compilers
 if [[ "$TRAVIS_OS_NAME" == "linux" ]]
@@ -10,6 +21,8 @@ then
   export CC="clang"
   export CXX="clang++"
 fi
+
+pushd $BUILD_DIR
 
 echo SV_EXTERNALS_ARGS: $SV_EXTERNALS_ARGS
 #cmake
