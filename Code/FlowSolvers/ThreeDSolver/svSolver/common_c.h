@@ -124,7 +124,7 @@
 #endif
 
 #define MAXBLK   5000
-#define MAXSURF  199
+#define MAXSURF  499
 #define MAXTS   100
 #define MAXTOP   5
 #define MAXQPT   125
