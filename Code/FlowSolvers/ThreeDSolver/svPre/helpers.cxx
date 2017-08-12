@@ -2107,14 +2107,14 @@ int integrateSurfElem(double crd[4][3], double *uvalues, double *q) {
         fprintf(stderr,"ERROR: Jacobian determinant negative! (%lf)\n",det);
         return CV_ERROR;
       }
-      if (det < 1E-6) {
-          fprintf(stderr,"Warning: ignoring small element with det of (%e).\n",det);
-          qflow = 0.0;
-          *q = qflow;
-          return CV_OK;
-      } else {
+//      if (det < 1E-6) {
+//          fprintf(stderr,"Warning: ignoring small element with det of (%e).\n",det);
+//          qflow = 0.0;
+//          *q = qflow;
+//          return CV_OK;
+//      } else {
         qflow = qflow + u*det;
-      }
+//      }
     }
   }
 
