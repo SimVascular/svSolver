@@ -59,7 +59,7 @@ c
         parameter     ( MAXBLK = 5000, MAXTS = 100)
         parameter     ( MAXSH = 32, NSD = 3 )
         parameter (MAXQPT = 125)
-        parameter     ( MAXTOP = 6, MAXSURF=499 )
+        parameter     ( MAXTOP = 6, MAXSURF=199 )
 c
 c----------------------------------------------------------------------
 c
