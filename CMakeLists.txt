@@ -87,7 +87,7 @@ include(SimVascularFunctionCheckCompilerFlags)
 # Externals!
 set(SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the sv_externals build, they can be with this string")
 set(SV_EXTERNALS_APPLE_CMAKE_ARGS)
-if(APPLE)
+if(APPLE AND NOT SV_PLATFORM_VERSION VERSION_EQUAL 10.11)
   list(APPEND SV_EXTERNALS_APPLE_CMAKE_ARGS -DSV_EXTERNALS_VTK_VERSION:STRING=7.0.0)
 endif()
 ExternalProject_Add(Externals
@@ -115,7 +115,7 @@ set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_BINARY_DIR}/Externals-build/sv_externals"
 # svSolver!
 set(SV_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the sv_externals build, they can be with this string")
 set(SV_APPLE_CMAKE_ARGS)
-if(APPLE)
+if(APPLE AND NOT SV_PLATFORM_VERSION VERSION_EQUAL 10.11)
   list(APPEND SV_APPLE_CMAKE_ARGS -DVTK_VERSION:STRING=7.0.0)
 endif()
 ExternalProject_Add(svSolver
