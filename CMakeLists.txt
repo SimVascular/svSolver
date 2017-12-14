@@ -47,6 +47,9 @@ endif()
 if (POLICY CMP0054)
   cmake_policy(SET CMP0054 OLD)
 endif()
+if (POLICY CMP0025) # Compiler ID when using clang set to clang not appleclang
+  cmake_policy(SET CMP0025 OLD)
+endif()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -83,6 +86,10 @@ include(SimVascularFunctionCheckCompilerFlags)
 #-----------------------------------------------------------------------------
 # Externals!
 set(SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the sv_externals build, they can be with this string")
+set(SV_EXTERNALS_APPLE_CMAKE_ARGS)
+if(APPLE AND NOT SV_PLATFORM_VERSION_DIR VERSION_EQUAL 10.11)
+  list(APPEND SV_EXTERNALS_APPLE_CMAKE_ARGS -DSV_EXTERNALS_VTK_VERSION:STRING=7.0.0)
+endif()
 ExternalProject_Add(Externals
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Externals
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Externals-build
@@ -98,6 +105,7 @@ ExternalProject_Add(Externals
     -DCMAKE_MACOSX_RPATH:BOOL=ON
     -DBUILD_TESTING:BOOL=OFF
     -DBUILD_EXAMPLES:BOOL=OFF
+    ${SV_EXTERNALS_APPLE_CMAKE_ARGS}
     ${SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS}
     )
 set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_BINARY_DIR}/Externals-build/sv_externals")
@@ -106,6 +114,10 @@ set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_BINARY_DIR}/Externals-build/sv_externals"
 #-----------------------------------------------------------------------------
 # svSolver!
 set(SV_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the sv_externals build, they can be with this string")
+set(SV_APPLE_CMAKE_ARGS)
+if(APPLE AND NOT SV_PLATFORM_VERSION_DIR VERSION_EQUAL 10.11)
+  list(APPEND SV_APPLE_CMAKE_ARGS -DVTK_VERSION:STRING=7.0.0)
+endif()
 ExternalProject_Add(svSolver
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Code
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/svSolver-build
@@ -125,6 +137,7 @@ ExternalProject_Add(svSolver
     -DBUILD_SHARED_LIBS:BOOL=OFF
     -DSV_EXTERNALS_USE_TOPLEVEL_DIR:BOOL=ON
     -DSV_EXTERNALS_TOPLEVEL_DIR:PATH=${SV_EXTERNALS_TOPLEVEL_DIR}
+    ${SV_APPLE_CMAKE_ARGS}
     ${SV_ADDITIONAL_CMAKE_ARGS}
     )
 #-----------------------------------------------------------------------------
