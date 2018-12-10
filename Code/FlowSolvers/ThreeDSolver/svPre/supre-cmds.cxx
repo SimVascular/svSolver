@@ -2709,7 +2709,7 @@ int cmd_bct_write_dat(char *cmd) {
         for(int i=0;i<nodeNum;i++){
             double pt[3];
             pd->GetPoint(i,pt);
-            int nodeID=pd->GetPointData()->GetScalars()->GetTuple1(i);
+            int nodeID=pd->GetPointData()->GetScalars("GlobalNodeID")->GetTuple1(i);
 
 //            fprintf(stdout,"working on node %d of %d.\n",i,nodeNum);
 
