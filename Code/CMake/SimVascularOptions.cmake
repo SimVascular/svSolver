@@ -109,8 +109,15 @@ mark_as_advanced(SV_USE_WIN32_REGISTRY)
 #-----------------------------------------------------------------------------
 # Enable Fortran
 enable_language(Fortran)
+get_filename_component(Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
 if(CMAKE_Fortran_COMPILER_ID MATCHES "GNU")
   set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -ffixed-line-length-132 -cpp")
+  simvascular_get_major_minor_version(${CMAKE_Fortran_COMPILER_VERSION} COMPILER_MAJOR_VERSION 
+    COMPILER_MINOR_VERSION)
+  # Set the -std=legacy option to compile code using gcc 8.1 (see svSolver GitHub Issue #32). 
+  if(APPLE AND (Fortran_COMPILER_NAME MATCHES "gfortran.*") AND (COMPILER_MAJOR_VERSION EQUAL 8))
+      set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -std=legacy")
+  endif()
 else()
   set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -132 -fpp")
 endif()
