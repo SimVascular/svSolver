@@ -67,7 +67,7 @@ c      enddo
 c      allocate(u(n))
 c  Size of workspace for cg + lsp4 
       itmax = 9999
-      nwa = 3*n+2*itmax
+      nwa = 5*n+2*itmax
       nwp = 2*n
       inwp = 0
       nwf = 0
