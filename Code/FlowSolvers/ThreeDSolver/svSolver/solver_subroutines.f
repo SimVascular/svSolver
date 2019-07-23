@@ -1343,7 +1343,7 @@ c
      &                   BC,        iper  )
       
       use pointer_data
-      use LagrangeMultipliers 
+      use LagrangeMultipliers
       
         include "global.h"
         include "mpif.h"
@@ -3840,6 +3840,7 @@ C
       REAL*8                tau1n,       tau2n,       tau3n,       temp
       REAL*8                u1,          u2,          u3,          unm
       REAL*8                vdot,        wdetjb
+      REAL*8                f_suppt                      ! ISL July 2019
 
 c
         dimension yl(npro,nshl,ndof),          iBCB(npro,ndiBCB),
@@ -3856,7 +3857,8 @@ c
         dimension u1(npro),                    u2(npro),
      &            u3(npro),                    rho(npro),
      &            unm(npro),                   pres(npro),
-     &            vdot(npro,nsd),              rlKwall(npro,nshlb,nsd)
+     &            vdot(npro,nsd),              rlKwall(npro,nshlb,nsd),
+     &            f_suppt(npro,nsd)                     ! ISL July 2019
 c
         dimension rou(npro),                   rmu(npro),
      &            temp(npro),                  allU(nsd)
@@ -3874,6 +3876,7 @@ c
      &   stabK(npro,9,nshl,nshl)
 
       integer   num
+
 
 c
 c.... compute the nodes which lie on the boundary (hierarchic)
@@ -3932,7 +3935,7 @@ c
      &               rmu,             unm,
      &               tau1n,           tau2n,           tau3n,
      &               vdot,            rlKwall,         
-     &               xKebe,           rKwall_glob)
+     &               xKebe,           rKwall_glob,     f_suppt)
         
 c        
 c.... -----------------> boundary conditions <-------------------
@@ -4014,6 +4017,8 @@ c
               vdot(iel,:) = zero
               xKebe(iel,:,:,:) = zero
               rKwall_glob(iel,:,:,:) = zero                 ! no stiffness: not a wall element
+
+              f_suppt(iel, :) = zero                        ! ISL July 2019
            endif
 c
 c..... to calculate inner products for Lagrange Multipliers
@@ -4044,7 +4049,7 @@ c
               enddo
            endif  ! end of if(Lagrange.gt.zero)
 c
-        enddo                                               ! end of bc loop
+        enddo                                               ! end of bc loop over all elements
 c
 c$$$c.... if we are computing the bdry for the consistent
 c$$$c     boundary forces, we must not include the surface elements
@@ -4091,6 +4096,7 @@ c
         rNa(:,2) = -WdetJb * ( tau2n - bnorm(:,2) * pres - vdot(:,2))
         rNa(:,3) = -WdetJb * ( tau3n - bnorm(:,3) * pres - vdot(:,3))
         rNa(:,4) =  WdetJb * unm
+
 c
 c.... THIS IS DONE FOR ADDING STABILITY IN THE CASE OF BACK FLOW 
 c
@@ -4147,11 +4153,21 @@ c
            rNa(:,2) = rNa(:,2) + WdetJb * rou * u2
            rNa(:,3) = rNa(:,3) + WdetJb * rou * u3
         endif
+
+c        
+c    ----------> External tissue support (ISL July 2019) <-------------
+
+        if(ideformwall.eq.1) then
+          rNa(:, 1) = rNa(:, 1) - WdetJb * f_suppt(:, 1)
+          rNa(:, 2) = rNa(:, 2) - WdetJb * f_suppt(:, 2)
+          rNa(:, 3) = rNa(:, 3) - WdetJb * f_suppt(:, 3)
+        endif
+
 c
-c.... ------------------------->  Residual  <--------------------------
+c.... ------------------->  Negative of Residual  <---------------------
 c
 c.... add the flux to the residual
-c
+
         do n = 1, nshlb
            nodlcl = lnode(n)
 
@@ -4161,8 +4177,11 @@ c
            rl(:,nodlcl,4) = rl(:,nodlcl,4) - shape(:,nodlcl) * rNa(:,4)
 
         enddo
+
+
+
         if(ideformwall.eq.1) then
-           rl(:,1,1) = rl(:,1,1) - rlKwall(:,1,1)
+           rl(:,1,1) = rl(:,1,1) - rlKwall(:,1,1) 
            rl(:,1,2) = rl(:,1,2) - rlKwall(:,1,2)
            rl(:,1,3) = rl(:,1,3) - rlKwall(:,1,3)
            
@@ -4175,7 +4194,8 @@ c
            rl(:,3,3) = rl(:,3,3) - rlKwall(:,3,3)
         endif 
 
-        enddo
+        enddo                ! end of loop over gauss integration points
+
         if(ideformwall.eq.1) then
 c     
 c.... -----> Wall Stiffness and Mass matrices for implicit LHS  <-----------
@@ -4184,12 +4204,10 @@ c.... Now we simply have to add the stiffness contribution in rKwall_glob to
 c.... the mass contribution already contained in xKebe
 
 c.... this line is going to destroy the mass matrix contribution
-
-
 c      xKebe = zero
 
-         xKebe(:,:,:,:) = ( xKebe(:,:,:,:)*iwallmassfactor
-     &           + rKwall_glob(:,:,:,:)*iwallstiffactor )
+         xKebe(:,:,:,:) = xKebe(:,:,:,:) * iwallmassfactor +
+     &                    rKwall_glob(:,:,:,:) * iwallstiffactor
 
 
          endif
@@ -4352,7 +4370,7 @@ c
 !! @param[in] yl(npro,nshl,ndof) Primitive variables (local), ndof: 5[p,v1,v2,v3,T]+number of scalars solved 
 !! @param[in] acl(npro,nshl,ndof) Acceleration (local)
 !! @param[in] ul(npro,nshlb,nsd) Displacement (local)
-!! @param[in] shpb(nen) Boundary element shape-functions
+!! @param[in] shpb(npro, nshl) Boundary element shape-functions
 !! @param[in] shglb(nsd,nen) Boundary element grad-shape-functions
 !! @param[in] xlb(npro,nenl,nsd) Nodal coordinates at current step
 !! @param[in] lnode(nenb) Local nodes on the boundary
@@ -4373,7 +4391,8 @@ c
 !! @param[out] tau2n(npro) BC viscous flux 2
 !! @param[out] tau3n(npro) BC viscous flux 3
 !! @param[out] vdot(npro,nsd) Acceleration at quadrature points
-!! @param[out] rlKwall(npro,nshlb,nsd) Wall stiffness contribution to the local residual 
+!! @param[out] rlKwall(npro,nshlb,nsd) Wall stiffness contribution to the local residual
+!! @param[out] f_suppt(npro, nsd) Tissue support contribution to the local residual - ISL July 2019
 
       subroutine e3bvar (yl,      acl,     ul,
      &                   shpb,    shglb,
@@ -4382,7 +4401,7 @@ c
      &                   u1,      u2,      u3,      rmu,  
      &                   unm,     tau1n,   tau2n,   tau3n,
      &                   vdot,    rlKwall,         
-     &                   xKebe,   rKwall_glob)
+     &                   xKebe,   rKwall_glob, f_suppt)
 
         include "global.h"
         include "common_blocks/conpar.h"
@@ -4402,9 +4421,10 @@ C
       REAL*8                rkwall_glob, rlkwall,     rmu,         shglb
       REAL*8                shpb,        tau1n,       tau2n,       tau3n
       REAL*8                u1,          u2,          u3,          ul
-      REAL*8                unm,         vdot,        wdetjb,      xkebe
+      REAL*8                unm,         vdot,        wdetjb,      xKebe
       REAL*8                xlb,         yl
-C
+      REAL*8                f_suppt                       ! ISL July 2019
+
 C     Local variables
 C
       INTEGER             ipt2,        ipt3,        k,           n
@@ -4425,8 +4445,12 @@ C
       REAL*8                rkwall_local31,           rkwall_local32
       REAL*8                rkwall_local33,           rotnodallocal
       REAL*8                temp,        temp1,       temp2,      temp3
-      REAL*8                tmp1,       v1,          v2
+      REAL*8                tmp1,        v1,          v2
       REAL*8                v3,          x1rot,       x2rot,      x3rot
+
+c     - ISL July 2019 - 
+      REAL*8                disp,        k_s,         c_s,        p_0
+      REAL*8                f_suppt_LHS
 C
 c
       dimension yl(npro,nshl,ndof),        rmu(npro),
@@ -4442,7 +4466,10 @@ c
      &            tau1n(npro),               tau2n(npro),
      &            tau3n(npro),
      &            acl(npro,nshl,ndof),       ul(npro,nshl,nsd),
-     &            vdot(npro,nsd),            rlKwall(npro,nshlb,nsd)
+     &            vdot(npro,nsd),            rlKwall(npro,nshlb,nsd),
+     &            disp(npro,nsd),            f_suppt(npro,nsd)  ! ISL July 2019
+
+
 c
       dimension gl1yi(npro,ndof),          gl2yi(npro,ndof),
      &            gl3yi(npro,ndof),          dxdxib(npro,nsd,nsd),
@@ -4478,19 +4505,19 @@ c
      &            rKwall_glob33(npro,nsd,nsd)
 c     
       dimension   rKwall_glob(npro,9,nshl,nshl),
-     &            xKebe(npro,9,nshl,nshl)
+     &            xKebe(npro,9,nshl,nshl),
+     &            f_suppt_LHS(npro)                     ! ISL July 2019 
 c     
       real*8      lhmFctvw, tsFctvw(npro)
 
-      dimension   tmp1(npro)       
+      dimension   tmp1(npro)      
 c     
-      real*8    Turb(npro),                xki,
+      real*8      Turb(npro),                xki,
      &            xki3,                      fv1
 c        
-      integer   e, i, j
+      integer     e, i, j
 c      
-      integer   aa, b
-
+      integer     aa, b
 
 c
 c.... ------------------->  integration variables  <--------------------
@@ -4501,6 +4528,8 @@ c
       u1   = zero
       u2   = zero
       u3   = zero
+      disp = zero                                        ! ISL July 2019
+
 c             
       do n = 1, nshlb
          nodlcl = lnode(n)
@@ -4509,6 +4538,11 @@ c
          u1   = u1   + shpb(:,nodlcl) * yl(:,nodlcl,2)
          u2   = u2   + shpb(:,nodlcl) * yl(:,nodlcl,3)
          u3   = u3   + shpb(:,nodlcl) * yl(:,nodlcl,4)
+
+c        Displacement for tissue support                 ! ISL July 2019
+         disp(:, 1) = disp(:, 1) + shpb(:, nodlcl) * ul(:, nodlcl, 1)
+         disp(:, 2) = disp(:, 2) + shpb(:, nodlcl) * ul(:, nodlcl, 2)
+         disp(:, 3) = disp(:, 3) + shpb(:, nodlcl) * ul(:, nodlcl, 3)
 
       enddo
 c
@@ -4677,7 +4711,7 @@ c
 c     
 c.... mass flux
 c     
-      unm = bnorm(:,1) * u1 +bnorm(:,2) * u2  +bnorm(:,3) * u3
+      unm = bnorm(:,1) * u1 + bnorm(:,2) * u2  + bnorm(:,3) * u3
 ! no rho in continuity eq.
 
 
@@ -4710,6 +4744,7 @@ c
         rKwall_glob = zero
       endif
 
+c.... --------------------------> Deformable wall <---------------------
       if(ideformwall.eq.1) then
       do n = 1, nshlb
          nodlcl = lnode(n)
@@ -4984,13 +5019,25 @@ c.... be done from 1 to nshlb=3...
 
       do b = 1, nshlb
          do aa = 1, nshlb
+
+c        The time term: tmp1=alpha_m*(1-lmp)*WdetJ*N^aN^b*rho*thickness
             tmp1 = tsFctvw * shpb(:,aa) * shpb(:,b)
+
+c...     ----------> External tissue support (ISL July 2019) <----------
+            k_s = 1D3
+            c_s = 1D4
+C             p_0 = 0D0
+            p_0 = -4D0 * 1.3332E3
+
+            f_suppt_LHS = WdetJb * ( alfi * gami * Delt(itseq) * 
+     &                    c_s * shpb(:, aa) * shpb(:, b) + 
+     &                    alfi * betai * Delt(itseq) * Delt(itseq) * 
+     &                    k_s * shpb(:, aa) * shpb(:, b) )
 c
-c           tmp1=alpha_m*(1-lmp)*WdetJ*N^aN^b*rho*thickness   the time term 
-c            
-            xKebe(:,1,aa,b) = xKebe(:,1,aa,b) + tmp1
-            xKebe(:,5,aa,b) = xKebe(:,5,aa,b) + tmp1
-            xKebe(:,9,aa,b) = xKebe(:,9,aa,b) + tmp1
+            xKebe(:,1,aa,b) = xKebe(:,1,aa,b) + tmp1 + f_suppt_LHS
+            xKebe(:,5,aa,b) = xKebe(:,5,aa,b) + tmp1 + f_suppt_LHS
+            xKebe(:,9,aa,b) = xKebe(:,9,aa,b) + tmp1 + f_suppt_LHS
+       
          enddo
       enddo
 
@@ -5096,18 +5143,27 @@ c.... This is ugly, but I will fix it later...
         rKwall_glob(:,9,3,3) = rKwall_glob33(:,3,3)
 
         rKwall_glob = rKwall_glob*betai*Delt(itseq)*Delt(itseq)*alfi
-      
-      else
-c....   nothing happens
-        goto 123
-      endif      
-
-123   continue
 
       endif
-c     
-c.... return
-c     
+
+c.... ----------> External tissue support (ISL July 2019) <-------------
+      k_s = 1D3
+      c_s = 1D4
+C       p_0 = 0D0
+      p_0 = -4D0 * 1.3332E3
+
+C       print *, '(k_s, c_s, p_0)', k_s, c_s, p_0
+
+      f_suppt(:, 1) = -k_s * disp(:, 1) - c_s * u1 - p_0 * bnorm(:, 1)
+      f_suppt(:, 2) = -k_s * disp(:, 2) - c_s * u2 - p_0 * bnorm(:, 2)
+      f_suppt(:, 3) = -k_s * disp(:, 3) - c_s * u3 - p_0 * bnorm(:, 3)
+
+
+      endif                         ! end of deformable wall conditional
+
+
+
+ 
       return
       end
       
@@ -7454,7 +7510,7 @@ c
       tmp2 =  rmu * ( g3yi(:,3) + g2yi(:,4) )
       tmp3 =  rmu * ( g1yi(:,4) + g3yi(:,2) )
 
-
+    
       if(iconvflow.eq.2) then  ! advective form (NO IBP either)
 c
 c no density yet...it comes later
@@ -9167,6 +9223,7 @@ C
 
         subroutine error (routin, variab, num)
 c
+
         include "global.h"
         include "mpif.h"
         include "common_blocks/mio.h"
@@ -9219,11 +9276,12 @@ c
      &          '  Error code :',a8,:,' : ',i8,//)
         end
 
+
       subroutine errsmooth(rerr,   x,     iper,   ilwork, 
      &                     shp,    shgl,  iBC)
 c
         use pointer_data
-c
+
         include "global.h"
         include "mpif.h"
         include "common_blocks/blkdat.h"
@@ -13887,7 +13945,7 @@ c
         subroutine rstatic (res, y, Dy)
 c
         use ResidualControl 
-        
+
         include "global.h"
         include "mpif.h"
         include "auxmpi.h"
@@ -14068,7 +14126,7 @@ c
 !> This subroutine calculates the statistics of the residual
 
         subroutine rstaticSclr (res, y, Dy, icomp)
-c
+
         include "global.h"
         include "mpif.h"
         include "auxmpi.h"
@@ -14209,8 +14267,8 @@ c        endif
      &                   solinc,     rerr,       sumtime,
      &                   svLS_lhs,  svLS_ls,   svLS_nFaces)
       use pointer_data
-      use LagrangeMultipliers 
-c        
+      use LagrangeMultipliers
+
         include "global.h"
         include "mpif.h"
         include "auxmpi.h"
@@ -15418,12 +15476,12 @@ c         endif
       use     specialBC
 
         include "global.h"
+        include "mpif.h"
         include "common_blocks/conpar.h"
         include "common_blocks/genpar.h"
         include "common_blocks/nomodule.h"
         include "common_blocks/workfc.h"
         include "common_blocks/inpdat.h"
-        include "mpif.h"
 
       real*8   x(numnp,nsd), BC(nshg,ndofBC)
       integer  iBC(numnp),lgmapping(numnp)
@@ -16574,7 +16632,7 @@ c
 
       use pvsQbi  ! brings in NABI
       use LagrangeMultipliers !brings in the current part of coef for Lagrange Multipliers
-c
+
       include "global.h"
       include "mpif.h"
       include "common_blocks/conpar.h"
@@ -16769,7 +16827,7 @@ c
       use convolRCRFlow !brings in HopRCR, dtRCR
 
       include "global.h"
-      include "mpif.h" !needed?
+      include "mpif.h"  !needed?
       include "common_blocks/timdat.h"
 C
       integer numSrfs, stepn      
@@ -16850,8 +16908,8 @@ c
       
       use convolRCRFlow    !brings RCRic, ValueListRCR, ValuePdist
 
-        include "global.h" !needed?
-        include "mpif.h" !needed?
+        include "global.h"
+        include "mpif.h"
         include "common_blocks/conpar.h"
         include "common_blocks/timdat.h"
 C
@@ -17078,8 +17136,8 @@ c
 c      
       use LagrangeMultipliers
 c      
-      include "global.h" 
-      include "mpif.h"   
+      include "global.h"
+      include "mpif.h"
 C
 C     Local variables
 C
