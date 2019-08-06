@@ -76,6 +76,13 @@ static Cmd cmd_table[] = {
 #if(VER_VARWALL == 1)
   {"set_surface_thickness", cmd_set_thickness_BCs},
   {"set_surface_Evw", cmd_set_Evw_BCs},
+
+  /********* EXTERNAL TISSUE SUPPORT ISL JULY 2019 *******************/
+  {"set_surface_ks", cmd_set_ksvw_BCs},
+  {"set_surface_cs", cmd_set_csvw_BCs},
+  {"set_surface_p0", cmd_set_p0vw_BCs},
+  /*********************************************************************/
+
   {"set_surface_initial_Evw", cmd_set_Initial_Evw},
   {"varwallprop_write_vtk", cmd_varwallprop_write_vtk},
 #endif
@@ -117,9 +124,23 @@ static Cmd cmd_table[] = {
   {"read_varwallprop_geombc",cmd_read_geombc_varwallprop},
   {"set_surface_thickness_vtp", cmd_set_thickness_BCs_vtp},
   {"set_surface_E_vtp", cmd_set_Evw_BCs_vtp},
+
+  /********* EXTERNAL TISSUE SUPPORT ISL JULY 2019 *******************/
+  {"set_surface_ks_vtp", cmd_set_ksvw_BCs_vtp},
+  {"set_surface_cs_vtp", cmd_set_csvw_BCs_vtp},
+  {"set_surface_p0_vtp", cmd_set_p0vw_BCs_vtp},
+/*********************************************************************/
+
   {"set_surface_initial_E_vtp", cmd_set_Initial_Evw_vtp},
   {"solve_varwall_thickness",cmd_Laplace_Thickness},
   {"solve_varwall_E",cmd_Laplace_Evw},
+
+  /********* EXTERNAL TISSUE SUPPORT ISL JULY 2019 *******************/
+  {"solve_varwall_ks", cmd_Laplace_Ksvw},
+  {"solve_varwall_cs", cmd_Laplace_Csvw},
+  {"solve_varwall_p0", cmd_Laplace_P0vw},
+  /*********************************************************************/
+
   {"solve_transient_varwall_E",cmd_Transient_Laplace_Evw},
   {"deformable_solve_varwall_displacements", cmd_deformable_iterative_solve_var_prop},
   {"varwallprop_write_vtp", cmd_varwallprop_write_vtp},

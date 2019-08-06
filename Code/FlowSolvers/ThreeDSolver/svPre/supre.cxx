@@ -75,7 +75,7 @@ double  init_v_[3];
 double* soln_ = NULL;
 double* dispsoln_ = NULL;
 #if(VER_VARWALL == 1)
-//variable wall thickness and Young Mod, all nodes
+//variable wall thickness, Young Mod, and 3 external tissue support constants for all nodes
 double* wallpropsoln_ = NULL;
 #endif
 double* acc_ = NULL;
@@ -91,8 +91,12 @@ int*    DisplacementNodeMap_     = NULL;
 double* DisplacementSolution_    = NULL;
 #if(VER_VARWALL == 1)
 //variable wall thickness and Young Mod, deformable wall nodes, like DisplacementSolution_
+double* WallPropSolution_    = NULL;  // hold any given var wall prop at a time
 double* ThicknessSolution_   = NULL;
-double* EvwSolution_   = NULL;
+double* EvwSolution_         = NULL;
+double* KsvwSolution_        = NULL;
+double* CsvwSolution_        = NULL;
+double* P0vwSolution_        = NULL;
 #endif
 double  Displacement_Evw_        = 0;
 double  Displacement_nuvw_       = 0;

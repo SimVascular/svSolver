@@ -45,10 +45,14 @@ struct Kentry {
 };
 
 
-
 //extern double* DisplacementSolution_;
+extern double* WallPropSolution_;
 extern double* ThicknessSolution_;
 extern double* EvwSolution_;
+extern double* KsvwSolution_;
+extern double* CsvwSolution_;
+extern double* P0vwSolution_;
+
 extern char buffer_[MAXCMDLINELENGTH];
 extern int* iBC_;
 extern double* gBC_;
@@ -61,6 +65,7 @@ int parseFile(char *cmd);
 int NWcloseFile();
 int NWgetNextNonBlankLine(int *eof);
 int parseCmdStr(char *cmd, char *mystr);
+
 
 // =========
 //   Cross
@@ -256,8 +261,8 @@ int CallFortranGMRES(Kentry* Kentries, int NNZ, double *b,int nunknown,double *u
 
     // std::cout <<"M[2]"<<M[2]<<std::endl;
     // delete [] Kentries;
-
     gmresfortran(&nunknown,&NNZ,IA,JA, M, b,u);
+    
     //   std::cout <<"u[2]"<<u[2]<<std::endl;
     //   std::cout <<"u[1]"<<u[1]<<std::endl;
 
@@ -266,12 +271,11 @@ int CallFortranGMRES(Kentry* Kentries, int NNZ, double *b,int nunknown,double *u
     free(JA);
 
     return 0;
-
 }
 
 void siftDownKentries(Kentry Kentries[], int root, int bottom, int array_size);
 
-int calcThicknessEvwDistribution(int Laplacetype) {
+int calcWallPropDistribution(int Laplacetype) {
 
     int nsdim = 3;
     int nnode = 3;
@@ -332,26 +336,21 @@ int calcThicknessEvwDistribution(int Laplacetype) {
     }
 
 
-
-
     // Assembly of the element contributions
 
     //   printf("new Kentries, Fglobal  and soln \n");
-    int Ksize=100*nunknown;
+    int Ksize = 100*nunknown;
     Kentry* Kentries = new Kentry[Ksize]();
     double* Fglobal = new double[nunknown]();
-
-
     double* soln    = new double[nunknown]();
 
-    NNZ=0;
-
+    NNZ = 0;
 
 
     tstart=clock();
 
 
-    for (ielem =0; ielem <numElements_  ; ielem++) {
+    for (ielem = 0; ielem <numElements_  ; ielem++) {
 
         if (ielem==numElements_/5 ||ielem==numElements_/5*2 || ielem==numElements_/5*3 ||ielem==numElements_/5*4) {
             printf("%d out of %d elements assembled \n",ielem,numElements_);
@@ -479,12 +478,6 @@ int calcThicknessEvwDistribution(int Laplacetype) {
 
     delete [] Kentries;
 
-
-
-
-
-
-
     //   printf("newNNZ=%d j=%d \n ",array_size,j);
 
     tend=clock();
@@ -492,49 +485,42 @@ int calcThicknessEvwDistribution(int Laplacetype) {
     //  printf("row=%d col=%d val=%lf \n",Kentriesnew[i].row,Kentriesnew[i].col,Kentriesnew[i].value);
     //  printf("row=%d Fglobal=%lf \n",i,Fglobal[i]);
 
-    CallFortranGMRES(Kentriesnew, array_size, Fglobal,nunknown,soln);
+    
+    /* Kentriesnew is of size 50 * nunknown
+     * array_size is NNZ (number of nonzero entries in the stiffness matrix)
+     * Fglobal is of size nunknown 
+     * soln is of size nunknown
+    */ 
 
+    CallFortranGMRES(Kentriesnew, array_size, Fglobal, nunknown, soln);
 
     delete [] Kentriesnew;
 
 
-
-    //   printf("writing Solution\n ");
-
-    if (Laplacetype==0) {
-        for (i=0;i<numNodes_;i++) {
-            if(ID[i]!=-1){
-                ThicknessSolution_[i]=soln[ID[i]];
-            } else {
-                ThicknessSolution_[i]=gBC_[i];
-            }
-       /*     if (ThicknessSolution_[i]<0.0){
-                printf("Warning: Negative Thickness=%lf \n",ThicknessSolution_[i]);
-                printf("coordinates: %lf,%lf,%lf \n", nodes_[0*numNodes_+i-1],nodes_[1*numNodes_+i-1],nodes_[2*numNodes_+i-1]);
-            }*/
+    /* ========================== External Tissue Support - ISL July 2019 ======================== */
+    for (i = 0; i < numNodes_; i++) {
+        if (ID[i] != -1) {
+            WallPropSolution_[i] = soln[ID[i]];
+        } else {
+            WallPropSolution_[i] = gBC_[i];
         }
     }
 
-    //   parseCmdStr("Evw_BC",keyword);
-    if (Laplacetype==1) {
-        for (i=0;i<numNodes_;i++) {
-            if(ID[i]!=-1){
-                EvwSolution_[i]=soln[ID[i]];
-            } else {
-                EvwSolution_[i]=gBC_[i];
-
-            }
-
-       /*     if (EvwSolution_[i]<0.0){
-                printf("Warning: Negative Evw=%lf ID= %d \n",EvwSolution_[i],ID[i]);
-                printf("coordinates: %lf,%lf,%lf \n", nodes_[0*numNodes_+i-1],nodes_[1*numNodes_+i-1],nodes_[2*numNodes_+i-1]);
-
-            } */
-        }
-
-
-
+    if (Laplacetype == 0) {
+        ThicknessSolution_ = WallPropSolution_;
+    } else if (Laplacetype == 1) {
+        EvwSolution_ = WallPropSolution_;
+    } else if (Laplacetype == 2) {
+        KsvwSolution_ = WallPropSolution_;
+    } else if (Laplacetype == 3) {
+        CsvwSolution_ = WallPropSolution_;
+    } else {
+        P0vwSolution_ = WallPropSolution_;
     }
+    WallPropSolution_ = NULL;
+
+    /* =========================================================================================== */
+
 
     //  printf("delete Fglobal\n ");
     delete [] Fglobal;
@@ -547,9 +533,10 @@ int calcThicknessEvwDistribution(int Laplacetype) {
     delete [] LM[3];
     // printf("delete ID \n ");
     delete [] ID;
+
     // reset gBC_ to initial state
-    for (i=0;i<numNodes_;i++) {
-        gBC_[i]=-1.0;
+    for (i = 0; i < numNodes_; i++) {
+        gBC_[i] = -1.0;
 
     }
 

@@ -98,6 +98,10 @@ extern double* gBC_;
 extern double* wallpropsoln_;
 extern double* ThicknessSolution_;
 extern double* EvwSolution_;
+extern double* KsvwSolution_;
+extern double* CsvwSolution_;
+extern double* P0vwSolution_;
+
 #endif
 
 int writeGEOMBCDAT(char* filename);
@@ -974,20 +978,25 @@ int read_variables_vtu(char* vtufn,string presName, string velName, string dispN
 		vtkDataArray* nodeIDArray= ug->GetPointData()->GetArray(IDArrayName.c_str());
 		vtkDataArray* wpArray= ug->GetPointData()->GetArray(wpArrayName.c_str());
 
-		wallpropsoln_ = new double[numNodes_ * 2];
+		int numWallProp = 5;
+
+		wallpropsoln_ = new double[numNodes_ * numWallProp];
 		int nodeID;
 		double* wp;
 
 		for (int i = 0; i < numNodes_; i++) {
 
 			nodeID = nodeIDArray->GetTuple1(i);
-			wp= wpArray->GetTuple2(i);
 
-			wallpropsoln_[0 * numNodes_ + nodeID - 1] = wp[0];
-			wallpropsoln_[1 * numNodes_ + nodeID - 1] = wp[1];
+			/* EXTERNAL TISSUE SUPPORT - ISL JULY 2019 */
+			wp = wpArray->GetTuple6(i);
 
+			for (int j = 0; j < numWallProp; j++) {
+				wallpropsoln_[j * numNodes_ + nodeID - 1] = wp[j];
+			}
 
-			debugprint(stddbg, "  Node (%i) (thickness,Evw) : %lf %lf\n", nodeID, wp[0], wp[1]);
+			debugprint(stddbg, "  Node (%i) (thickness,Evw,ksvw,p0vw) : %lf %lf %lf %lf %lf\n",
+				nodeID, wp[0], wp[1], wp[2], wp[3], wp[4]);
 
 		}
 	}else{
@@ -2174,6 +2183,23 @@ int cmd_set_Evw_BCs_vtp(char *cmd){
   return cmd_set_scalar_BCs_vtp(cmd);
 }
 
+
+// SET SPRING CONSTANT BC
+int cmd_set_ksvw_BCs_vtp(char *cmd){
+	return cmd_set_scalar_BCs_vtp(cmd);
+}
+
+// SET DAMPING CONSTANT BC
+int cmd_set_csvw_BCs_vtp(char *cmd){
+	return cmd_set_scalar_BCs_vtp(cmd);
+}
+
+// SET_EXTERNAL PRESSURE BC
+int cmd_set_p0vw_BCs_vtp(char *cmd){
+	return cmd_set_scalar_BCs_vtp(cmd);
+}
+
+
 int cmd_set_Initial_Evw_vtp(char *cmd) {
 
     // enter
@@ -2268,15 +2294,15 @@ int cmd_varwallprop_write_vtp(char *cmd) {
 
     int i;
 
-    vtkUnstructuredGrid* grid =createGrid(numNodes_,nodes_,numElements_,elements_);
+    vtkUnstructuredGrid* grid = createGrid(numNodes_,nodes_,numElements_,elements_);
 
     if (ThicknessSolution_ != NULL) {
         vtkDoubleArray *thickness = vtkDoubleArray::New();
         thickness->SetNumberOfComponents(1);
         thickness->Allocate(numNodes_,10000);
         thickness->SetNumberOfTuples(numNodes_);
-        thickness->SetName("thickness");
-        for(i=0; i< numNodes_; i++){
+        thickness->SetName("Thickness");
+        for(i = 0; i < numNodes_; i++){
             thickness->SetTuple1(i,ThicknessSolution_[i]);
         }
 
@@ -2290,8 +2316,8 @@ int cmd_varwallprop_write_vtp(char *cmd) {
         Evw->SetNumberOfComponents(1);
         Evw->Allocate(numNodes_,10000);
         Evw->SetNumberOfTuples(numNodes_);
-        Evw->SetName("Young_Mod");
-        for(i=0; i< numNodes_; i++){
+        Evw->SetName("YoungsModulus");
+        for(i = 0; i < numNodes_; i++){
             Evw->SetTuple1(i,EvwSolution_[i]);
         }
 
@@ -2299,6 +2325,54 @@ int cmd_varwallprop_write_vtp(char *cmd) {
 
         Evw->Delete();
     }
+
+    // /* EXTERNAL TISSUE SUPPORT - ISL JULY 2019 */
+    if (KsvwSolution_ != NULL) {
+    	vtkDoubleArray *ksvw = vtkDoubleArray::New();
+        ksvw->SetNumberOfComponents(1);
+        ksvw->Allocate(numNodes_,10000);
+        ksvw->SetNumberOfTuples(numNodes_);
+        ksvw->SetName("SpringConstant");
+        for(i = 0; i < numNodes_; i++){
+            ksvw->SetTuple1(i,KsvwSolution_[i]);
+        }
+
+        grid->GetPointData()->AddArray(ksvw);
+
+        ksvw->Delete();
+    }
+
+    if (CsvwSolution_ != NULL) {
+    	vtkDoubleArray *csvw = vtkDoubleArray::New();
+        csvw->SetNumberOfComponents(1);
+        csvw->Allocate(numNodes_,10000);
+        csvw->SetNumberOfTuples(numNodes_);
+        csvw->SetName("DampingConstant");
+        for(i = 0; i < numNodes_; i++){
+            csvw->SetTuple1(i,CsvwSolution_[i]);
+        }
+
+        grid->GetPointData()->AddArray(csvw);
+
+        csvw->Delete();
+    }
+
+    if (P0vwSolution_ != NULL) {
+    	vtkDoubleArray *p0vw = vtkDoubleArray::New();
+        p0vw->SetNumberOfComponents(1);
+        p0vw->Allocate(numNodes_,10000);
+        p0vw->SetNumberOfTuples(numNodes_);
+        p0vw->SetName("ExternalPressure");
+        for(i = 0; i < numNodes_; i++){
+            p0vw->SetTuple1(i,P0vwSolution_[i]);
+        }
+
+        grid->GetPointData()->AddArray(p0vw);
+
+        p0vw->Delete();
+    }
+    /* --------------------------------------------------- */
+
 
     vtkGeometryFilter* surfFilt = vtkGeometryFilter::New();
     surfFilt->MergingOff();
