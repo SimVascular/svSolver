@@ -176,7 +176,7 @@ c
 
         subroutine e3b2 (ul,      yl,      acl,     iBCB,    BCB,
      &                  shpb,    shglb,   xlb,     rl,      sgn,
-     &    dwl,     xKebe, elem_prop)
+     &                  dwl,     xKebe, elem_prop)
         use LagrangeMultipliers
 c
         include "global.h"
@@ -208,12 +208,13 @@ C
       INTEGER             nodlclM,nodlclN
 C
       REAL*8                allu,        bnorm,      g1yi
-      REAL*8                g2yi,        g3yi,        pres,        rho
-      REAL*8                rkwall_glob, rlkwall,     rmu,         rna
-      REAL*8                rou,         shape,       shdrv,       stabk
-      REAL*8                tau1n,       tau2n,       tau3n,       temp
-      REAL*8                u1,          u2,          u3,          unm
-      REAL*8                vdot,        wdetjb,      elem_prop
+      REAL*8                g2yi,        g3yi,       pres,        rho
+      REAL*8                rkwall_glob, rlkwall,    rmu,         rna
+      REAL*8                rou,         shape,      shdrv,       stabk
+      REAL*8                tau1n,       tau2n,      tau3n,       temp
+      REAL*8                u1,          u2,         u3,          unm
+      REAL*8                vdot,        wdetjb,     elem_prop
+      REAL*8                f_suppt                      ! ISL July 2019
 
 c
         dimension yl(npro,nshl,ndof),          iBCB(npro,ndiBCB),
@@ -221,7 +222,7 @@ c
      &            shglb(nsd,nshl,ngaussb),
      &            xlb(npro,nenl,nsd),          ul(npro,nshl,nsd),
      &            acl(npro,nshl,ndof),
-     &            rl(npro,nshl,nflow), elem_prop(npro,2)
+     &            rl(npro,nshl,nflow),         elem_prop(npro,2)
 c
         dimension g1yi(npro,ndof),             g2yi(npro,ndof),
      &            g3yi(npro,ndof),             WdetJb(npro),
@@ -230,7 +231,8 @@ c
         dimension u1(npro),                    u2(npro),
      &            u3(npro),                    rho(npro),
      &            unm(npro),                   pres(npro),
-     &            vdot(npro,nsd),              rlKwall(npro,nshlb,nsd)
+     &            vdot(npro,nsd),              rlKwall(npro,nshlb,nsd),
+     &            f_suppt(npro,nsd)                     ! ISL July 2019
 c
         dimension rou(npro),                   rmu(npro),
      &            temp(npro),                  allU(nsd)
@@ -238,11 +240,11 @@ c
         dimension tau1n(npro),
      &            tau2n(npro),                 tau3n(npro)
 c
-        dimension lnode(27),               sgn(npro,nshl),
-     &            shape(npro,nshl),        shdrv(npro,nsd,nshl),
+        dimension lnode(27),                   sgn(npro,nshl),
+     &            shape(npro,nshl),            shdrv(npro,nsd,nshl),
      &            rNa(npro,4)
 
-        real*8    xmudmi(npro,ngauss),      dwl(npro,nshl)
+        real*8    xmudmi(npro,ngauss),         dwl(npro,nshl)
 c
       dimension xKebe(npro,9,nshl,nshl),  rKwall_glob(npro,9,nshl,nshl),
      &   stabK(npro,9,nshl,nshl)
@@ -308,7 +310,7 @@ c
      &               rmu,             unm,
      &               tau1n,           tau2n,           tau3n,
      &               vdot,            rlKwall,
-     &               xKebe,           rKwall_glob,  elem_prop)
+     &               xKebe,           rKwall_glob,  elem_prop,  f_suppt)
 
 c
 c.... -----------------> boundary conditions <-------------------
@@ -390,6 +392,8 @@ c
               vdot(iel,:) = zero
               xKebe(iel,:,:,:) = zero
               rKwall_glob(iel,:,:,:) = zero                 ! no stiffness: not a wall element
+
+              f_suppt(iel, :) = zero                        ! ISL July 2019
            endif
 c
 c..... to calculate inner products for Lagrange Multipliers
@@ -462,7 +466,7 @@ c                  rlkwall(iel,3,:)=walln3*bnorm(iel,:)
         endif
 c
 c.... assemble the contributions
-c
+
         rNa(:,1) = -WdetJb * ( tau1n - bnorm(:,1) * pres - vdot(:,1))
         rNa(:,2) = -WdetJb * ( tau2n - bnorm(:,2) * pres - vdot(:,2))
         rNa(:,3) = -WdetJb * ( tau3n - bnorm(:,3) * pres - vdot(:,3))
@@ -470,6 +474,7 @@ c
 c
 c.... THIS IS DONE FOR ADDING STABILITY IN THE CASE OF BACK FLOW
 c
+        
         rou      = backFlowStabCoef*5D-1*rho*WdetJb*(ABS(unm) - unm)
         rNa(:,1) = rNa(:,1) + rou*u1
         rNa(:,2) = rNa(:,2) + rou*u2
@@ -522,7 +527,16 @@ c
            rNa(:,3) = rNa(:,3) + WdetJb * rou * u3
         endif
 c
-c.... ------------------------->  Residual  <--------------------------
+c    ----------> External tissue support (ISL July 2019) <--------------
+
+        if(ideformwall.eq.1) then
+          rNa(:, 1) = rNa(:, 1) - WdetJb * f_suppt(:, 1)
+          rNa(:, 2) = rNa(:, 2) - WdetJb * f_suppt(:, 2)
+          rNa(:, 3) = rNa(:, 3) - WdetJb * f_suppt(:, 3)
+        endif
+
+c
+c.... ------------------->  Negative of Residual  <---------------------
 c
 c.... add the flux to the residual
 c
@@ -535,6 +549,7 @@ c
            rl(:,nodlcl,4) = rl(:,nodlcl,4) - shape(:,nodlcl) * rNa(:,4)
 
         enddo
+
         if(ideformwall.eq.1) then
            rl(:,1,1) = rl(:,1,1) - rlKwall(:,1,1)
            rl(:,1,2) = rl(:,1,2) - rlKwall(:,1,2)
@@ -591,6 +606,7 @@ c
 !! @param[in] shglb(nsd,nen) Boundary element grad-shape-functions
 !! @param[in] xlb(npro,nenl,nsd) Nodal coordinates at current step
 !! @param[in] lnode(nenb) Local nodes on the boundary
+!! @param[in] elem_prop(npro, nwallprop)  Local element wall properties
 !!
 !! output:<BR>
 !! @param[out] g1yi(npro,ndof) grad-v in direction 1
@@ -609,6 +625,7 @@ c
 !! @param[out] tau3n(npro) BC viscous flux 3
 !! @param[out] vdot(npro,nsd) Acceleration at quadrature points
 !! @param[out] rlKwall(npro,nshlb,nsd) Wall stiffness contribution to the local residual
+!! @param[out] f_suppt(npro, nsd) Tissue support contribution to the local residual - ISL July 2019
 
       subroutine e3bvar2 (yl,      acl,     ul,
      &                   shpb,    shglb,
@@ -617,7 +634,7 @@ c
      &                   u1,      u2,      u3,      rmu,
      &                   unm,     tau1n,   tau2n,   tau3n,
      &                   vdot,    rlKwall,
-     &                   xKebe,   rKwall_glob, elem_prop)
+     &                   xKebe,   rKwall_glob, elem_prop, f_suppt)
 
       include "global.h"
       include "common_blocks/conpar.h"
@@ -639,6 +656,7 @@ C
       REAL*8                u1,          u2,          u3,          ul
       REAL*8                unm,         vdot,        wdetjb,      xkebe
       REAL*8                xlb,         yl
+      REAL*8                f_suppt                       ! ISL July 2019
 C
 C     Local variables
 C
@@ -664,6 +682,8 @@ C
       REAL*8                v3,          x1rot,       x2rot,      x3rot
       REAL*8                elem_prop
 
+c     - ISL July 2019 - 
+      REAL*8                disp,        f_suppt_LHS
 
 c
       dimension yl(npro,nshl,ndof),        rmu(npro),
@@ -680,7 +700,8 @@ c
      &            tau3n(npro),
      &            acl(npro,nshl,ndof),       ul(npro,nshl,nsd),
      &            vdot(npro,nsd),           rlKwall(npro,nshlb,nsd),
-     &            elem_prop(npro,2)
+     &            elem_prop(npro,2),
+     &            disp(npro,nsd),            f_suppt(npro,nsd)  ! ISL July 2019
 c
       dimension gl1yi(npro,ndof),          gl2yi(npro,ndof),
      &            gl3yi(npro,ndof),          dxdxib(npro,nsd,nsd),
@@ -716,7 +737,8 @@ c
      &            rKwall_glob33(npro,nsd,nsd)
 c
       dimension   rKwall_glob(npro,9,nshl,nshl),
-     &            xKebe(npro,9,nshl,nshl)
+     &            xKebe(npro,9,nshl,nshl),
+     &            f_suppt_LHS(npro)                     ! ISL July 2019 
 c
       real*8      lhmFctvw, tsFctvw(npro)
 
@@ -728,8 +750,7 @@ c
       integer   e, i, j
 c
       integer   aa, b
-
-
+      
 c
 c.... ------------------->  integration variables  <--------------------
 c
@@ -740,6 +761,7 @@ c
       u1   = zero
       u2   = zero
       u3   = zero
+      disp = zero                                        ! ISL July 2019
 c
 
       do n = 1, nshlb
@@ -749,6 +771,11 @@ c
          u1   = u1   + shpb(:,nodlcl) * yl(:,nodlcl,2)
          u2   = u2   + shpb(:,nodlcl) * yl(:,nodlcl,3)
          u3   = u3   + shpb(:,nodlcl) * yl(:,nodlcl,4)
+
+c        Displacement for tissue support                 ! ISL July 2019
+         disp(:, 1) = disp(:, 1) + shpb(:, nodlcl) * ul(:, nodlcl, 1)
+         disp(:, 2) = disp(:, 2) + shpb(:, nodlcl) * ul(:, nodlcl, 2)
+         disp(:, 3) = disp(:, 3) + shpb(:, nodlcl) * ul(:, nodlcl, 3)
 
       enddo
 c
@@ -952,6 +979,7 @@ c
         rKwall_glob = zero
       endif
 
+c.... --------------------------> Deformable wall <---------------------
       if(ideformwall.eq.1) then
       do n = 1, nshlb
          nodlcl = lnode(n)
@@ -962,13 +990,10 @@ c
 
       enddo
 
-
-c        !  vdot = vdot * thicknessvw * rhovw
-        !e3bvar2.f is for ivarwallprop=1
-         do n=1,nsd
+      do n = 1, nsd
          !  elem_prop(:,1) variable thickness
          vdot(:,n) = vdot(:,n) * elem_prop(:,1)*rhovw
-         enddo
+      enddo
 
 
 
@@ -1253,13 +1278,10 @@ c      lhmFct = almi * (one - flmpl)      Maybe we have to define flmplW: lumped
       lhmFctvw = almi * (one - flmpl)
 c
 c.... scale variables for efficiency
-c
+c..., elem_prop(:,1) is thickness
 
-      tsFctvw     = lhmFctvw * WdetJb * rhovw * elem_prop(:,1)
+      tsFctvw     = lhmFctvw * WdetJb * rhovw * elem_prop(:, 1)
 
-c     tsFctvw     = lhmFctvw * WdetJb * rhovw * thicknessvw
-
-c
 c.... compute mass and convection terms
 c
 c.... NOTE:  the wall mass contributions should only have 3 nodal components
@@ -1268,13 +1290,21 @@ c.... be done from 1 to nshlb=3...
 
       do b = 1, nshlb
          do aa = 1, nshlb
+
+c        The time term: tmp1=alpha_m*(1-lmp)*WdetJ*N^aN^b*rho*thickness
             tmp1 = tsFctvw * shpb(:,aa) * shpb(:,b)
-c
-c           tmp1=alpha_m*(1-lmp)*WdetJ*N^aN^b*rho*thickness   the time term
-c
-            xKebe(:,1,aa,b) = xKebe(:,1,aa,b) + tmp1
-            xKebe(:,5,aa,b) = xKebe(:,5,aa,b) + tmp1
-            xKebe(:,9,aa,b) = xKebe(:,9,aa,b) + tmp1
+
+c...     ----------> External tissue support (ISL July 2019) <----------
+c...     elem_prop(elem, :) - var thicknessvw, evw, ksvw, csvw, p0vw 
+
+            f_suppt_LHS = WdetJb * ( alfi * gami * Delt(itseq) * 
+     &                    elem_prop(:, 4) * shpb(:, aa) * shpb(:, b) + 
+     &                    alfi * betai * Delt(itseq) * Delt(itseq) * 
+     &                    elem_prop(:, 3) * shpb(:, aa) * shpb(:, b) )      
+
+            xKebe(:,1,aa,b) = xKebe(:,1,aa,b) + tmp1 + f_suppt_LHS
+            xKebe(:,5,aa,b) = xKebe(:,5,aa,b) + tmp1 + f_suppt_LHS
+            xKebe(:,9,aa,b) = xKebe(:,9,aa,b) + tmp1 + f_suppt_LHS
          enddo
       enddo
 
@@ -1381,17 +1411,25 @@ c.... This is ugly, but I will fix it later...
 
         rKwall_glob = rKwall_glob*betai*Delt(itseq)*Delt(itseq)*alfi
 
-      else
-c....   nothing happens
-        goto 123
       endif
 
-123   continue
+c.... ----------> External tissue support (ISL July 2019) <-------------
+c...     elem_prop(elem, :) - var thicknessvw, evw, ksvw, csvw, p0vw 
 
-      endif
-c
-c.... return
-c
+      f_suppt(:, 1) = -elem_prop(:, 3) * disp(:, 1) - 
+     &                 elem_prop(:, 4) * u1 - 
+     &                 elem_prop(:, 5) * bnorm(:, 1)
+
+      f_suppt(:, 2) = -elem_prop(:, 3) * disp(:, 2) - 
+     &                 elem_prop(:, 4) * u2 - 
+     &                 elem_prop(:, 5) * bnorm(:, 2)
+
+      f_suppt(:, 3) = -elem_prop(:, 3) * disp(:, 3) - 
+     &                 elem_prop(:, 4) * u3 - 
+     &                 elem_prop(:, 5) * bnorm(:, 3)      
+
+      endif                         ! end of deformable wall conditional
+
       return
       end
 
@@ -1402,29 +1440,35 @@ c
       INCLUDE "common_blocks/nomodule.h"
 
       INTEGER i,k,j
-      REAL*8 elem_prop,rlocal
-      DIMENSION rlocal(npro,nshl,2), elem_prop(npro,2)
-      REAL*8, DIMENSION(3,2):: f
+      REAL*8 rlocal, elem_prop, f
+
+      DIMENSION rlocal(npro, nshl, 5)
+      DIMENSION elem_prop(npro, 5)
+      DIMENSION f(3, 5)
+
 
       DO i = 1,npro
         k = 0
 c        DO j=1,nshl
 c         IF (rlocal(i,j,1)>0.0D0 .AND. k<4) THEN
 c         some element may have all four nodes on the wall
-        DO j=1,nshlb
-          IF (rlocal(i,j,1)>0.0D0) THEN
-            k=k+1
-            f(k,:)=rlocal(i,j,:)
+
+        DO j = 1, nshlb
+
+c....     Use thickness to determine the number of nodes on the wall
+          IF (rlocal(i, j, 1) > 0.0D0) THEN
+            k = k + 1
+            f(k, :) = rlocal(i, j, :)
           END IF
         END DO
 
-        IF(k == 3) THEN
-          elem_prop(i,:)=(f(1,:)+f(2,:)+f(3,:))/3D0
+        IF (k == 3) THEN
+c....     Take the average of nodal wall properties
+          elem_prop(i, :) = (f(1,:) + f(2,:) + f(3,:)) / 3D0
         ELSE
-          elem_prop(i,1) = thicknessvw
-          elem_prop(i,2) = evw
+          elem_prop(i, :) = (/ thicknessvw, evw, ksvw, csvw, p0vw /)
         END IF
       END DO
-      END SUBROUTINE
+      END
 
 #endif

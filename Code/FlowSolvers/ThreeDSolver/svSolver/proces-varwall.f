@@ -92,6 +92,7 @@ c      temporary local boundary element nodal coordinates and wall properties
        real*8, allocatable, dimension(:,:,:) :: xlb
        real*8, allocatable, dimension(:,:,:) :: wallpropl
        integer iblk,iel
+       integer nwallprop
 #endif
 c
 c.... shape function declarations
@@ -158,6 +159,9 @@ c
 
 #if(VER_VARWALL == 1)
 
+c....   variable thicknessvw, evw, ksvw, csvw, p0vw
+        nwallprop = 5
+
         if((ideformwall.eq.1) .and. (ivarwallprop.eq.1)) then
 
           do iblk = 1, nelblb
@@ -168,11 +172,11 @@ c
 
             npro   = lcblkb(1,iblk+1) - iel
 
-c            allocate ( xlb(npro,nenl,nsd) )
-            allocate ( wallpropl(npro,nshl,2) )
-
+c           allocate ( xlb(npro,nenl,nsd) )
+            allocate ( wallpropl(npro,nshl,nwallprop) )
+            
 c           get wall properties for each wall node for block iblk
-         call localx(wallpropg,wallpropl,  mienb(iblk)%p, 2, 'gather  ')
+            call localx(wallpropg,wallpropl,  mienb(iblk)%p, nwallprop, 'gather  ')
 
 c           get coordinates for wall nodes in block iblk
 c           call localx(point2x,  xlb,  mienb(iblk)%p,  nsd,  'gather  ')
@@ -185,6 +189,7 @@ c            deallocate(xlb)
 
           deallocate(wallpropg)
         end if
+
 #endif
 
 c.... close echo file
@@ -195,6 +200,7 @@ c
 c
 c.... call the semi-discrete predictor multi-corrector iterative driver
 c
+
         call itrdrv (y,              ac,
      &               uold,           point2x,
      &               iBC,            BC,

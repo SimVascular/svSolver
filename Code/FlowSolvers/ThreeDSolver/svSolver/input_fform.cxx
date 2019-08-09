@@ -722,22 +722,30 @@ int input_fform(char inpfname[])
 
 #if(VER_VARWALL == 1)
      // Check Variable wall properties
-     strvalue=(string)inp.GetValue("Variable Wall Thickness and Young Mod","False",false,true);
-     if(strvalue == "True"){
+     strvalue=(string)inp.GetValue("Variable Wall Properties","False",false,true);
+     if (strvalue == "True") {
        nomodule.ivarwallprop = 1;
-     }else{
+     } else {
        nomodule.ivarwallprop = 0;
      } 
 #endif
 
-     // Read isotropic material properties only if the thi
-     if(nomodule.ivarwallprop == 0){
+     // Read isotropic material properties
+     if (nomodule.ivarwallprop == 0) {
+
        nomodule.thicknessvw = inp.GetValue("Thickness of Vessel Wall","",true,true);
        nomodule.evw = inp.GetValue("Young Mod of Vessel Wall","",true,true);
-     }else{
+       nomodule.ksvw = inp.GetValue("Spring Constant of External Support", "", true, true);
+       nomodule.csvw = inp.GetValue("Damping Constant of External Support", "", true, true);
+       nomodule.p0vw = inp.GetValue("External Pressure", "", true, true);
+
+     } else {
        // Read Isotropic values from File
        nomodule.thicknessvw = 0.0;
        nomodule.evw = 0.0;
+       nomodule.ksvw = 0.0;
+       nomodule.csvw = 0.0;
+       nomodule.p0vw = 0.0;
      }
      // Density and shear constant of the walls need to be defined
      nomodule.rhovw = inp.GetValue("Density of Vessel Wall","",true,true);

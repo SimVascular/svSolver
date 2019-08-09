@@ -4178,8 +4178,6 @@ c.... add the flux to the residual
 
         enddo
 
-
-
         if(ideformwall.eq.1) then
            rl(:,1,1) = rl(:,1,1) - rlKwall(:,1,1) 
            rl(:,1,2) = rl(:,1,2) - rlKwall(:,1,2)
@@ -4449,8 +4447,7 @@ C
       REAL*8                v3,          x1rot,       x2rot,      x3rot
 
 c     - ISL July 2019 - 
-      REAL*8                disp,        k_s,         c_s,        p_0
-      REAL*8                f_suppt_LHS
+      REAL*8                disp,        f_suppt_LHS
 C
 c
       dimension yl(npro,nshl,ndof),        rmu(npro),
@@ -5016,7 +5013,7 @@ c
 c.... NOTE:  the wall mass contributions should only have 3 nodal components 
 c.... since the fourth node is an interior node... therefore, the loops should
 c.... be done from 1 to nshlb=3...
-
+      
       do b = 1, nshlb
          do aa = 1, nshlb
 
@@ -5024,15 +5021,11 @@ c        The time term: tmp1=alpha_m*(1-lmp)*WdetJ*N^aN^b*rho*thickness
             tmp1 = tsFctvw * shpb(:,aa) * shpb(:,b)
 
 c...     ----------> External tissue support (ISL July 2019) <----------
-            k_s = 1D3
-            c_s = 1D4
-C             p_0 = 0D0
-            p_0 = -4D0 * 1.3332E3
 
             f_suppt_LHS = WdetJb * ( alfi * gami * Delt(itseq) * 
-     &                    c_s * shpb(:, aa) * shpb(:, b) + 
+     &                    csvw * shpb(:, aa) * shpb(:, b) + 
      &                    alfi * betai * Delt(itseq) * Delt(itseq) * 
-     &                    k_s * shpb(:, aa) * shpb(:, b) )
+     &                    ksvw * shpb(:, aa) * shpb(:, b) )
 c
             xKebe(:,1,aa,b) = xKebe(:,1,aa,b) + tmp1 + f_suppt_LHS
             xKebe(:,5,aa,b) = xKebe(:,5,aa,b) + tmp1 + f_suppt_LHS
@@ -5147,23 +5140,13 @@ c.... This is ugly, but I will fix it later...
       endif
 
 c.... ----------> External tissue support (ISL July 2019) <-------------
-      k_s = 1D3
-      c_s = 1D4
-C       p_0 = 0D0
-      p_0 = -4D0 * 1.3332E3
-
-C       print *, '(k_s, c_s, p_0)', k_s, c_s, p_0
-
-      f_suppt(:, 1) = -k_s * disp(:, 1) - c_s * u1 - p_0 * bnorm(:, 1)
-      f_suppt(:, 2) = -k_s * disp(:, 2) - c_s * u2 - p_0 * bnorm(:, 2)
-      f_suppt(:, 3) = -k_s * disp(:, 3) - c_s * u3 - p_0 * bnorm(:, 3)
+      f_suppt(:, 1) = -ksvw * disp(:, 1) - csvw * u1 - p0vw * bnorm(:, 1)
+      f_suppt(:, 2) = -ksvw * disp(:, 2) - csvw * u2 - p0vw * bnorm(:, 2)
+      f_suppt(:, 3) = -ksvw * disp(:, 3) - csvw * u3 - p0vw * bnorm(:, 3)
 
 
       endif                         ! end of deformable wall conditional
 
-
-
- 
       return
       end
       
@@ -11964,9 +11947,7 @@ c
 c
 c.... read in and block all data
 c
-
         call readnblk()
-
 c
 c.... open the echo file (echo closed at exit)
 c

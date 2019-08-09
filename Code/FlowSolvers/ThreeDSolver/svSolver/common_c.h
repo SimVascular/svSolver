@@ -477,10 +477,13 @@ extern "C" {
     double bcttimescale;
     double ValueListResist[MAXSURF+1];
     double rhovw;
-    double thicknessvw;
-    double evw;
     double rnuvw;
     double rshearconstantvw;
+    double thicknessvw;
+    double evw;
+    double ksvw;
+    double csvw;
+    double p0vw;
     double betai;
     double rescontrol;
     double ResCriteria;

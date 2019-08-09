@@ -1688,7 +1688,7 @@ Partition_Problem( int  numProcs,
 	  }
 
 #if(VER_VARWALL == 1)
-    int nsdwp = 2;
+    int nsdwp = 5;  // variable thicknessvw, evw, ksvw, csvw, p0vw
     double* wallprop;
     double* fWallprop;
     int nshgLocalWallprop;
@@ -1707,7 +1707,8 @@ Partition_Problem( int  numProcs,
       	  use_restart=1;
 
 		  nshg  = iarray[0];
-		  nsdwp  = iarray[1];
+		  nsdwp = iarray[1];
+
 		  isize = nshg * nsdwp ;
 
 		  wallprop = new double [ isize ];
@@ -1750,7 +1751,7 @@ Partition_Problem( int  numProcs,
         }
 
 #if(VER_VARWALL == 1)
-        if (nomodule.ivarwallprop != 0 && use_restart==1) {
+        if (nomodule.ivarwallprop != 0 && use_restart==1) {         
           nshgLocalWallprop = wallpropPart[a].size();
           fWallprop = new double [ nshgLocalWallprop * nsdwp ];
 	    }
@@ -1785,7 +1786,9 @@ Partition_Problem( int  numProcs,
         }
 
 #if(VER_VARWALL == 1)
+
         if (nomodule.ivarwallprop != 0 && use_restart==1) {
+            
 			fprintf( rascii, "nshgLocalwallprop: %d\n", nshgLocalWallprop);
 			fprintf( rascii, "numVars: %d\n", nsdwp );
 			fprintf( rascii, "Step Number: %d\n", stepno);

@@ -53,6 +53,8 @@
 
 using namespace std;
 
+// Function implementations in Cinput.cxx
+
 class Input {
 public:
 //  Input(const string &, const string &default_fname = "");
