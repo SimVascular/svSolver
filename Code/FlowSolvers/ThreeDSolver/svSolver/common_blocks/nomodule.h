@@ -40,9 +40,9 @@ c  DAMAGE.
 
 c      \\Common Block variables for "no module"
 
-       REAL*8 bcttimescale,ValueListResist(0:MAXSURF),rhovw,thicknessvw,
-     & evw,rnuvw
-       REAL*8 rshearconstantvw, betai,rescontrol,ResCriteria,
+       REAL*8 bcttimescale,ValueListResist(0:MAXSURF),rhovw,rnuvw, 
+     & rshearconstantvw, thicknessvw, evw, ksvw, csvw, p0vw
+       REAL*8 betai,rescontrol,ResCriteria,
      & backflowstabcoef
        INTEGER icardio, itvn, ipvsq, numResistSrfs,
      & nsrflistResist(0:MAXSURF)
@@ -63,8 +63,11 @@ c      \\Common Block variables for "no module"
        INTEGER numNormalSrfs,nsrflistNormal(0:MAXSURF)
 
         common /nomodule/ bcttimescale,ValueListResist,
-     &            rhovw, thicknessvw, evw, rnuvw,
-     &            rshearconstantvw, betai,rescontrol,ResCriteria,
+     &            rhovw, rnuvw, rshearconstantvw, thicknessvw, evw,
+c         ======= External Tissue Support / ISL July 2019 ======
+     &            ksvw, csvw, p0vw,
+c         ======================================================
+     &            betai, rescontrol,ResCriteria,
      &            backFlowStabCoef, icardio, itvn, ipvsq,
      &            numResistSrfs, nsrflistResist,
 c                 ADDED FOR CONSISTENCY - CLOSED LOOP

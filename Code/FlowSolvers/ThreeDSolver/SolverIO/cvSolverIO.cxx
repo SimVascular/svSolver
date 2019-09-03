@@ -260,11 +260,11 @@ int cvsolverIO::readDataBlock ( const char* keyphrase,
     }
 
     // error check..
-    // since we require that a consistant header always preceed the data block
+    // since we require that a consistent header always precede the data block
     // let us check to see that it is actually the case.    
 
     if ( ! cscompare( LastHeaderKey_, keyphrase ) ) {
-        fprintf(stderr,"ERROR: header not consistant with data block\n");
+        fprintf(stderr,"ERROR: header not consistent with data block\n");
         fprintf(stderr,"Header: %s\n", LastHeaderKey_);
         fprintf(stderr,"DataBlock: %s\n", keyphrase);
         fprintf(stderr,"Please recheck read sequence\n");
@@ -418,11 +418,11 @@ int cvsolverIO::writeDataBlock (const char* keyphrase,
     }
 
     // error check..
-    // since we require that a consistant header always preceed the data block
+    // since we require that a consistent header always precede the data block
     // let us check to see that it is actually the case.    
 
     if ( ! cscompare( LastHeaderKey_, keyphrase ) ) {
-        fprintf(stderr,"ERROR: header not consistant with data block\n");
+        fprintf(stderr,"ERROR: header not consistent with data block\n");
         fprintf(stderr,"Header: %s\n", LastHeaderKey_);
         fprintf(stderr,"DataBlock: %s\n", keyphrase);
         fprintf(stderr,"Please recheck read sequence\n");
