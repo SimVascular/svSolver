@@ -54,8 +54,9 @@ c      \\Common Block variables for "no module"
        INTEGER Lagrange, numLagrangeSrfs,nsrflistLagrange(0:MAXSURF),
      & iLagfile
        INTEGER MinNumIter,ideformwall, ivarwallprop
+       INTEGER itissuesuppt
        INTEGER applyWallDeformation
-       INTEGER iwallmassfactor,iwallstiffactor,
+       INTEGER iwallmassfactor, iwallstiffactor,
      & nProps
        INTEGER iGenInitialization,iGenFromFile
        INTEGER numNeumannSrfs,nsrflistNeumann(0:MAXSURF)
@@ -74,7 +75,7 @@ c                 ADDED FOR CONSISTENCY - CLOSED LOOP
      &            numNeumannSrfs,nsrflistNeumann,
      &            iGenInitialization,iGenFromFile,
      &            numDirichletSrfs,nsrflistDirichlet,
-c                 ===================================
+c                 ==============================================
      &            numImpSrfs, nsrflistImp,impfile,
      &            numRCRSrfs, nsrflistRCR,ircrfile,
      &            numCORSrfs,nsrflistCOR,icorfile,
@@ -82,13 +83,12 @@ c                 ===================================
      &            numCalcSrfs, nsrflistCalc,
 c                 ADDED FOR CONSISTENCY - CLOSED LOOP
      &            numNormalSrfs,nsrflistNormal,
-c                 ===================================
+c                 ==============================================
      &            Lagrange, numLagrangeSrfs,
      &            nsrflistLagrange,iLagfile,
      &            MinNumIter,
      &            ideformwall, applyWallDeformation,
-c                 ADDED FOR CONSISTENCY - VARWALL
-     &            ivarwallprop, 
-c                 ===============================
+     &            ivarwallprop, itissuesuppt,
+c                 ==============================================
      &            iwallmassfactor,
      &            iwallstiffactor, nProps

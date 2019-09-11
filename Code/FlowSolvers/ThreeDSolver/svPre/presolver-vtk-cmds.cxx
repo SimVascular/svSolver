@@ -101,7 +101,7 @@ extern double* EvwSolution_;
 extern double* KsvwSolution_;
 extern double* CsvwSolution_;
 extern double* P0vwSolution_;
-
+extern int itissuesuppt;
 #endif
 
 int writeGEOMBCDAT(char* filename);
@@ -114,7 +114,7 @@ int NWgetNextNonBlankLine(int *eof);
 int NWcloseFile();
 int setNodesWithCode(char *cmd, int val);
 int setBoundaryFacesWithCode(char *cmd, int setSurfID, int surfID, int setCode,
-		int code, double value);
+        int code, double value);
 int parseDouble(char *cmd, double *num);
 int parseDouble2(char *cmd, double *num);
 int parseDouble3(char *cmd, double *v1, double *v2, double *v3);
@@ -122,7 +122,7 @@ int parseCmdStr(char *cmd, char *mystr);
 int parseCmdStr2(char *cmd, char *mystr);
 int parseNum2(char *cmd, int *num);
 int check_node_order(int n0, int n1, int n2, int n3, int elementId, int *k0,
-		int *k1, int *k2, int *k3);
+        int *k1, int *k2, int *k3);
 //int fixFreeEdgeNodes(char *cmd);
 void siftDownEdges(int **edges, int root, int bottom, int array_size);
 //int createMeshForDispCalc(char *cmd);
@@ -174,11 +174,11 @@ extern vector<BCTData> vbct;
 
 inline
 void Cross(double ax, double ay, double az, double bx, double by, double bz,
-		double *prodx, double *prody, double *prodz) {
-	(*prodx) = ay * bz - az * by;
-	(*prody) = -(ax * bz - az * bx);
-	(*prodz) = ax * by - ay * bx;
-	return;
+        double *prodx, double *prody, double *prodz) {
+    (*prodx) = ay * bz - az * by;
+    (*prody) = -(ax * bz - az * bx);
+    (*prodz) = ax * by - ay * bx;
+    return;
 }
 
 // =======
@@ -187,251 +187,251 @@ void Cross(double ax, double ay, double az, double bx, double by, double bz,
 
 inline
 double Dot(double ax, double ay, double az, double bx, double by, double bz) {
-	double product;
+    double product;
 
-	product = ax * bx + ay * by + az * bz;
-	return product;
+    product = ax * bx + ay * by + az * bz;
+    return product;
 }
 
 int cmd_mesh_vtu(char *cmd) {
 
-	int i;
+    int i;
 
-	// enter
-	debugprint(stddbg, "Entering cmd_mesh_vtu.\n");
+    // enter
+    debugprint(stddbg, "Entering cmd_mesh_vtu.\n");
 
-	// parse command string for filename
-	char meshfn[MAXPATHLEN];
-	meshfn[0] = '\0';
-	parseCmdStr(cmd, meshfn);
+    // parse command string for filename
+    char meshfn[MAXPATHLEN];
+    meshfn[0] = '\0';
+    parseCmdStr(cmd, meshfn);
 
-	// check file exists
-	FILE* fp = NULL;
-	if ((fp = fopen(meshfn, "r")) == NULL) {
-		fprintf(stderr, "ERROR: could not open file (%s).", meshfn);
-		return CV_ERROR;
-	} else {
-		fclose(fp);
-	}
+    // check file exists
+    FILE* fp = NULL;
+    if ((fp = fopen(meshfn, "r")) == NULL) {
+        fprintf(stderr, "ERROR: could not open file (%s).", meshfn);
+        return CV_ERROR;
+    } else {
+        fclose(fp);
+    }
 
-	vtkXMLUnstructuredGridReader* reader = vtkXMLUnstructuredGridReader::New();
-	reader->SetFileName(meshfn);
-	reader->Update();
+    vtkXMLUnstructuredGridReader* reader = vtkXMLUnstructuredGridReader::New();
+    reader->SetFileName(meshfn);
+    reader->Update();
 
-	vtkUnstructuredGrid* ug = NULL;
-	ug = reader->GetOutput();
-	if (ug == NULL) {
-		fprintf(stderr, "ERROR: problems parsing file (%s).", meshfn);
-		return CV_ERROR;
-	}
+    vtkUnstructuredGrid* ug = NULL;
+    ug = reader->GetOutput();
+    if (ug == NULL) {
+        fprintf(stderr, "ERROR: problems parsing file (%s).", meshfn);
+        return CV_ERROR;
+    }
 
-	// never run scalar problems anymore
+    // never run scalar problems anymore
 
-	numSolnVars_ = 5;
+    numSolnVars_ = 5;
 
-	// set num nodes and elements
+    // set num nodes and elements
 
-	numNodes_ = ug->GetNumberOfPoints();
-	numElements_ = ug->GetNumberOfCells();
+    numNodes_ = ug->GetNumberOfPoints();
+    numElements_ = ug->GetNumberOfCells();
 
-	debugprint(stddbg, "  Number of Nodes (%i)\n", numNodes_);
-	debugprint(stddbg, "  Number of Elements (%i).\n", numElements_);
+    debugprint(stddbg, "  Number of Nodes (%i)\n", numNodes_);
+    debugprint(stddbg, "  Number of Elements (%i).\n", numElements_);
 
-	// find the number of edges in the entire mesh
+    // find the number of edges in the entire mesh
 
-	vtkExtractEdges* extractEdges = vtkExtractEdges::New();
-	extractEdges->SetInputDataObject(ug);
-	extractEdges->Update();
-	numMeshEdges_ = extractEdges->GetOutput()->GetNumberOfCells();
-	extractEdges->Delete();
+    vtkExtractEdges* extractEdges = vtkExtractEdges::New();
+    extractEdges->SetInputDataObject(ug);
+    extractEdges->Update();
+    numMeshEdges_ = extractEdges->GetOutput()->GetNumberOfCells();
+    extractEdges->Delete();
 
-	// find exterior surface
+    // find exterior surface
 
-	vtkGeometryFilter* surfFilt = vtkGeometryFilter::New();
-	surfFilt->MergingOff();
-	surfFilt->SetInputDataObject(ug);
-	surfFilt->Update();
-	vtkCleanPolyData* cleaner = vtkCleanPolyData::New();
-	cleaner->PointMergingOff();
-	cleaner->PieceInvariantOff();
-	cleaner->SetInputDataObject(surfFilt->GetOutput());
-	cleaner->Update();
+    vtkGeometryFilter* surfFilt = vtkGeometryFilter::New();
+    surfFilt->MergingOff();
+    surfFilt->SetInputDataObject(ug);
+    surfFilt->Update();
+    vtkCleanPolyData* cleaner = vtkCleanPolyData::New();
+    cleaner->PointMergingOff();
+    cleaner->PieceInvariantOff();
+    cleaner->SetInputDataObject(surfFilt->GetOutput());
+    cleaner->Update();
 
-	vtkPolyData *bdryPD = cleaner->GetOutput();
+    vtkPolyData *bdryPD = cleaner->GetOutput();
 
-	bdryPD->GetPointData()->SetActiveScalars("GlobalNodeID");
-	bdryPD->GetCellData()->SetActiveScalars("GlobalElementID");
+    bdryPD->GetPointData()->SetActiveScalars("GlobalNodeID");
+    bdryPD->GetCellData()->SetActiveScalars("GlobalElementID");
 
-	numBoundaryFaces_ = bdryPD->GetNumberOfCells();
+    numBoundaryFaces_ = bdryPD->GetNumberOfCells();
 
-	// calculate number of total mesh faces
-	numMeshFaces_ = (numElements_ * 4 - numBoundaryFaces_) / 2
-			+ numBoundaryFaces_;
+    // calculate number of total mesh faces
+    numMeshFaces_ = (numElements_ * 4 - numBoundaryFaces_) / 2
+            + numBoundaryFaces_;
 
-	debugprint(stddbg, "  Number of Boundary Faces (%i)\n", numBoundaryFaces_);
-	debugprint(stddbg, "  Number of Mesh faces (%i).\n", numMeshFaces_);
+    debugprint(stddbg, "  Number of Boundary Faces (%i)\n", numBoundaryFaces_);
+    debugprint(stddbg, "  Number of Mesh faces (%i).\n", numMeshFaces_);
 
-	int eof = 0;
-	int n0, n1, n2, n3;
-	int elementId;
+    int eof = 0;
+    int n0, n1, n2, n3;
+    int elementId;
 
-	//
-	// nodes
-	//
+    //
+    // nodes
+    //
 
-	if (numNodes_ == 0) {
-		fprintf(stderr,
-				"ERROR:  Must specify number of nodes before you read them in!\n");
-		return CV_ERROR;
-	}
+    if (numNodes_ == 0) {
+        fprintf(stderr,
+                "ERROR:  Must specify number of nodes before you read them in!\n");
+        return CV_ERROR;
+    }
 
-	nodes_ = new double[3 * numNodes_];
+    nodes_ = new double[3 * numNodes_];
 
-	double pt[3];
-	int nodeId;
+    double pt[3];
+    int nodeId;
 
-	ug->GetPointData()->SetActiveScalars("GlobalNodeID");
-	ug->GetCellData()->SetActiveScalars("GlobalElementID");
+    ug->GetPointData()->SetActiveScalars("GlobalNodeID");
+    ug->GetCellData()->SetActiveScalars("GlobalElementID");
 
-	for (i = 0; i < numNodes_; i++) {
-		ug->GetPoints()->GetPoint(i, pt);
-		nodeId = ug->GetPointData()->GetScalars()->GetTuple1(i);
-		nodes_[0 * numNodes_ + nodeId - 1] = pt[0];
-		nodes_[1 * numNodes_ + nodeId - 1] = pt[1];
-		nodes_[2 * numNodes_ + nodeId - 1] = pt[2];
-		debugprint(stddbg, "  Node (%i) : %lf %lf %lf\n", nodeId, pt[0], pt[1],
-				pt[2]);
-	}
+    for (i = 0; i < numNodes_; i++) {
+        ug->GetPoints()->GetPoint(i, pt);
+        nodeId = ug->GetPointData()->GetScalars()->GetTuple1(i);
+        nodes_[0 * numNodes_ + nodeId - 1] = pt[0];
+        nodes_[1 * numNodes_ + nodeId - 1] = pt[1];
+        nodes_[2 * numNodes_ + nodeId - 1] = pt[2];
+        debugprint(stddbg, "  Node (%i) : %lf %lf %lf\n", nodeId, pt[0], pt[1],
+                pt[2]);
+    }
 
-	// do work
-	if (numElements_ == 0) {
-		fprintf(stderr,
-				"ERROR:  Must specify number of elements before you read them in!\n");
-		return CV_ERROR;
-	}
+    // do work
+    if (numElements_ == 0) {
+        fprintf(stderr,
+                "ERROR:  Must specify number of elements before you read them in!\n");
+        return CV_ERROR;
+    }
 
-	vtkIdList* ptids = vtkIdList::New();
-	ptids->Allocate(10, 10);
-	ptids->Initialize();
+    vtkIdList* ptids = vtkIdList::New();
+    ptids->Allocate(10, 10);
+    ptids->Initialize();
 
-	elements_ = new int[4 * numElements_];
+    elements_ = new int[4 * numElements_];
 
-	vtkCellArray *cells = ug->GetCells();
-	cells->InitTraversal();
+    vtkCellArray *cells = ug->GetCells();
+    cells->InitTraversal();
 
-	for (int i = 0; i < numElements_; i++) {
+    for (int i = 0; i < numElements_; i++) {
 
-		ptids->Reset();
-		cells->GetCell(5 * i, ptids);
-		if (ptids->GetNumberOfIds() != 4) {
-			fprintf(stderr, "ERROR:  invalid number of ids in cell (%i)!",
-					ptids->GetNumberOfIds());
-			return CV_ERROR;
-		}
-		elementId = ug->GetCellData()->GetScalars()->GetTuple1(i);
-		n0 = ug->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(0));
-		n1 = ug->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(1));
-		n2 = ug->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(2));
-		n3 = ug->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(3));
+        ptids->Reset();
+        cells->GetCell(5 * i, ptids);
+        if (ptids->GetNumberOfIds() != 4) {
+            fprintf(stderr, "ERROR:  invalid number of ids in cell (%i)!",
+                    ptids->GetNumberOfIds());
+            return CV_ERROR;
+        }
+        elementId = ug->GetCellData()->GetScalars()->GetTuple1(i);
+        n0 = ug->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(0));
+        n1 = ug->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(1));
+        n2 = ug->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(2));
+        n3 = ug->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(3));
 
-		int j0 = 0;
-		int j1 = 0;
-		int j2 = 0;
-		int j3 = 0;
+        int j0 = 0;
+        int j1 = 0;
+        int j2 = 0;
+        int j3 = 0;
 
-		check_node_order(n0, n1, n2, n3, elementId, &j0, &j1, &j2, &j3);
+        check_node_order(n0, n1, n2, n3, elementId, &j0, &j1, &j2, &j3);
 
-		elements_[0 * numElements_ + elementId - 1] = j0;
-		elements_[1 * numElements_ + elementId - 1] = j1;
-		elements_[2 * numElements_ + elementId - 1] = j2;
-		elements_[3 * numElements_ + elementId - 1] = j3;
+        elements_[0 * numElements_ + elementId - 1] = j0;
+        elements_[1 * numElements_ + elementId - 1] = j1;
+        elements_[2 * numElements_ + elementId - 1] = j2;
+        elements_[3 * numElements_ + elementId - 1] = j3;
 
-	}
+    }
 
-	//
-	// Boundary Faces
-	//
+    //
+    // Boundary Faces
+    //
 
-	// init data first time this function is called
-	if (boundaryElements_ == NULL) {
-		boundaryElements_ = new int*[4];
-		boundaryElements_[0] = new int[numMeshFaces_];
-		boundaryElements_[1] = new int[numMeshFaces_];
-		boundaryElements_[2] = new int[numMeshFaces_];
-		boundaryElements_[3] = new int[numMeshFaces_];
-		boundaryElementsIds_ = new int[numMeshFaces_];
-	}
+    // init data first time this function is called
+    if (boundaryElements_ == NULL) {
+        boundaryElements_ = new int*[4];
+        boundaryElements_[0] = new int[numMeshFaces_];
+        boundaryElements_[1] = new int[numMeshFaces_];
+        boundaryElements_[2] = new int[numMeshFaces_];
+        boundaryElements_[3] = new int[numMeshFaces_];
+        boundaryElementsIds_ = new int[numMeshFaces_];
+    }
 
-	cells = bdryPD->GetPolys();
-	cells->InitTraversal();
+    cells = bdryPD->GetPolys();
+    cells->InitTraversal();
 
-	for (i = 0; i < cells->GetNumberOfCells(); i++) {
-		ptids->Reset();
-		cells->GetCell(4 * i, ptids);
-		if (ptids->GetNumberOfIds() != 3) {
-			fprintf(stderr, "ERROR:  invalid number of ids in cell (%i)!",
-					ptids->GetNumberOfIds());
-			return CV_ERROR;
-		}
-		elementId = bdryPD->GetCellData()->GetScalars()->GetTuple1(i);
-		n0 = bdryPD->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(0));
-		n1 = bdryPD->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(1));
-		n2 = bdryPD->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(2));
+    for (i = 0; i < cells->GetNumberOfCells(); i++) {
+        ptids->Reset();
+        cells->GetCell(4 * i, ptids);
+        if (ptids->GetNumberOfIds() != 3) {
+            fprintf(stderr, "ERROR:  invalid number of ids in cell (%i)!",
+                    ptids->GetNumberOfIds());
+            return CV_ERROR;
+        }
+        elementId = bdryPD->GetCellData()->GetScalars()->GetTuple1(i);
+        n0 = bdryPD->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(0));
+        n1 = bdryPD->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(1));
+        n2 = bdryPD->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(2));
 
-		n3 = -1;
+        n3 = -1;
 
-		int j0 = 0;
-		int j1 = 0;
-		int j2 = 0;
-		int j3 = 0;
+        int j0 = 0;
+        int j1 = 0;
+        int j2 = 0;
+        int j3 = 0;
 
-		check_node_order(n0, n1, n2, n3, elementId, &j0, &j1, &j2, &j3);
+        check_node_order(n0, n1, n2, n3, elementId, &j0, &j1, &j2, &j3);
 
-		boundaryElements_[0][i] = j0;
-		boundaryElements_[1][i] = j1;
-		boundaryElements_[2][i] = j2;
-		boundaryElements_[3][i] = j3;
+        boundaryElements_[0][i] = j0;
+        boundaryElements_[1][i] = j1;
+        boundaryElements_[2][i] = j2;
+        boundaryElements_[3][i] = j3;
 
-		debugprint(stddbg, "  Boundary Element (%i) (%i): %i %i %i %i\n", i,
-				elementId, j0, j1, j2, j3);
+        debugprint(stddbg, "  Boundary Element (%i) (%i): %i %i %i %i\n", i,
+                elementId, j0, j1, j2, j3);
 
-		// note that I assume element numbering starts at 1,
-		// whereas flow solver assumes it started at zero!!
-		boundaryElementsIds_[i] = elementId - 1;
+        // note that I assume element numbering starts at 1,
+        // whereas flow solver assumes it started at zero!!
+        boundaryElementsIds_[i] = elementId - 1;
 
-	}
+    }
 
-	// cleanup
-	ptids->Delete();
-	cleaner->Delete();
-	surfFilt->Delete();
-	reader->Delete();
+    // cleanup
+    ptids->Delete();
+    cleaner->Delete();
+    surfFilt->Delete();
+    reader->Delete();
 
-	//
-	//  create some additional internal data structs
-	//
+    //
+    //  create some additional internal data structs
+    //
 
-	if (iBC_ == NULL) {
-		iBC_ = new int[numNodes_];
-		for (i = 0; i < numNodes_; i++) {
-			iBC_[i] = 0;
-		}
-	}
+    if (iBC_ == NULL) {
+        iBC_ = new int[numNodes_];
+        for (i = 0; i < numNodes_; i++) {
+            iBC_[i] = 0;
+        }
+    }
 
-	if (iBCB_ == NULL) {
-		iBCB_ = new int[2 * numBoundaryFaces_];
-		BCB_ = new double[numBoundaryFaces_ * 6];
-		for (i = 0; i < 2 * numBoundaryFaces_; i++) {
-			iBCB_[i] = 0;
-		}
-		for (i = 0; i < numBoundaryFaces_; i++) {
-			BCB_[i] = 0.0;
-		}
-	}
+    if (iBCB_ == NULL) {
+        iBCB_ = new int[2 * numBoundaryFaces_];
+        BCB_ = new double[numBoundaryFaces_ * 6];
+        for (i = 0; i < 2 * numBoundaryFaces_; i++) {
+            iBCB_[i] = 0;
+        }
+        for (i = 0; i < numBoundaryFaces_; i++) {
+            BCB_[i] = 0.0;
+        }
+    }
 
-	debugprint(stddbg, "Exiting cmd_mesh_vtu.\n");
+    debugprint(stddbg, "Exiting cmd_mesh_vtu.\n");
 
-	return CV_OK;
+    return CV_OK;
 
 }
 
@@ -446,615 +446,625 @@ int cmd_mesh_vtu(char *cmd) {
  */
 int cmd_mesh_and_adjncy_vtu(char *cmd) {
 
-	int i;
+    int i;
 
-	// enter
-	debugprint(stddbg, "Entering cmd_mesh_and_adjncy_vtu.\n");
+    // enter
+    debugprint(stddbg, "Entering cmd_mesh_and_adjncy_vtu.\n");
 
-	// parse command string for filename
-	char meshfn[MAXPATHLEN];
-	meshfn[0] = '\0';
-	parseCmdStr(cmd, meshfn);
+    // parse command string for filename
+    char meshfn[MAXPATHLEN];
+    meshfn[0] = '\0';
+    parseCmdStr(cmd, meshfn);
 
-	// check file exists
-	FILE* fp = NULL;
-	if ((fp = fopen(meshfn, "r")) == NULL) {
-		fprintf(stderr, "ERROR: could not open file (%s).", meshfn);
-		return CV_ERROR;
-	} else {
-		fclose(fp);
-	}
+    // check file exists
+    FILE* fp = NULL;
+    if ((fp = fopen(meshfn, "r")) == NULL) {
+        fprintf(stderr, "ERROR: could not open file (%s).", meshfn);
+        return CV_ERROR;
+    } else {
+        fclose(fp);
+    }
 
-	vtkXMLUnstructuredGridReader* reader = vtkXMLUnstructuredGridReader::New();
-	reader->SetFileName(meshfn);
-	reader->Update();
+    vtkXMLUnstructuredGridReader* reader = vtkXMLUnstructuredGridReader::New();
+    reader->SetFileName(meshfn);
+    reader->Update();
 
-	vtkUnstructuredGrid* ug = NULL;
-	ug = reader->GetOutput();
-	if (ug == NULL) {
-		fprintf(stderr, "ERROR: problems parsing file (%s).", meshfn);
-		return CV_ERROR;
-	}
+    vtkUnstructuredGrid* ug = NULL;
+    ug = reader->GetOutput();
+    if (ug == NULL) {
+        fprintf(stderr, "ERROR: problems parsing file (%s).", meshfn);
+        return CV_ERROR;
+    }
 
-	// never run scalar problems anymore
+    // never run scalar problems anymore
 
-	numSolnVars_ = 5;
+    numSolnVars_ = 5;
 
-	// set num nodes and elements
+    // set num nodes and elements
 
-	numNodes_ = ug->GetNumberOfPoints();
-	numElements_ = ug->GetNumberOfCells();
+    numNodes_ = ug->GetNumberOfPoints();
+    numElements_ = ug->GetNumberOfCells();
 
-	debugprint(stddbg, "  Number of Nodes (%i)\n", numNodes_);
-	debugprint(stddbg, "  Number of Elements (%i).\n", numElements_);
+    debugprint(stddbg, "  Number of Nodes (%i)\n", numNodes_);
+    debugprint(stddbg, "  Number of Elements (%i).\n", numElements_);
 
-	// find the number of edges in the entire mesh
+    // find the number of edges in the entire mesh
 
-	vtkExtractEdges* extractEdges = vtkExtractEdges::New();
-	extractEdges->SetInputDataObject(ug);
-	extractEdges->Update();
-	numMeshEdges_ = extractEdges->GetOutput()->GetNumberOfCells();
-	extractEdges->Delete();
+    vtkExtractEdges* extractEdges = vtkExtractEdges::New();
+    extractEdges->SetInputDataObject(ug);
+    extractEdges->Update();
+    numMeshEdges_ = extractEdges->GetOutput()->GetNumberOfCells();
+    extractEdges->Delete();
 
-	// find exterior surface
+    // find exterior surface
 
-	vtkGeometryFilter* surfFilt = vtkGeometryFilter::New();
-	surfFilt->MergingOff();
-	surfFilt->SetInputDataObject(ug);
-	surfFilt->Update();
-	vtkCleanPolyData* cleaner = vtkCleanPolyData::New();
-	cleaner->PointMergingOff();
-	cleaner->PieceInvariantOff();
-	cleaner->SetInputDataObject(surfFilt->GetOutput());
-	cleaner->Update();
+    vtkGeometryFilter* surfFilt = vtkGeometryFilter::New();
+    surfFilt->MergingOff();
+    surfFilt->SetInputDataObject(ug);
+    surfFilt->Update();
+    vtkCleanPolyData* cleaner = vtkCleanPolyData::New();
+    cleaner->PointMergingOff();
+    cleaner->PieceInvariantOff();
+    cleaner->SetInputDataObject(surfFilt->GetOutput());
+    cleaner->Update();
 
-	vtkPolyData *bdryPD = cleaner->GetOutput();
+    vtkPolyData *bdryPD = cleaner->GetOutput();
 
-	bdryPD->GetPointData()->SetActiveScalars("GlobalNodeID");
-	bdryPD->GetCellData()->SetActiveScalars("GlobalElementID");
+    bdryPD->GetPointData()->SetActiveScalars("GlobalNodeID");
+    bdryPD->GetCellData()->SetActiveScalars("GlobalElementID");
 
-	numBoundaryFaces_ = bdryPD->GetNumberOfCells();
+    numBoundaryFaces_ = bdryPD->GetNumberOfCells();
 
-	// calculate number of total mesh faces
-	numMeshFaces_ = (numElements_ * 4 - numBoundaryFaces_) / 2
-			+ numBoundaryFaces_;
+    // calculate number of total mesh faces
+    numMeshFaces_ = (numElements_ * 4 - numBoundaryFaces_) / 2
+            + numBoundaryFaces_;
 
-	debugprint(stddbg, "  Number of Boundary Faces (%i)\n", numBoundaryFaces_);
-	debugprint(stddbg, "  Number of Mesh faces (%i).\n", numMeshFaces_);
+    debugprint(stddbg, "  Number of Boundary Faces (%i)\n", numBoundaryFaces_);
+    debugprint(stddbg, "  Number of Mesh faces (%i).\n", numMeshFaces_);
 
-	int eof = 0;
-	int n0, n1, n2, n3;
-	int elementId;
+    int eof = 0;
+    int n0, n1, n2, n3;
+    int elementId;
 
-	//
-	// nodes
-	//
+    //
+    // nodes
+    //
 
-	if (numNodes_ == 0) {
-		fprintf(stderr,
-				"ERROR:  Must specify number of nodes before you read them in!\n");
-		return CV_ERROR;
-	}
+    if (numNodes_ == 0) {
+        fprintf(stderr,
+                "ERROR:  Must specify number of nodes before you read them in!\n");
+        return CV_ERROR;
+    }
 
-	nodes_ = new double[3 * numNodes_];
+    nodes_ = new double[3 * numNodes_];
 
-	double pt[3];
-	int nodeId;
+    double pt[3];
+    int nodeId;
 
-	ug->GetPointData()->SetActiveScalars("GlobalNodeID");
-	ug->GetCellData()->SetActiveScalars("GlobalElementID");
+    ug->GetPointData()->SetActiveScalars("GlobalNodeID");
+    ug->GetCellData()->SetActiveScalars("GlobalElementID");
 
-	for (i = 0; i < numNodes_; i++) {
-		ug->GetPoints()->GetPoint(i, pt);
-		nodeId = ug->GetPointData()->GetScalars()->GetTuple1(i);
-		nodes_[0 * numNodes_ + nodeId - 1] = pt[0];
-		nodes_[1 * numNodes_ + nodeId - 1] = pt[1];
-		nodes_[2 * numNodes_ + nodeId - 1] = pt[2];
-		debugprint(stddbg, "  Node (%i) : %lf %lf %lf\n", nodeId, pt[0], pt[1],
-				pt[2]);
-	}
+    for (i = 0; i < numNodes_; i++) {
+        ug->GetPoints()->GetPoint(i, pt);
+        nodeId = ug->GetPointData()->GetScalars()->GetTuple1(i);
+        nodes_[0 * numNodes_ + nodeId - 1] = pt[0];
+        nodes_[1 * numNodes_ + nodeId - 1] = pt[1];
+        nodes_[2 * numNodes_ + nodeId - 1] = pt[2];
+        debugprint(stddbg, "  Node (%i) : %lf %lf %lf\n", nodeId, pt[0], pt[1],
+                pt[2]);
+    }
 
-	// do work
-	if (numElements_ == 0) {
-		fprintf(stderr,
-				"ERROR:  Must specify number of elements before you read them in!\n");
-		return CV_ERROR;
-	}
+    // do work
+    if (numElements_ == 0) {
+        fprintf(stderr,
+                "ERROR:  Must specify number of elements before you read them in!\n");
+        return CV_ERROR;
+    }
 
-	vtkIdList* ptids = vtkIdList::New();
-	ptids->Allocate(10, 10);
-	ptids->Initialize();
+    vtkIdList* ptids = vtkIdList::New();
+    ptids->Allocate(10, 10);
+    ptids->Initialize();
 
-	elements_ = new int[4 * numElements_];
+    elements_ = new int[4 * numElements_];
 
-	vtkCellArray *cells = ug->GetCells();
-	cells->InitTraversal();
+    vtkCellArray *cells = ug->GetCells();
+    cells->InitTraversal();
 
-	for (int i = 0; i < numElements_; i++) {
+    for (int i = 0; i < numElements_; i++) {
 
-		ptids->Reset();
-		cells->GetCell(5 * i, ptids);
-		if (ptids->GetNumberOfIds() != 4) {
-			fprintf(stderr, "ERROR:  invalid number of ids in cell (%i)!",
-					ptids->GetNumberOfIds());
-			return CV_ERROR;
-		}
-		elementId = ug->GetCellData()->GetScalars()->GetTuple1(i);
-		n0 = ug->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(0));
-		n1 = ug->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(1));
-		n2 = ug->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(2));
-		n3 = ug->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(3));
+        ptids->Reset();
+        cells->GetCell(5 * i, ptids);
+        if (ptids->GetNumberOfIds() != 4) {
+            fprintf(stderr, "ERROR:  invalid number of ids in cell (%i)!",
+                    ptids->GetNumberOfIds());
+            return CV_ERROR;
+        }
+        elementId = ug->GetCellData()->GetScalars()->GetTuple1(i);
+        n0 = ug->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(0));
+        n1 = ug->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(1));
+        n2 = ug->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(2));
+        n3 = ug->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(3));
 
-		int j0 = 0;
-		int j1 = 0;
-		int j2 = 0;
-		int j3 = 0;
+        int j0 = 0;
+        int j1 = 0;
+        int j2 = 0;
+        int j3 = 0;
 
-		check_node_order(n0, n1, n2, n3, elementId, &j0, &j1, &j2, &j3);
+        check_node_order(n0, n1, n2, n3, elementId, &j0, &j1, &j2, &j3);
 
-		elements_[0 * numElements_ + elementId - 1] = j0;
-		elements_[1 * numElements_ + elementId - 1] = j1;
-		elements_[2 * numElements_ + elementId - 1] = j2;
-		elements_[3 * numElements_ + elementId - 1] = j3;
+        elements_[0 * numElements_ + elementId - 1] = j0;
+        elements_[1 * numElements_ + elementId - 1] = j1;
+        elements_[2 * numElements_ + elementId - 1] = j2;
+        elements_[3 * numElements_ + elementId - 1] = j3;
 
-	}
+    }
 
-	//
-	// Boundary Faces
-	//
+    //
+    // Boundary Faces
+    //
 
-	// init data first time this function is called
-	if (boundaryElements_ == NULL) {
-		boundaryElements_ = new int*[4];
-		boundaryElements_[0] = new int[numMeshFaces_];
-		boundaryElements_[1] = new int[numMeshFaces_];
-		boundaryElements_[2] = new int[numMeshFaces_];
-		boundaryElements_[3] = new int[numMeshFaces_];
-		boundaryElementsIds_ = new int[numMeshFaces_];
-	}
+    // init data first time this function is called
+    if (boundaryElements_ == NULL) {
+        boundaryElements_ = new int*[4];
+        boundaryElements_[0] = new int[numMeshFaces_];
+        boundaryElements_[1] = new int[numMeshFaces_];
+        boundaryElements_[2] = new int[numMeshFaces_];
+        boundaryElements_[3] = new int[numMeshFaces_];
+        boundaryElementsIds_ = new int[numMeshFaces_];
+    }
 
-	cells = bdryPD->GetPolys();
-	cells->InitTraversal();
+    cells = bdryPD->GetPolys();
+    cells->InitTraversal();
 
-	for (i = 0; i < cells->GetNumberOfCells(); i++) {
-		ptids->Reset();
-		cells->GetCell(4 * i, ptids);
-		if (ptids->GetNumberOfIds() != 3) {
-			fprintf(stderr, "ERROR:  invalid number of ids in cell (%i)!",
-					ptids->GetNumberOfIds());
-			return CV_ERROR;
-		}
-		elementId = bdryPD->GetCellData()->GetScalars()->GetTuple1(i);
-		n0 = bdryPD->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(0));
-		n1 = bdryPD->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(1));
-		n2 = bdryPD->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(2));
+    for (i = 0; i < cells->GetNumberOfCells(); i++) {
+        ptids->Reset();
+        cells->GetCell(4 * i, ptids);
+        if (ptids->GetNumberOfIds() != 3) {
+            fprintf(stderr, "ERROR:  invalid number of ids in cell (%i)!",
+                    ptids->GetNumberOfIds());
+            return CV_ERROR;
+        }
+        elementId = bdryPD->GetCellData()->GetScalars()->GetTuple1(i);
+        n0 = bdryPD->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(0));
+        n1 = bdryPD->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(1));
+        n2 = bdryPD->GetPointData()->GetScalars()->GetTuple1(ptids->GetId(2));
 
-		n3 = -1;
+        n3 = -1;
 
-		int j0 = 0;
-		int j1 = 0;
-		int j2 = 0;
-		int j3 = 0;
+        int j0 = 0;
+        int j1 = 0;
+        int j2 = 0;
+        int j3 = 0;
 
-		check_node_order(n0, n1, n2, n3, elementId, &j0, &j1, &j2, &j3);
+        check_node_order(n0, n1, n2, n3, elementId, &j0, &j1, &j2, &j3);
 
-		boundaryElements_[0][i] = j0;
-		boundaryElements_[1][i] = j1;
-		boundaryElements_[2][i] = j2;
-		boundaryElements_[3][i] = j3;
+        boundaryElements_[0][i] = j0;
+        boundaryElements_[1][i] = j1;
+        boundaryElements_[2][i] = j2;
+        boundaryElements_[3][i] = j3;
 
-		debugprint(stddbg, "  Boundary Element (%i) (%i): %i %i %i %i\n", i,
-				elementId, j0, j1, j2, j3);
+        debugprint(stddbg, "  Boundary Element (%i) (%i): %i %i %i %i\n", i,
+                elementId, j0, j1, j2, j3);
 
-		// note that I assume element numbering starts at 1,
-		// whereas flow solver assumes it started at zero!!
-		boundaryElementsIds_[i] = elementId - 1;
+        // note that I assume element numbering starts at 1,
+        // whereas flow solver assumes it started at zero!!
+        boundaryElementsIds_[i] = elementId - 1;
 
-	}
+    }
 
-	//
-	//  create some additional internal data structs
-	//
+    //
+    //  create some additional internal data structs
+    //
 
-	if (iBC_ == NULL) {
-		iBC_ = new int[numNodes_];
-		for (i = 0; i < numNodes_; i++) {
-			iBC_[i] = 0;
-		}
-	}
+    if (iBC_ == NULL) {
+        iBC_ = new int[numNodes_];
+        for (i = 0; i < numNodes_; i++) {
+            iBC_[i] = 0;
+        }
+    }
 
-	if (iBCB_ == NULL) {
-		iBCB_ = new int[2 * numBoundaryFaces_];
-		BCB_ = new double[numBoundaryFaces_ * 6];
-		for (i = 0; i < 2 * numBoundaryFaces_; i++) {
-			iBCB_[i] = 0;
-		}
-		for (i = 0; i < numBoundaryFaces_; i++) {
-			BCB_[i] = 0.0;
-		}
-	}
+    if (iBCB_ == NULL) {
+        iBCB_ = new int[2 * numBoundaryFaces_];
+        BCB_ = new double[numBoundaryFaces_ * 6];
+        for (i = 0; i < 2 * numBoundaryFaces_; i++) {
+            iBCB_[i] = 0;
+        }
+        for (i = 0; i < numBoundaryFaces_; i++) {
+            BCB_[i] = 0.0;
+        }
+    }
 
-	//Starting to extract the adjacency information
-	//Define vars
-	int numCells;
-	vtkIdType cellId;
-	vtkIdType meshCellId;
-	vtkIdType p1, p2, p3;
-	vtkIdType npts = 0;
-	vtkIdType *pts = 0;
-	vtkSmartPointer < vtkIdList > ptIds = vtkSmartPointer < vtkIdList > ::New();
-	vtkSmartPointer < vtkIdList > cellIds = vtkSmartPointer < vtkIdList
-			> ::New();
+    //Starting to extract the adjacency information
+    //Define vars
+    int numCells;
+    vtkIdType cellId;
+    vtkIdType meshCellId;
+    vtkIdType p1, p2, p3;
+    vtkIdType npts = 0;
+    vtkIdType *pts = 0;
+    vtkSmartPointer < vtkIdList > ptIds = vtkSmartPointer < vtkIdList > ::New();
+    vtkSmartPointer < vtkIdList > cellIds = vtkSmartPointer < vtkIdList
+            > ::New();
 
-	// do work
-	//
-	ug->GetPointData()->SetActiveScalars("GlobalNodeID");
-	ug->GetCellData()->SetActiveScalars("GlobalElementID");
-	ug->BuildLinks();
-	numCells = ug->GetNumberOfCells();
+    // do work
+    //
+    ug->GetPointData()->SetActiveScalars("GlobalNodeID");
+    ug->GetCellData()->SetActiveScalars("GlobalElementID");
+    ug->BuildLinks();
+    numCells = ug->GetNumberOfCells();
 
-	xadj_ = new int[numCells + 1];
-	adjncy_ = new int[4 * numCells];
-	int adj = 0;
-	int xcheck = 0;
-	xadj_[xcheck] = 0;
+    xadj_ = new int[numCells + 1];
+    adjncy_ = new int[4 * numCells];
+    int adj = 0;
+    int xcheck = 0;
+    xadj_[xcheck] = 0;
 
-	ptIds->SetNumberOfIds(3);
-	for (cellId = 0; cellId < numCells; cellId++) {
-		meshCellId = (int) ug->GetCellData()->GetScalars()->LookupValue(cellId + 1);
-		ug->GetCellPoints(meshCellId, npts, pts);
+    ptIds->SetNumberOfIds(3);
+    for (cellId = 0; cellId < numCells; cellId++) {
+        meshCellId = (int) ug->GetCellData()->GetScalars()->LookupValue(cellId + 1);
+        ug->GetCellPoints(meshCellId, npts, pts);
 
-		for (i = 0; i < npts; i++) {
-			p1 = pts[i];
-			p2 = pts[(i + 1) % (npts)];
-			p3 = pts[(i + 2) % (npts)];
+        for (i = 0; i < npts; i++) {
+            p1 = pts[i];
+            p2 = pts[(i + 1) % (npts)];
+            p3 = pts[(i + 2) % (npts)];
 
-			ptIds->InsertId(0, p1);
-			ptIds->InsertId(1, p2);
-			ptIds->InsertId(2, p3);
+            ptIds->InsertId(0, p1);
+            ptIds->InsertId(1, p2);
+            ptIds->InsertId(2, p3);
 
-			ug->GetCellNeighbors(meshCellId, ptIds, cellIds);
+            ug->GetCellNeighbors(meshCellId, ptIds, cellIds);
 
-			if (cellIds->GetNumberOfIds() != 0) {
-				adjncy_[adj++] = (int) (ug->GetCellData()->GetScalars()->GetTuple1(
-						cellIds->GetId(0)) - 1);
-			}
+            if (cellIds->GetNumberOfIds() != 0) {
+                adjncy_[adj++] = (int) (ug->GetCellData()->GetScalars()->GetTuple1(
+                        cellIds->GetId(0)) - 1);
+            }
 
-		}
-		xadj_[++xcheck] = adj;
-	}
+        }
+        xadj_[++xcheck] = adj;
+    }
 
-	adjncySize_ = adj;
-	xadjSize_ = numCells + 1;
+    adjncySize_ = adj;
+    xadjSize_ = numCells + 1;
 
-	// cleanup
-	ptids->Delete();
-	cleaner->Delete();
-	surfFilt->Delete();
-	reader->Delete();
+    // cleanup
+    ptids->Delete();
+    cleaner->Delete();
+    surfFilt->Delete();
+    reader->Delete();
 
-	debugprint(stddbg, "Exiting cmd_mesh_and_adjncy_vtu.\n");
+    debugprint(stddbg, "Exiting cmd_mesh_and_adjncy_vtu.\n");
 
-	return CV_OK;
+    return CV_OK;
 }
 
 int read_variables_vtu(char* vtufn,string presName, string velName, string dispName,bool dispRequired,
-		string tDName, bool tDRequired, string wpName, bool wpRequired) {
-
-	// enter
-	debugprint(stddbg, "Entering read_variables_vtu.\n");
-
-	// check file exists
-	FILE* fp = NULL;
-	if ((fp = fopen(vtufn, "r")) == NULL) {
-		fprintf(stderr, "ERROR: could not open file (%s).", vtufn);
-		return CV_ERROR;
-	} else {
-		fclose(fp);
-	}
-
-	vtkXMLUnstructuredGridReader* reader = vtkXMLUnstructuredGridReader::New();
-	reader->SetFileName(vtufn);
-	reader->Update();
-
-	vtkUnstructuredGrid* ug = NULL;
-	ug = reader->GetOutput();
-	if (ug == NULL) {
-		fprintf(stderr, "ERROR: problems parsing file (%s).", vtufn);
-		return CV_ERROR;
-	}
-
-	numSolnVars_ = 5;
-
-	// read num nodes
-	numNodes_ = ug->GetNumberOfPoints();
-
-	debugprint(stddbg, "  Number of Nodes (%i)\n", numNodes_);
-
-	if (numNodes_ == 0) {
-		fprintf(stderr, "ERROR:  Needs nodes in (%s)!\n",vtufn);
-		return CV_ERROR;
-	}
-
-	int size = numNodes_ * numSolnVars_;
-
-	int numArrays = ug->GetPointData()->GetNumberOfArrays();
-
-	string IDName="GlobalNodeID";
-
-	string IDArrayName="", presArrayName = "", velArrayName = "", dispArrayName = "", tDArrayName="";
-	string wpArrayName = "";
-
-	for (int i = 0; i < numArrays; i++) {
-		string name = ug->GetPointData()->GetArrayName(i);
+        string tDName, bool tDRequired, string wpName, bool wpRequired) {
+
+    // enter
+    debugprint(stddbg, "Entering read_variables_vtu.\n");
+
+    // check file exists
+    FILE* fp = NULL;
+    if ((fp = fopen(vtufn, "r")) == NULL) {
+        fprintf(stderr, "ERROR: could not open file (%s).", vtufn);
+        return CV_ERROR;
+    } else {
+        fclose(fp);
+    }
+
+    vtkXMLUnstructuredGridReader* reader = vtkXMLUnstructuredGridReader::New();
+    reader->SetFileName(vtufn);
+    reader->Update();
+
+    vtkUnstructuredGrid* ug = NULL;
+    ug = reader->GetOutput();
+    if (ug == NULL) {
+        fprintf(stderr, "ERROR: problems parsing file (%s).", vtufn);
+        return CV_ERROR;
+    }
+
+    numSolnVars_ = 5;
+
+    // read num nodes
+    numNodes_ = ug->GetNumberOfPoints();
+
+    debugprint(stddbg, "  Number of Nodes (%i)\n", numNodes_);
+
+    if (numNodes_ == 0) {
+        fprintf(stderr, "ERROR:  Needs nodes in (%s)!\n",vtufn);
+        return CV_ERROR;
+    }
+
+    int size = numNodes_ * numSolnVars_;
+
+    int numArrays = ug->GetPointData()->GetNumberOfArrays();
+
+    string IDName="GlobalNodeID";
+
+    string IDArrayName="", presArrayName = "", velArrayName = "", dispArrayName = "", tDArrayName="";
+    string wpArrayName = "";
+
+    for (int i = 0; i < numArrays; i++) {
+        string name = ug->GetPointData()->GetArrayName(i);
 
-		size_t found;
-
-		if(IDName!=""){
-			found = name.find(IDName);
-			if (found != string::npos) {
-				IDArrayName = name;
-			}
-		}
+        size_t found;
+
+        if (IDName!="") {
+            found = name.find(IDName);
+            if (found != string::npos) {
+                IDArrayName = name;
+            }
+        }
 
-		if(presName!=""){
-			found = name.find(presName);
-			if (found != string::npos) {
-				presArrayName = name;
-			}
-		}
+        if (presName!="") {
+            found = name.find(presName);
+            if (found != string::npos) {
+                presArrayName = name;
+            }
+        }
 
-		if(velName!=""){
-			found = name.find(velName);
-			if (found != string::npos) {
-				velArrayName = name;
-			}
-		}
+        if (velName!="") {
+            found = name.find(velName);
+            if (found != string::npos) {
+                velArrayName = name;
+            }
+        }
 
-		if(dispName!=""){
-			found = name.find(dispName);
-			if (found != string::npos) {
-				dispArrayName = name;
-			}
-		}
+        if (dispName!="") {
+            found = name.find(dispName);
+            if (found != string::npos) {
+                dispArrayName = name;
+            }
+        }
 
-		if(tDName!=""){
-			found = name.find(tDName);
-			if (found != string::npos) {
-				tDArrayName = name;
-			}
-		}
+        if (tDName!="") {
+            found = name.find(tDName);
+            if (found != string::npos) {
+                tDArrayName = name;
+            }
+        }
 
-		if(wpName!=""){
-			found = name.find(wpName);
-			if (found != string::npos) {
-				wpArrayName = name;
-			}
-		}
-	}
+        if (wpName!="") {
+            found = name.find(wpName);
+            if (found != string::npos) {
+                wpArrayName = name;
+            }
+        }
+    }
 
-	if (IDArrayName == ""){
-		fprintf(stderr, "ERROR:  globalNodeID not found in (%s)!\n",vtufn);
-		return CV_ERROR;
-	}
+    if (IDArrayName == "") {
+        fprintf(stderr, "ERROR:  globalNodeID not found in (%s)!\n",vtufn);
+        return CV_ERROR;
+    }
 
-	if (presArrayName != "" || velArrayName != "") {
-		if(soln_==NULL){
-			soln_ = new double[size];
-		}
-	}
+    if (presArrayName != "" || velArrayName != "") {
+        if (soln_==NULL) {
+            soln_ = new double[size];
+        }
+    }
 
-	if (presArrayName != "") {
-		int nodeID;
-		double pres;
+    if (presArrayName != "") {
+        int nodeID;
+        double pres;
 
-		vtkSmartPointer<vtkIntArray> nodeIDArray =
-				vtkIntArray::SafeDownCast(ug->GetPointData()->GetArray(IDArrayName.c_str()));
+        vtkSmartPointer<vtkIntArray> nodeIDArray =
+                vtkIntArray::SafeDownCast(ug->GetPointData()->GetArray(IDArrayName.c_str()));
 
-		vtkSmartPointer<vtkDoubleArray> presArray =
-				vtkDoubleArray::SafeDownCast(ug->GetPointData()->GetArray(presArrayName.c_str()));
+        vtkSmartPointer<vtkDoubleArray> presArray =
+                vtkDoubleArray::SafeDownCast(ug->GetPointData()->GetArray(presArrayName.c_str()));
 
-		for (int i = 0; i < numNodes_; i++) {
+        for (int i = 0; i < numNodes_; i++) {
 
-			nodeID=nodeIDArray->GetValue(i);
-			pres=presArray->GetValue(i);
+            nodeID=nodeIDArray->GetValue(i);
+            pres=presArray->GetValue(i);
 
-			soln_[0 * numNodes_ + nodeID - 1] = pres;
+            soln_[0 * numNodes_ + nodeID - 1] = pres;
 
-			debugprint(stddbg, "  Node (%i) (p) : %lf \n", nodeID, pres);
+            debugprint(stddbg, "  Node (%i) (p) : %lf \n", nodeID, pres);
 
-		}
+        }
 
-	}else{
-		if(presName!=""){
-			fprintf(stderr, "ERROR: pressure not found in (%s)!\n",vtufn);
-			return CV_ERROR;
-		}
-	}
+    } else {
+        if (presName!="") {
+            fprintf(stderr, "ERROR: pressure not found in (%s)!\n",vtufn);
+            return CV_ERROR;
+        }
+    }
 
-	if (velArrayName != "") {
-		int nodeID;
-		double vel[3];
+    if (velArrayName != "") {
+        int nodeID;
+        double vel[3];
 
-		vtkSmartPointer<vtkIntArray> nodeIDArray =
-				vtkIntArray::SafeDownCast(ug->GetPointData()->GetArray(IDArrayName.c_str()));
+        vtkSmartPointer<vtkIntArray> nodeIDArray =
+                vtkIntArray::SafeDownCast(ug->GetPointData()->GetArray(IDArrayName.c_str()));
 
-		vtkSmartPointer<vtkDoubleArray> velArray =
-				vtkDoubleArray::SafeDownCast(ug->GetPointData()->GetArray(velArrayName.c_str()));
+        vtkSmartPointer<vtkDoubleArray> velArray =
+                vtkDoubleArray::SafeDownCast(ug->GetPointData()->GetArray(velArrayName.c_str()));
 
-		for (int i = 0; i < numNodes_; i++) {
+        for (int i = 0; i < numNodes_; i++) {
 
-			nodeID=nodeIDArray->GetValue(i);
-			velArray->GetTupleValue(i, vel);
+            nodeID=nodeIDArray->GetValue(i);
+            velArray->GetTupleValue(i, vel);
 
-			soln_[1 * numNodes_ + nodeID - 1] = vel[0];
-			soln_[2 * numNodes_ + nodeID - 1] = vel[1];
-			soln_[3 * numNodes_ + nodeID - 1] = vel[2];
+            soln_[1 * numNodes_ + nodeID - 1] = vel[0];
+            soln_[2 * numNodes_ + nodeID - 1] = vel[1];
+            soln_[3 * numNodes_ + nodeID - 1] = vel[2];
 
-			debugprint(stddbg, "  Node (%i) (v1,v2,v3) : %lf %lf %lf\n", nodeID, vel[0],vel[1],vel[2]);
+            debugprint(stddbg, "  Node (%i) (v1,v2,v3) : %lf %lf %lf\n", nodeID, vel[0],vel[1],vel[2]);
 
-		}
+        }
 
-	}else{
-		if(velName!=""){
-			fprintf(stderr, "ERROR:  velocity not found in (%s)!\n",vtufn);
-			return CV_ERROR;
-		}
-	}
+    } else {
+        if (velName!="") {
+            fprintf(stderr, "ERROR:  velocity not found in (%s)!\n",vtufn);
+            return CV_ERROR;
+        }
+    }
 
-	if (dispArrayName != "") {
+    if (dispArrayName != "") {
 
-		dispsoln_ = new double[numNodes_ * 3];
-		int nodeID;
-		double disp[3];
+        dispsoln_ = new double[numNodes_ * 3];
+        int nodeID;
+        double disp[3];
 
-		vtkSmartPointer<vtkIntArray> nodeIDArray =
-				vtkIntArray::SafeDownCast(ug->GetPointData()->GetArray(IDArrayName.c_str()));
+        vtkSmartPointer<vtkIntArray> nodeIDArray =
+                vtkIntArray::SafeDownCast(ug->GetPointData()->GetArray(IDArrayName.c_str()));
 
-		vtkSmartPointer<vtkDoubleArray> dispArray =
-				vtkDoubleArray::SafeDownCast(ug->GetPointData()->GetArray(dispArrayName.c_str()));
+        vtkSmartPointer<vtkDoubleArray> dispArray =
+                vtkDoubleArray::SafeDownCast(ug->GetPointData()->GetArray(dispArrayName.c_str()));
 
-		for (int i = 0; i < numNodes_; i++) {
+        for (int i = 0; i < numNodes_; i++) {
 
-			nodeID=nodeIDArray->GetValue(i);
-			dispArray->GetTupleValue(i,disp);
+            nodeID=nodeIDArray->GetValue(i);
+            dispArray->GetTupleValue(i,disp);
 
-			dispsoln_[0 * numNodes_ + nodeID - 1] = disp[0];
-			dispsoln_[1 * numNodes_ + nodeID - 1] = disp[1];
-			dispsoln_[2 * numNodes_ + nodeID - 1] = disp[2];
+            dispsoln_[0 * numNodes_ + nodeID - 1] = disp[0];
+            dispsoln_[1 * numNodes_ + nodeID - 1] = disp[1];
+            dispsoln_[2 * numNodes_ + nodeID - 1] = disp[2];
 
-			debugprint(stddbg, "  Node (%i) (disp1,disp2,disp3) : %lf %lf %lf\n", nodeID, disp[0],disp[1],disp[2]);
+            debugprint(stddbg, "  Node (%i) (disp1,disp2,disp3) : %lf %lf %lf\n", nodeID, disp[0],disp[1],disp[2]);
 
-		}
-	}else{
-		if(dispName!=""){
-			if(dispRequired){
-				fprintf(stderr, "ERROR:  displacements not found in (%s)!\n",vtufn);
-				return CV_ERROR;
-			}else{
-				fprintf(stdout, "Warning:  displacements not found in (%s)!\n",vtufn);
-			}
-		}
-	}
+        }
+    } else {
+        if (dispName!="") {
+            if (dispRequired){
+                fprintf(stderr, "ERROR:  displacements not found in (%s)!\n",vtufn);
+                return CV_ERROR;
+            } else {
+                fprintf(stdout, "Warning:  displacements not found in (%s)!\n",vtufn);
+            }
+        }
+    }
 
-	if (tDArrayName != "") {
+    if (tDArrayName != "") {
 
-		vtkDataArray* nodeIDArray= ug->GetPointData()->GetArray(IDArrayName.c_str());
-		vtkDataArray* tDArray= ug->GetPointData()->GetArray(tDArrayName.c_str());
-//		int numComponent=vel->GetNumberOfComponents();
+        vtkDataArray* nodeIDArray= ug->GetPointData()->GetArray(IDArrayName.c_str());
+        vtkDataArray* tDArray= ug->GetPointData()->GetArray(tDArrayName.c_str());
+//      int numComponent=vel->GetNumberOfComponents();
 
-//		acc_ = new double[numNodes_ * numComponent];
-		acc_ = new double[numNodes_ * 4];
-		int nodeID;
-		double* ac;
+//      acc_ = new double[numNodes_ * numComponent];
+        acc_ = new double[numNodes_ * 4];
+        int nodeID;
+        double* ac;
 
-		for (int i = 0; i < numNodes_; i++) {
+        for (int i = 0; i < numNodes_; i++) {
 
-			nodeID = nodeIDArray->GetTuple1(i);
-			ac= tDArray->GetTuple4(i);
+            nodeID = nodeIDArray->GetTuple1(i);
+            ac= tDArray->GetTuple4(i);
 
-			acc_[0 * numNodes_ + nodeID - 1] = ac[0];
-			acc_[1 * numNodes_ + nodeID - 1] = ac[1];
-			acc_[2 * numNodes_ + nodeID - 1] = ac[2];
-			acc_[3 * numNodes_ + nodeID - 1] = ac[2];
+            acc_[0 * numNodes_ + nodeID - 1] = ac[0];
+            acc_[1 * numNodes_ + nodeID - 1] = ac[1];
+            acc_[2 * numNodes_ + nodeID - 1] = ac[2];
+            acc_[3 * numNodes_ + nodeID - 1] = ac[2];
 
-			debugprint(stddbg, "  Node (%i) (acc0,acc1,acc2,acc3) : %lf %lf %lf %lf\n", nodeID, ac[0], ac[1],ac[2],ac[3]);
+            debugprint(stddbg, "  Node (%i) (acc0,acc1,acc2,acc3) : %lf %lf %lf %lf\n", nodeID, ac[0], ac[1],ac[2],ac[3]);
 
-		}
-	}else{
-		if(tDName!=""){
-			if(tDRequired){
-				fprintf(stderr, "ERROR:  time derivative of solution not found in (%s)!\n",vtufn);
-				return CV_ERROR;
-			}else{
-				fprintf(stdout, "Warning:  time derivative of solution not found in (%s)!\n",vtufn);
-			}
-		}
-	}
+        }
+    } else {
+        if (tDName!="") {
+            if (tDRequired) {
+                fprintf(stderr, "ERROR:  time derivative of solution not found in (%s)!\n",vtufn);
+                return CV_ERROR;
+            } else {
+                fprintf(stdout, "Warning:  time derivative of solution not found in (%s)!\n",vtufn);
+            }
+        }
+    }
 
-#if(VER_VARWALL == 1)
-	if (wpArrayName != "") {
+#if (VER_VARWALL == 1)
+    if (wpArrayName != "") {
 
-		vtkDataArray* nodeIDArray= ug->GetPointData()->GetArray(IDArrayName.c_str());
-		vtkDataArray* wpArray= ug->GetPointData()->GetArray(wpArrayName.c_str());
+        vtkDataArray* nodeIDArray= ug->GetPointData()->GetArray(IDArrayName.c_str());
+        vtkDataArray* wpArray= ug->GetPointData()->GetArray(wpArrayName.c_str());
 
-		int numWallProp = 5;
+        int numWallProp;
+        if (itissuesuppt) {
+            numWallProp = 5;
+        } else {
+            numWallProp = 2;
+        }
 
-		wallpropsoln_ = new double[numNodes_ * numWallProp];
-		int nodeID;
-		double* wp;
+        wallpropsoln_ = new double[numNodes_ * numWallProp];
+        int nodeID;
+        double* wp;
 
-		for (int i = 0; i < numNodes_; i++) {
+        for (int i = 0; i < numNodes_; i++) {
 
-			nodeID = nodeIDArray->GetTuple1(i);
+            nodeID = nodeIDArray->GetTuple1(i);
 
-			/* EXTERNAL TISSUE SUPPORT - ISL JULY 2019 */
-			wp = wpArray->GetTuple6(i);
+            /* EXTERNAL TISSUE SUPPORT - ISL JULY 2019 */
+            wp = wpArray->GetTuple6(i);
 
-			for (int j = 0; j < numWallProp; j++) {
-				wallpropsoln_[j * numNodes_ + nodeID - 1] = wp[j];
-			}
+            for (int j = 0; j < numWallProp; j++) {
+                wallpropsoln_[j * numNodes_ + nodeID - 1] = wp[j];
+            }
 
-			debugprint(stddbg, "  Node (%i) (thickness,Evw,ksvw,p0vw) : %lf %lf %lf %lf %lf\n",
-				nodeID, wp[0], wp[1], wp[2], wp[3], wp[4]);
+            if (itissuesuppt) {
+                debugprint(stddbg, "  Node (%i) (thickness,Evw,ksvw,csvw,p0vw) : %lf %lf %lf %lf %lf\n",
+                    nodeID, wp[0], wp[1], wp[2], wp[3], wp[4]);
+            } else {
+                debugprint(stddbg, "  Node (%i) (thickness,Evw) : %lf %lf\n",
+                 nodeID, wp[0], wp[1]);
+            }
 
-		}
-	}else{
-		if(wpName!=""){
-			if(wpRequired){
-				fprintf(stderr, "ERROR:  variable wall properties not found in (%s)!\n",vtufn);
-				return CV_ERROR;
-			}else{
-				fprintf(stdout, "Warning:  variable wall properties not found in (%s)!\n",vtufn);
-			}
-		}
-	}
+        }
+    } else {
+        if (wpName!="") {
+            if (wpRequired) {
+                fprintf(stderr, "ERROR:  variable wall properties not found in (%s)!\n",vtufn);
+                return CV_ERROR;
+            } else {
+                fprintf(stdout, "Warning:  variable wall properties not found in (%s)!\n",vtufn);
+            }
+        }
+    }
 
 #endif
 
-	debugprint(stddbg, "Exiting read_variables_vtu.\n");
-	return CV_OK;
+    debugprint(stddbg, "Exiting read_variables_vtu.\n");
+    return CV_OK;
 }
 
 int cmd_read_all_variables_vtu(char *cmd) {
 
-	// enter
-	debugprint(stddbg, "Entering cmd_read_all_variables_vtu.\n");
+    // enter
+    debugprint(stddbg, "Entering cmd_read_all_variables_vtu.\n");
 
-	// parse command string for filename
-	char vtufn[MAXPATHLEN];
-	vtufn[0] = '\0';
-	parseCmdStr(cmd, vtufn);
+    // parse command string for filename
+    char vtufn[MAXPATHLEN];
+    vtufn[0] = '\0';
+    parseCmdStr(cmd, vtufn);
 
-	if(read_variables_vtu(vtufn,"pressure","velocity","displacement",false,"timeDeriv",false,"wallproperty",false)==CV_ERROR){
-		return CV_ERROR;
-	}
-	debugprint(stddbg, "Exiting cmd_read_all_variables_vtu.\n");
-	return CV_OK;
+    if(read_variables_vtu(vtufn,"pressure","velocity","displacement",false,"timeDeriv",false,"wallproperty",false)==CV_ERROR){
+        return CV_ERROR;
+    }
+    debugprint(stddbg, "Exiting cmd_read_all_variables_vtu.\n");
+    return CV_OK;
 }
 
 int cmd_read_pressure_velocity_vtu(char *cmd) {
 
-	// enter
-	debugprint(stddbg, "Entering cmd_read_pressue_velocity_vtu.\n");
+    // enter
+    debugprint(stddbg, "Entering cmd_read_pressue_velocity_vtu.\n");
 
-	// parse command string for filename
-	char vtufn[MAXPATHLEN];
-	vtufn[0] = '\0';
-	parseCmdStr(cmd, vtufn);
+    // parse command string for filename
+    char vtufn[MAXPATHLEN];
+    vtufn[0] = '\0';
+    parseCmdStr(cmd, vtufn);
 
-	if(read_variables_vtu(vtufn,"pressure","velocity","",false,"",false,"",false)==CV_ERROR){
-		return CV_ERROR;
-	}
+    if(read_variables_vtu(vtufn,"pressure","velocity","",false,"",false,"",false)==CV_ERROR){
+        return CV_ERROR;
+    }
 
-	debugprint(stddbg, "Exiting cmd_read_pressue_velocity_vtu.\n");
-	return CV_OK;
+    debugprint(stddbg, "Exiting cmd_read_pressue_velocity_vtu.\n");
+    return CV_OK;
 }
 
 int cmd_read_pressure_vtu(char *cmd) {
 
-	// enter
-	debugprint(stddbg, "Entering cmd_read_pressure_vtu.\n");
+    // enter
+    debugprint(stddbg, "Entering cmd_read_pressure_vtu.\n");
 
     // parse command string for filename and variable name
     int n = 0;
@@ -1071,22 +1081,22 @@ int cmd_read_pressure_vtu(char *cmd) {
 
     string pres_name="pressure";
     if(vn[0]!='\0'){
-    	pres_name=string(vn);
+        pres_name=string(vn);
     }
 
     // do work
-	if(read_variables_vtu(vtufn,pres_name,"","",false,"",false,"",false)==CV_ERROR){
-		return CV_ERROR;
-	}
+    if(read_variables_vtu(vtufn,pres_name,"","",false,"",false,"",false)==CV_ERROR){
+        return CV_ERROR;
+    }
 
-	debugprint(stddbg, "Exiting cmd_read_pressure_vtu.\n");
-	return CV_OK;
+    debugprint(stddbg, "Exiting cmd_read_pressure_vtu.\n");
+    return CV_OK;
 }
 
 int cmd_read_velocity_vtu(char *cmd) {
 
-	// enter
-	debugprint(stddbg, "Entering cmd_read_velocity_vtu.\n");
+    // enter
+    debugprint(stddbg, "Entering cmd_read_velocity_vtu.\n");
 
     // parse command string for filename and variable name
     int n = 0;
@@ -1103,22 +1113,22 @@ int cmd_read_velocity_vtu(char *cmd) {
 
     string vel_name="velocity";
     if(vn[0]!='\0'){
-    	vel_name=string(vn);
+        vel_name=string(vn);
     }
 
     // do work
-	if(read_variables_vtu(vtufn,"",vel_name,"",false,"",false,"",false)==CV_ERROR){
-		return CV_ERROR;
-	}
+    if(read_variables_vtu(vtufn,"",vel_name,"",false,"",false,"",false)==CV_ERROR){
+        return CV_ERROR;
+    }
 
-	debugprint(stddbg, "Exiting cmd_read_velocity_vtu.\n");
-	return CV_OK;
+    debugprint(stddbg, "Exiting cmd_read_velocity_vtu.\n");
+    return CV_OK;
 }
 
 int cmd_read_displacements_vtu(char *cmd) {
 
-	// enter
-	debugprint(stddbg, "Entering cmd_read_displacements_vtu.\n");
+    // enter
+    debugprint(stddbg, "Entering cmd_read_displacements_vtu.\n");
 
     // parse command string for filename and variable name
     int n = 0;
@@ -1135,22 +1145,22 @@ int cmd_read_displacements_vtu(char *cmd) {
 
     string disp_name="displacement";
     if(vn[0]!='\0'){
-    	disp_name=string(vn);
+        disp_name=string(vn);
     }
 
     // do work
-	if(read_variables_vtu(vtufn,"","",disp_name,true,"",false,"",false)==CV_ERROR){
-		return CV_ERROR;
-	}
+    if(read_variables_vtu(vtufn,"","",disp_name,true,"",false,"",false)==CV_ERROR){
+        return CV_ERROR;
+    }
 
-	debugprint(stddbg, "Exiting cmd_read_displacements_vtu.\n");
-	return CV_OK;
+    debugprint(stddbg, "Exiting cmd_read_displacements_vtu.\n");
+    return CV_OK;
 }
 
 int cmd_read_accelerations_vtu(char *cmd) {
 
-	// enter
-	debugprint(stddbg, "Entering cmd_read_accelerations_vtu.\n");
+    // enter
+    debugprint(stddbg, "Entering cmd_read_accelerations_vtu.\n");
 
     // parse command string for filename and variable name
     int n = 0;
@@ -1167,22 +1177,22 @@ int cmd_read_accelerations_vtu(char *cmd) {
 
     string tD_name="timeDeriv";
     if(vn[0]!='\0'){
-    	tD_name=string(vn);
+        tD_name=string(vn);
     }
 
     // do work
-	if(read_variables_vtu(vtufn,"","","",false,tD_name,true,"",false)==CV_ERROR){
-		return CV_ERROR;
-	}
+    if(read_variables_vtu(vtufn,"","","",false,tD_name,true,"",false)==CV_ERROR){
+        return CV_ERROR;
+    }
 
-	debugprint(stddbg, "Exiting cmd_read_accelerations_vtu.\n");
-	return CV_OK;
+    debugprint(stddbg, "Exiting cmd_read_accelerations_vtu.\n");
+    return CV_OK;
 }
 
 int cmd_read_varwallprop_vtu(char *cmd) {
 
-	// enter
-	debugprint(stddbg, "Entering cmd_read_varwallprop_vtu.\n");
+    // enter
+    debugprint(stddbg, "Entering cmd_read_varwallprop_vtu.\n");
 
     // parse command string for filename and variable name
     int n = 0;
@@ -1199,333 +1209,333 @@ int cmd_read_varwallprop_vtu(char *cmd) {
 
     string wp_name="wallproperty";
     if(vn[0]!='\0'){
-    	wp_name=string(vn);
+        wp_name=string(vn);
     }
 
     // do work
-	if(read_variables_vtu(vtufn,"","","",false,"",false,wp_name,true)==CV_ERROR){
-		return CV_ERROR;
-	}
+    if(read_variables_vtu(vtufn,"","","",false,"",false,wp_name,true)==CV_ERROR){
+        return CV_ERROR;
+    }
 
-	debugprint(stddbg, "Exiting cmd_read_varwallprop_vtu.\n");
-	return CV_OK;
+    debugprint(stddbg, "Exiting cmd_read_varwallprop_vtu.\n");
+    return CV_OK;
 }
 
 int cmd_noslip_vtp(char *cmd) {
 
-	// enter
-	debugprint(stddbg, "Entering cmd_noslip.\n");
+    // enter
+    debugprint(stddbg, "Entering cmd_noslip.\n");
 
-	// do work
+    // do work
 
-	// parse command string for filename
-	char polyfn[MAXPATHLEN];
-	polyfn[0] = '\0';
-	parseCmdStr(cmd, polyfn);
+    // parse command string for filename
+    char polyfn[MAXPATHLEN];
+    polyfn[0] = '\0';
+    parseCmdStr(cmd, polyfn);
 
-	// check file exists
-	FILE* fp = NULL;
-	if ((fp = fopen(polyfn, "r")) == NULL) {
-		fprintf(stderr, "ERROR: could not open file (%s).", polyfn);
-		return CV_ERROR;
-	} else {
-		fclose(fp);
-	}
+    // check file exists
+    FILE* fp = NULL;
+    if ((fp = fopen(polyfn, "r")) == NULL) {
+        fprintf(stderr, "ERROR: could not open file (%s).", polyfn);
+        return CV_ERROR;
+    } else {
+        fclose(fp);
+    }
 
-	// read file
-	vtkPolyData* pd = NULL;
-	vtkXMLPolyDataReader* reader = vtkXMLPolyDataReader::New();
-	reader->SetFileName(polyfn);
-	reader->Update();
-	pd = reader->GetOutput();
-	if (pd == NULL) {
-		fprintf(stderr, "ERROR: problem parsing file (%s).", polyfn);
-		return CV_ERROR;
-	}
-	vtkIntArray* gids = NULL;
-	gids =static_cast<vtkIntArray*>(reader->GetOutput()->GetPointData()->GetArray("GlobalNodeID"));
-	if (gids == NULL) {
-		fprintf(stderr, "ERROR: problem finding GlobalNodeID");
-		return CV_ERROR;
-	}
+    // read file
+    vtkPolyData* pd = NULL;
+    vtkXMLPolyDataReader* reader = vtkXMLPolyDataReader::New();
+    reader->SetFileName(polyfn);
+    reader->Update();
+    pd = reader->GetOutput();
+    if (pd == NULL) {
+        fprintf(stderr, "ERROR: problem parsing file (%s).", polyfn);
+        return CV_ERROR;
+    }
+    vtkIntArray* gids = NULL;
+    gids =static_cast<vtkIntArray*>(reader->GetOutput()->GetPointData()->GetArray("GlobalNodeID"));
+    if (gids == NULL) {
+        fprintf(stderr, "ERROR: problem finding GlobalNodeID");
+        return CV_ERROR;
+    }
 
-	for (int i = 0; i < gids->GetNumberOfTuples(); i++) {
-		int nodeId = gids->GetTuple1(i);
-		debugprint(stddbg, "  BC (%i) Dirichlet BC on Node (%i): %i.\n", i,
-				nodeId, 56);
-		iBC_[nodeId - 1] = 56;
-	}
+    for (int i = 0; i < gids->GetNumberOfTuples(); i++) {
+        int nodeId = gids->GetTuple1(i);
+        debugprint(stddbg, "  BC (%i) Dirichlet BC on Node (%i): %i.\n", i,
+                nodeId, 56);
+        iBC_[nodeId - 1] = 56;
+    }
 
-	// cleanup
-	reader->Delete();
+    // cleanup
+    reader->Delete();
 
-	debugprint(stddbg, "Exiting cmd_noslip.\n");
-	return CV_OK;
+    debugprint(stddbg, "Exiting cmd_noslip.\n");
+    return CV_OK;
 }
 
 int cmd_prescribed_velocities_vtp(char *cmd) {
 
-	// enter
-	debugprint(stddbg, "Entering cmd_prescribed_velocities.\n");
+    // enter
+    debugprint(stddbg, "Entering cmd_prescribed_velocities.\n");
 
-	// do work
+    // do work
 
-	// these are treated the same as noslip in geombc.dat
-	cmd_noslip_vtp(cmd);
+    // these are treated the same as noslip in geombc.dat
+    cmd_noslip_vtp(cmd);
 
-	// cleanup
-	debugprint(stddbg, "Exiting cmd_prescribed_velocities.\n");
-	return CV_OK;
+    // cleanup
+    debugprint(stddbg, "Exiting cmd_prescribed_velocities.\n");
+    return CV_OK;
 }
 
 int setBoundaryFacesWithCodeVTK(char *cmd, int setSurfID, int surfID,
-		int setCode, int code, double value) {
+        int setCode, int code, double value) {
 
-	int i;
+    int i;
 
-	// enter
-	debugprint(stddbg, "Entering setBoundaryFacesWithCodeVTK.\n");
+    // enter
+    debugprint(stddbg, "Entering setBoundaryFacesWithCodeVTK.\n");
 
-	// parse command string for filename
-	char polyfn[MAXPATHLEN];
-	polyfn[0] = '\0';
-	parseCmdStr(cmd, polyfn);
+    // parse command string for filename
+    char polyfn[MAXPATHLEN];
+    polyfn[0] = '\0';
+    parseCmdStr(cmd, polyfn);
 
-	// check file exists
-	FILE* fp = NULL;
-	if ((fp = fopen(polyfn, "r")) == NULL) {
-		fprintf(stderr, "ERROR: could not open file (%s).", polyfn);
-		return CV_ERROR;
-	} else {
-		fclose(fp);
-	}
+    // check file exists
+    FILE* fp = NULL;
+    if ((fp = fopen(polyfn, "r")) == NULL) {
+        fprintf(stderr, "ERROR: could not open file (%s).", polyfn);
+        return CV_ERROR;
+    } else {
+        fclose(fp);
+    }
 
-	// read file
-	vtkPolyData* pd = NULL;
-	vtkXMLPolyDataReader* reader = vtkXMLPolyDataReader::New();
-	reader->SetFileName(polyfn);
-	reader->Update();
-	pd = reader->GetOutput();
-	if (pd == NULL) {
-		fprintf(stderr, "ERROR: problem parsing file (%s).", polyfn);
-		return CV_ERROR;
-	}
+    // read file
+    vtkPolyData* pd = NULL;
+    vtkXMLPolyDataReader* reader = vtkXMLPolyDataReader::New();
+    reader->SetFileName(polyfn);
+    reader->Update();
+    pd = reader->GetOutput();
+    if (pd == NULL) {
+        fprintf(stderr, "ERROR: problem parsing file (%s).", polyfn);
+        return CV_ERROR;
+    }
 
-	pd->GetPointData()->SetActiveScalars("GlobalNodeID");
-	pd->GetCellData()->SetActiveScalars("GlobalElementID");
+    pd->GetPointData()->SetActiveScalars("GlobalNodeID");
+    pd->GetCellData()->SetActiveScalars("GlobalElementID");
 
-	vtkIdList* ptids = vtkIdList::New();
-	ptids->Allocate(10, 10);
-	ptids->Initialize();
+    vtkIdList* ptids = vtkIdList::New();
+    ptids->Allocate(10, 10);
+    ptids->Initialize();
 
-	vtkCellArray *cells = pd->GetPolys();
-	cells->InitTraversal();
+    vtkCellArray *cells = pd->GetPolys();
+    cells->InitTraversal();
 
-	vtkIntArray* gids = NULL;
-	gids = static_cast<vtkIntArray*>(pd->GetPointData()->GetArray(
-			"GlobalNodeID"));
-	if (gids == NULL) {
-		fprintf(stderr, "ERROR: problem finding GlobalNodeID");
-		return CV_ERROR;
-	}
+    vtkIntArray* gids = NULL;
+    gids = static_cast<vtkIntArray*>(pd->GetPointData()->GetArray(
+            "GlobalNodeID"));
+    if (gids == NULL) {
+        fprintf(stderr, "ERROR: problem finding GlobalNodeID");
+        return CV_ERROR;
+    }
 
-	// Loop on vtp faces
-	int n0, n1, n2, n3;
-	int elementId;
-	int totCodeFaces = 0;
-	int totSurfIDFaces = 0;
-	for (int icell = 0; icell < cells->GetNumberOfCells(); icell++) {
+    // Loop on vtp faces
+    int n0, n1, n2, n3;
+    int elementId;
+    int totCodeFaces = 0;
+    int totSurfIDFaces = 0;
+    for (int icell = 0; icell < cells->GetNumberOfCells(); icell++) {
 
-		ptids->Reset();
-		cells->GetCell(4 * icell, ptids);
-		if (ptids->GetNumberOfIds() != 3) {
-			fprintf(stderr, "ERROR:  invalid number of ids in cell (%i)!",
-					ptids->GetNumberOfIds());
-			return CV_ERROR;
-		}
-		elementId = pd->GetCellData()->GetScalars()->GetTuple1(icell);
-		n0 = gids->GetTuple1(ptids->GetId(0));
-		n1 = gids->GetTuple1(ptids->GetId(1));
-		n2 = gids->GetTuple1(ptids->GetId(2));
-		n3 = -1;
+        ptids->Reset();
+        cells->GetCell(4 * icell, ptids);
+        if (ptids->GetNumberOfIds() != 3) {
+            fprintf(stderr, "ERROR:  invalid number of ids in cell (%i)!",
+                    ptids->GetNumberOfIds());
+            return CV_ERROR;
+        }
+        elementId = pd->GetCellData()->GetScalars()->GetTuple1(icell);
+        n0 = gids->GetTuple1(ptids->GetId(0));
+        n1 = gids->GetTuple1(ptids->GetId(1));
+        n2 = gids->GetTuple1(ptids->GetId(2));
+        n3 = -1;
 
-		int j0 = n0;
-		int j1 = n1;
-		int j2 = n2;
-		int j3 = -1;
+        int j0 = n0;
+        int j1 = n1;
+        int j2 = n2;
+        int j3 = -1;
 
-		for (i = 0; i < 4; i++) {
-			if (elements_[i * numElements_ + (elementId - 1)] != j0
-					&& elements_[i * numElements_ + (elementId - 1)] != j1
-					&& elements_[i * numElements_ + (elementId - 1)] != j2) {
-				j3 = elements_[i * numElements_ + (elementId - 1)];
-				break;
-			}
-		}
+        for (i = 0; i < 4; i++) {
+            if (elements_[i * numElements_ + (elementId - 1)] != j0
+                    && elements_[i * numElements_ + (elementId - 1)] != j1
+                    && elements_[i * numElements_ + (elementId - 1)] != j2) {
+                j3 = elements_[i * numElements_ + (elementId - 1)];
+                break;
+            }
+        }
 
-		if (j3 < 0) {
-			fprintf(stderr,
-					"ERROR:  could not find nodes in element (%i %i %i %i)\n",
-					elementId, n0, n1, n2);
-			return CV_ERROR;
-		}
+        if (j3 < 0) {
+            fprintf(stderr,
+                    "ERROR:  could not find nodes in element (%i %i %i %i)\n",
+                    elementId, n0, n1, n2);
+            return CV_ERROR;
+        }
 
-		double a[3];
-		double b[3];
-		double c[3];
-		double norm0, norm1, norm2;
+        double a[3];
+        double b[3];
+        double c[3];
+        double norm0, norm1, norm2;
 
-		a[0] = nodes_[0 * numNodes_ + j1 - 1] - nodes_[0 * numNodes_ + j0 - 1];
-		a[1] = nodes_[1 * numNodes_ + j1 - 1] - nodes_[1 * numNodes_ + j0 - 1];
-		a[2] = nodes_[2 * numNodes_ + j1 - 1] - nodes_[2 * numNodes_ + j0 - 1];
-		b[0] = nodes_[0 * numNodes_ + j2 - 1] - nodes_[0 * numNodes_ + j0 - 1];
-		b[1] = nodes_[1 * numNodes_ + j2 - 1] - nodes_[1 * numNodes_ + j0 - 1];
-		b[2] = nodes_[2 * numNodes_ + j2 - 1] - nodes_[2 * numNodes_ + j0 - 1];
-		c[0] = nodes_[0 * numNodes_ + j3 - 1] - nodes_[0 * numNodes_ + j0 - 1];
-		c[1] = nodes_[1 * numNodes_ + j3 - 1] - nodes_[1 * numNodes_ + j0 - 1];
-		c[2] = nodes_[2 * numNodes_ + j3 - 1] - nodes_[2 * numNodes_ + j0 - 1];
+        a[0] = nodes_[0 * numNodes_ + j1 - 1] - nodes_[0 * numNodes_ + j0 - 1];
+        a[1] = nodes_[1 * numNodes_ + j1 - 1] - nodes_[1 * numNodes_ + j0 - 1];
+        a[2] = nodes_[2 * numNodes_ + j1 - 1] - nodes_[2 * numNodes_ + j0 - 1];
+        b[0] = nodes_[0 * numNodes_ + j2 - 1] - nodes_[0 * numNodes_ + j0 - 1];
+        b[1] = nodes_[1 * numNodes_ + j2 - 1] - nodes_[1 * numNodes_ + j0 - 1];
+        b[2] = nodes_[2 * numNodes_ + j2 - 1] - nodes_[2 * numNodes_ + j0 - 1];
+        c[0] = nodes_[0 * numNodes_ + j3 - 1] - nodes_[0 * numNodes_ + j0 - 1];
+        c[1] = nodes_[1 * numNodes_ + j3 - 1] - nodes_[1 * numNodes_ + j0 - 1];
+        c[2] = nodes_[2 * numNodes_ + j3 - 1] - nodes_[2 * numNodes_ + j0 - 1];
 
-		Cross(a[0], a[1], a[2], b[0], b[1], b[2], &norm0, &norm1, &norm2);
-		double mydot = Dot(norm0, norm1, norm2, c[0], c[1], c[2]);
+        Cross(a[0], a[1], a[2], b[0], b[1], b[2], &norm0, &norm1, &norm2);
+        double mydot = Dot(norm0, norm1, norm2, c[0], c[1], c[2]);
 
-		if (mydot > 0) {
-			int tmpj = j0;
-			j0 = j2;
-			j2 = j1;
-			j1 = tmpj;
-			debugprint(stddbg, "elementId %i : %i %i %i %i   (flipped0) %lf\n",
-					elementId, j0, j1, j2, j3, mydot);
-		} else {
-			debugprint(stddbg, "elementId %i : %i %i %i %i  %lf\n", elementId,
-					j0, j1, j2, j3, mydot);
-		}
+        if (mydot > 0) {
+            int tmpj = j0;
+            j0 = j2;
+            j2 = j1;
+            j1 = tmpj;
+            debugprint(stddbg, "elementId %i : %i %i %i %i   (flipped0) %lf\n",
+                    elementId, j0, j1, j2, j3, mydot);
+        } else {
+            debugprint(stddbg, "elementId %i : %i %i %i %i  %lf\n", elementId,
+                    j0, j1, j2, j3, mydot);
+        }
 
-		// find matching element already read in
-		int foundIt = 0;
-		for (i = 0; i < numBoundaryFaces_; i++) {
-			// Check Global Element Number
-			if (boundaryElementsIds_[i] == (elementId - 1)) {
-				// Check if the fourth node corresponds
-				if (boundaryElements_[3][i] == j3) {
-					// Set Code
-					if (setCode) {
-						iBCB_[i] = code;
-						BCB_[1 * numBoundaryFaces_ + i] = value;
-						foundIt = 1;
-						totCodeFaces++;
-					}
-					// Set Surface Number
-					if (setSurfID) {
-						iBCB_[numBoundaryFaces_ + i] = surfID;
-						foundIt = 1;
-						totSurfIDFaces++;
-					}
-				}
-			}
-		}
+        // find matching element already read in
+        int foundIt = 0;
+        for (i = 0; i < numBoundaryFaces_; i++) {
+            // Check Global Element Number
+            if (boundaryElementsIds_[i] == (elementId - 1)) {
+                // Check if the fourth node corresponds
+                if (boundaryElements_[3][i] == j3) {
+                    // Set Code
+                    if (setCode) {
+                        iBCB_[i] = code;
+                        BCB_[1 * numBoundaryFaces_ + i] = value;
+                        foundIt = 1;
+                        totCodeFaces++;
+                    }
+                    // Set Surface Number
+                    if (setSurfID) {
+                        iBCB_[numBoundaryFaces_ + i] = surfID;
+                        foundIt = 1;
+                        totSurfIDFaces++;
+                    }
+                }
+            }
+        }
 
-		if (foundIt == 0) {
-			fprintf(stderr,
-					"ERROR: could not find pressure face in boundary faces!\n");
-			return CV_ERROR;
-		}
+        if (foundIt == 0) {
+            fprintf(stderr,
+                    "ERROR: could not find pressure face in boundary faces!\n");
+            return CV_ERROR;
+        }
 
-	}
+    }
 
-	// Write Debug Message to Make Sure the number of Surfaces is Correct
-	debugprint(stddbg, "Assigned %d Codes and %d surfIDs\n", totCodeFaces,
-			totSurfIDFaces);
+    // Write Debug Message to Make Sure the number of Surfaces is Correct
+    debugprint(stddbg, "Assigned %d Codes and %d surfIDs\n", totCodeFaces,
+            totSurfIDFaces);
 
-	// cleanup
-	ptids->Delete();
-	reader->Delete();
+    // cleanup
+    ptids->Delete();
+    reader->Delete();
 
-	debugprint(stddbg, "Exiting setBoundaryFacesWithCodeVTK.\n");
-	return CV_OK;
+    debugprint(stddbg, "Exiting setBoundaryFacesWithCodeVTK.\n");
+    return CV_OK;
 
 }
 
 int cmd_zero_pressure_vtp(char *cmd) {
 
-	// enter
-	debugprint(stddbg, "Entering cmd_zero_pressure.\n");
+    // enter
+    debugprint(stddbg, "Entering cmd_zero_pressure.\n");
 
-	// do work
-	double pressure = 0.0;
-	int setSurfID = 0;
-	int surfID = 0;
-	int setPressure = 1;
+    // do work
+    double pressure = 0.0;
+    int setSurfID = 0;
+    int surfID = 0;
+    int setPressure = 1;
 
-	// should use bits and not ints here!!
-	int code = 2;
+    // should use bits and not ints here!!
+    int code = 2;
 
-	if (setBoundaryFacesWithCodeVTK(cmd, setSurfID, surfID, setPressure, code,
-			pressure) == CV_ERROR) {
-		return CV_ERROR;
-	}
+    if (setBoundaryFacesWithCodeVTK(cmd, setSurfID, surfID, setPressure, code,
+            pressure) == CV_ERROR) {
+        return CV_ERROR;
+    }
 
-	// cleanup
-	debugprint(stddbg, "Exiting cmd_zero_pressure.\n");
-	return CV_OK;
+    // cleanup
+    debugprint(stddbg, "Exiting cmd_zero_pressure.\n");
+    return CV_OK;
 }
 
 int cmd_pressure_vtp(char *cmd) {
 
-	// enter
-	debugprint(stddbg, "Entering cmd_pressure.\n");
+    // enter
+    debugprint(stddbg, "Entering cmd_pressure.\n");
 
-	// do work
-	double pressure = 0.0;
+    // do work
+    double pressure = 0.0;
 
-	if (parseDouble2(cmd, &pressure) == CV_ERROR) {
-		return CV_ERROR;
-	}
+    if (parseDouble2(cmd, &pressure) == CV_ERROR) {
+        return CV_ERROR;
+    }
 
-	debugprint(stddbg, "  Pressure = %lf\n", pressure);
+    debugprint(stddbg, "  Pressure = %lf\n", pressure);
 
-	int setSurfID = 0;
-	int surfID = 0;
-	int setPressure = 1;
-	// should use bits and not ints here!!
-	int code = 2;
+    int setSurfID = 0;
+    int surfID = 0;
+    int setPressure = 1;
+    // should use bits and not ints here!!
+    int code = 2;
 
-	if (setBoundaryFacesWithCodeVTK(cmd, setSurfID, surfID, setPressure, code,
-			pressure) == CV_ERROR) {
-		return CV_ERROR;
-	}
+    if (setBoundaryFacesWithCodeVTK(cmd, setSurfID, surfID, setPressure, code,
+            pressure) == CV_ERROR) {
+        return CV_ERROR;
+    }
 
-	// cleanup
-	debugprint(stddbg, "Exiting cmd_pressure.\n");
-	return CV_OK;
+    // cleanup
+    debugprint(stddbg, "Exiting cmd_pressure.\n");
+    return CV_OK;
 }
 
 int cmd_set_surface_id_vtp(char *cmd) {
 
-	// enter
-	debugprint(stddbg, "Entering cmd_set_surface_id.\n");
+    // enter
+    debugprint(stddbg, "Entering cmd_set_surface_id.\n");
 
-	// do work
-	int surfID = 0;
-	if (parseNum2(cmd, &surfID) == CV_ERROR) {
-		return CV_ERROR;
-	}
+    // do work
+    int surfID = 0;
+    if (parseNum2(cmd, &surfID) == CV_ERROR) {
+        return CV_ERROR;
+    }
 
-	debugprint(stddbg, "  Setting surfID to [%i]\n", surfID);
+    debugprint(stddbg, "  Setting surfID to [%i]\n", surfID);
 
-	double value = 0.0;
-	int setSurfID = 1;
-	int setCode = 0;
-	// should use bits and not ints here!!
-	int code = 0;
+    double value = 0.0;
+    int setSurfID = 1;
+    int setCode = 0;
+    // should use bits and not ints here!!
+    int code = 0;
 
-	if (setBoundaryFacesWithCodeVTK(cmd, setSurfID, surfID, setCode, code,
-			value) == CV_ERROR) {
-		return CV_ERROR;
-	}
+    if (setBoundaryFacesWithCodeVTK(cmd, setSurfID, surfID, setCode, code,
+            value) == CV_ERROR) {
+        return CV_ERROR;
+    }
 
-	// cleanup
-	debugprint(stddbg, "Exiting cmd_set_surface_id.\n");
-	return CV_OK;
+    // cleanup
+    debugprint(stddbg, "Exiting cmd_set_surface_id.\n");
+    return CV_OK;
 }
 
 
@@ -1771,48 +1781,48 @@ int cmd_create_mesh_deformable_vtp(char *cmd) {
 
     int i,j;
 
-	// parse command string for filename
-	char polyfn[MAXPATHLEN];
-	polyfn[0] = '\0';
-	parseCmdStr(cmd, polyfn);
+    // parse command string for filename
+    char polyfn[MAXPATHLEN];
+    polyfn[0] = '\0';
+    parseCmdStr(cmd, polyfn);
 
-	// check file exists
-	FILE* fp = NULL;
-	if ((fp = fopen(polyfn, "r")) == NULL) {
-		fprintf(stderr, "ERROR: could not open file (%s).", polyfn);
-		return CV_ERROR;
-	} else {
-		fclose(fp);
-	}
+    // check file exists
+    FILE* fp = NULL;
+    if ((fp = fopen(polyfn, "r")) == NULL) {
+        fprintf(stderr, "ERROR: could not open file (%s).", polyfn);
+        return CV_ERROR;
+    } else {
+        fclose(fp);
+    }
 
-	// read file
-	vtkPolyData* pd = NULL;
-	vtkXMLPolyDataReader* reader = vtkXMLPolyDataReader::New();
-	reader->SetFileName(polyfn);
-	reader->Update();
-	pd = reader->GetOutput();
-	if (pd == NULL) {
-		fprintf(stderr, "ERROR: problem parsing file (%s).", polyfn);
-		return CV_ERROR;
-	}
+    // read file
+    vtkPolyData* pd = NULL;
+    vtkXMLPolyDataReader* reader = vtkXMLPolyDataReader::New();
+    reader->SetFileName(polyfn);
+    reader->Update();
+    pd = reader->GetOutput();
+    if (pd == NULL) {
+        fprintf(stderr, "ERROR: problem parsing file (%s).", polyfn);
+        return CV_ERROR;
+    }
 
-	pd->GetPointData()->SetActiveScalars("GlobalNodeID");
-	pd->GetCellData()->SetActiveScalars("GlobalElementID");
+    pd->GetPointData()->SetActiveScalars("GlobalNodeID");
+    pd->GetCellData()->SetActiveScalars("GlobalElementID");
 
-	vtkIdList* ptids = vtkIdList::New();
-	ptids->Allocate(10, 10);
-	ptids->Initialize();
+    vtkIdList* ptids = vtkIdList::New();
+    ptids->Allocate(10, 10);
+    ptids->Initialize();
 
-	vtkCellArray *cells = pd->GetPolys();
-	cells->InitTraversal();
+    vtkCellArray *cells = pd->GetPolys();
+    cells->InitTraversal();
 
-	vtkIntArray* gids = NULL;
-	gids = static_cast<vtkIntArray*>(pd->GetPointData()->GetArray(
-			"GlobalNodeID"));
-	if (gids == NULL) {
-		fprintf(stderr, "ERROR: problem finding GlobalNodeID");
-		return CV_ERROR;
-	}
+    vtkIntArray* gids = NULL;
+    gids = static_cast<vtkIntArray*>(pd->GetPointData()->GetArray(
+            "GlobalNodeID"));
+    if (gids == NULL) {
+        fprintf(stderr, "ERROR: problem finding GlobalNodeID");
+        return CV_ERROR;
+    }
 
     int numEle = cells->GetNumberOfCells();
     if (numEle == 0) {
@@ -1829,19 +1839,19 @@ int cmd_create_mesh_deformable_vtp(char *cmd) {
     int numIds = 0;
     int numElements = 0;
 
-	for (int icell = 0; icell < cells->GetNumberOfCells(); icell++) {
+    for (int icell = 0; icell < cells->GetNumberOfCells(); icell++) {
 
-		ptids->Reset();
-		cells->GetCell(4 * icell, ptids);
-		if (ptids->GetNumberOfIds() != 3) {
-			fprintf(stderr, "ERROR:  invalid number of ids in cell (%i)!",
-					ptids->GetNumberOfIds());
-			return CV_ERROR;
-		}
-		elementId = pd->GetCellData()->GetScalars()->GetTuple1(icell);
-		n0 = gids->GetTuple1(ptids->GetId(0));
-		n1 = gids->GetTuple1(ptids->GetId(1));
-		n2 = gids->GetTuple1(ptids->GetId(2));
+        ptids->Reset();
+        cells->GetCell(4 * icell, ptids);
+        if (ptids->GetNumberOfIds() != 3) {
+            fprintf(stderr, "ERROR:  invalid number of ids in cell (%i)!",
+                    ptids->GetNumberOfIds());
+            return CV_ERROR;
+        }
+        elementId = pd->GetCellData()->GetScalars()->GetTuple1(icell);
+        n0 = gids->GetTuple1(ptids->GetId(0));
+        n1 = gids->GetTuple1(ptids->GetId(1));
+        n2 = gids->GetTuple1(ptids->GetId(2));
 
         ids[0][numIds] = n0;
         ids[1][numIds] = numElements;
@@ -1958,9 +1968,9 @@ int cmd_create_mesh_deformable_vtp(char *cmd) {
     DisplacementNumNodes_    = numUniqueNodes;
     DisplacementNodeMap_     = map;
 
-	// cleanup
-	ptids->Delete();
-	reader->Delete();
+    // cleanup
+    ptids->Delete();
+    reader->Delete();
 
     debugprint(stddbg,"Exiting cmd_create_mesh_deformable_vtp.\n");
     return CV_OK;
@@ -2122,36 +2132,36 @@ int cmd_set_scalar_BCs_vtp(char *cmd) {
 
     debugprint(stddbg,"Setting surface thickness or Evw to [%lf] \n",value);
 
-	// parse command string for filename
-	char polyfn[MAXPATHLEN];
-	polyfn[0] = '\0';
-	parseCmdStr(cmd, polyfn);
+    // parse command string for filename
+    char polyfn[MAXPATHLEN];
+    polyfn[0] = '\0';
+    parseCmdStr(cmd, polyfn);
 
-	// check file exists
-	FILE* fp = NULL;
-	if ((fp = fopen(polyfn, "r")) == NULL) {
-		fprintf(stderr, "ERROR: could not open file (%s).", polyfn);
-		return CV_ERROR;
-	} else {
-		fclose(fp);
-	}
+    // check file exists
+    FILE* fp = NULL;
+    if ((fp = fopen(polyfn, "r")) == NULL) {
+        fprintf(stderr, "ERROR: could not open file (%s).", polyfn);
+        return CV_ERROR;
+    } else {
+        fclose(fp);
+    }
 
-	// read file
-	vtkPolyData* pd = NULL;
-	vtkXMLPolyDataReader* reader = vtkXMLPolyDataReader::New();
-	reader->SetFileName(polyfn);
-	reader->Update();
-	pd = reader->GetOutput();
-	if (pd == NULL) {
-		fprintf(stderr, "ERROR: problem parsing file (%s).", polyfn);
-		return CV_ERROR;
-	}
-	vtkIntArray* gids = NULL;
-	gids =static_cast<vtkIntArray*>(reader->GetOutput()->GetPointData()->GetArray("GlobalNodeID"));
-	if (gids == NULL) {
-		fprintf(stderr, "ERROR: problem finding GlobalNodeID");
-		return CV_ERROR;
-	}
+    // read file
+    vtkPolyData* pd = NULL;
+    vtkXMLPolyDataReader* reader = vtkXMLPolyDataReader::New();
+    reader->SetFileName(polyfn);
+    reader->Update();
+    pd = reader->GetOutput();
+    if (pd == NULL) {
+        fprintf(stderr, "ERROR: problem parsing file (%s).", polyfn);
+        return CV_ERROR;
+    }
+    vtkIntArray* gids = NULL;
+    gids =static_cast<vtkIntArray*>(reader->GetOutput()->GetPointData()->GetArray("GlobalNodeID"));
+    if (gids == NULL) {
+        fprintf(stderr, "ERROR: problem finding GlobalNodeID");
+        return CV_ERROR;
+    }
 
     if (gBC_ == NULL) {
      gBC_ = new double [numNodes_];
@@ -2160,13 +2170,13 @@ int cmd_set_scalar_BCs_vtp(char *cmd) {
      }
     }
 
-	for (int i = 0; i < gids->GetNumberOfTuples(); i++) {
-		int nodeId = gids->GetTuple1(i);
-		gBC_[nodeId - 1] = value;
-	}
+    for (int i = 0; i < gids->GetNumberOfTuples(); i++) {
+        int nodeId = gids->GetTuple1(i);
+        gBC_[nodeId - 1] = value;
+    }
 
-	// cleanup
-	reader->Delete();
+    // cleanup
+    reader->Delete();
 
     // cleanup
     debugprint(stddbg,"Exiting cmd_set_scalar_BCs_vtp.\n");
@@ -2186,17 +2196,17 @@ int cmd_set_Evw_BCs_vtp(char *cmd){
 
 // SET SPRING CONSTANT BC
 int cmd_set_ksvw_BCs_vtp(char *cmd){
-	return cmd_set_scalar_BCs_vtp(cmd);
+    return cmd_set_scalar_BCs_vtp(cmd);
 }
 
 // SET DAMPING CONSTANT BC
 int cmd_set_csvw_BCs_vtp(char *cmd){
-	return cmd_set_scalar_BCs_vtp(cmd);
+    return cmd_set_scalar_BCs_vtp(cmd);
 }
 
 // SET_EXTERNAL PRESSURE BC
 int cmd_set_p0vw_BCs_vtp(char *cmd){
-	return cmd_set_scalar_BCs_vtp(cmd);
+    return cmd_set_scalar_BCs_vtp(cmd);
 }
 
 
@@ -2213,36 +2223,36 @@ int cmd_set_Initial_Evw_vtp(char *cmd) {
 
     debugprint(stddbg,"Setting initial value to [%lf] \n",value);
 
-	// parse command string for filename
-	char polyfn[MAXPATHLEN];
-	polyfn[0] = '\0';
-	parseCmdStr(cmd, polyfn);
+    // parse command string for filename
+    char polyfn[MAXPATHLEN];
+    polyfn[0] = '\0';
+    parseCmdStr(cmd, polyfn);
 
-	// check file exists
-	FILE* fp = NULL;
-	if ((fp = fopen(polyfn, "r")) == NULL) {
-		fprintf(stderr, "ERROR: could not open file (%s).", polyfn);
-		return CV_ERROR;
-	} else {
-		fclose(fp);
-	}
+    // check file exists
+    FILE* fp = NULL;
+    if ((fp = fopen(polyfn, "r")) == NULL) {
+        fprintf(stderr, "ERROR: could not open file (%s).", polyfn);
+        return CV_ERROR;
+    } else {
+        fclose(fp);
+    }
 
-	// read file
-	vtkPolyData* pd = NULL;
-	vtkXMLPolyDataReader* reader = vtkXMLPolyDataReader::New();
-	reader->SetFileName(polyfn);
-	reader->Update();
-	pd = reader->GetOutput();
-	if (pd == NULL) {
-		fprintf(stderr, "ERROR: problem parsing file (%s).", polyfn);
-		return CV_ERROR;
-	}
-	vtkIntArray* gids = NULL;
-	gids =static_cast<vtkIntArray*>(reader->GetOutput()->GetPointData()->GetArray("GlobalNodeID"));
-	if (gids == NULL) {
-		fprintf(stderr, "ERROR: problem finding GlobalNodeID");
-		return CV_ERROR;
-	}
+    // read file
+    vtkPolyData* pd = NULL;
+    vtkXMLPolyDataReader* reader = vtkXMLPolyDataReader::New();
+    reader->SetFileName(polyfn);
+    reader->Update();
+    pd = reader->GetOutput();
+    if (pd == NULL) {
+        fprintf(stderr, "ERROR: problem parsing file (%s).", polyfn);
+        return CV_ERROR;
+    }
+    vtkIntArray* gids = NULL;
+    gids =static_cast<vtkIntArray*>(reader->GetOutput()->GetPointData()->GetArray("GlobalNodeID"));
+    if (gids == NULL) {
+        fprintf(stderr, "ERROR: problem finding GlobalNodeID");
+        return CV_ERROR;
+    }
 
     if (gBC_ == NULL) {
      gBC_ = new double [numNodes_];
@@ -2258,13 +2268,13 @@ int cmd_set_Initial_Evw_vtp(char *cmd) {
      }
     }
 
-	for (int i = 0; i < gids->GetNumberOfTuples(); i++) {
-		int nodeId = gids->GetTuple1(i);
-		EvwSolution_[nodeId - 1] = value;
-	}
+    for (int i = 0; i < gids->GetNumberOfTuples(); i++) {
+        int nodeId = gids->GetTuple1(i);
+        EvwSolution_[nodeId - 1] = value;
+    }
 
-	// cleanup
-	reader->Delete();
+    // cleanup
+    reader->Delete();
 
     // cleanup
     debugprint(stddbg,"Exiting cmd_set_Initial_Evw_vtp.\n");
@@ -2327,50 +2337,53 @@ int cmd_varwallprop_write_vtp(char *cmd) {
     }
 
     // /* EXTERNAL TISSUE SUPPORT - ISL JULY 2019 */
-    if (KsvwSolution_ != NULL) {
-    	vtkDoubleArray *ksvw = vtkDoubleArray::New();
-        ksvw->SetNumberOfComponents(1);
-        ksvw->Allocate(numNodes_,10000);
-        ksvw->SetNumberOfTuples(numNodes_);
-        ksvw->SetName("SpringConstant");
-        for(i = 0; i < numNodes_; i++){
-            ksvw->SetTuple1(i,KsvwSolution_[i]);
+    if (itissuesuppt) {
+        if (KsvwSolution_ != NULL) {
+            vtkDoubleArray *ksvw = vtkDoubleArray::New();
+            ksvw->SetNumberOfComponents(1);
+            ksvw->Allocate(numNodes_,10000);
+            ksvw->SetNumberOfTuples(numNodes_);
+            ksvw->SetName("SpringConstant");
+            for(i = 0; i < numNodes_; i++){
+                ksvw->SetTuple1(i,KsvwSolution_[i]);
+            }
+
+            grid->GetPointData()->AddArray(ksvw);
+
+            ksvw->Delete();
         }
 
-        grid->GetPointData()->AddArray(ksvw);
+        if (CsvwSolution_ != NULL) {
+            vtkDoubleArray *csvw = vtkDoubleArray::New();
+            csvw->SetNumberOfComponents(1);
+            csvw->Allocate(numNodes_,10000);
+            csvw->SetNumberOfTuples(numNodes_);
+            csvw->SetName("DampingConstant");
+            for(i = 0; i < numNodes_; i++){
+                csvw->SetTuple1(i,CsvwSolution_[i]);
+            }
 
-        ksvw->Delete();
-    }
+            grid->GetPointData()->AddArray(csvw);
 
-    if (CsvwSolution_ != NULL) {
-    	vtkDoubleArray *csvw = vtkDoubleArray::New();
-        csvw->SetNumberOfComponents(1);
-        csvw->Allocate(numNodes_,10000);
-        csvw->SetNumberOfTuples(numNodes_);
-        csvw->SetName("DampingConstant");
-        for(i = 0; i < numNodes_; i++){
-            csvw->SetTuple1(i,CsvwSolution_[i]);
+            csvw->Delete();
         }
 
-        grid->GetPointData()->AddArray(csvw);
+        if (P0vwSolution_ != NULL) {
+            vtkDoubleArray *p0vw = vtkDoubleArray::New();
+            p0vw->SetNumberOfComponents(1);
+            p0vw->Allocate(numNodes_,10000);
+            p0vw->SetNumberOfTuples(numNodes_);
+            p0vw->SetName("ExternalPressure");
+            for(i = 0; i < numNodes_; i++){
+                p0vw->SetTuple1(i,P0vwSolution_[i]);
+            }
 
-        csvw->Delete();
-    }
+            grid->GetPointData()->AddArray(p0vw);
 
-    if (P0vwSolution_ != NULL) {
-    	vtkDoubleArray *p0vw = vtkDoubleArray::New();
-        p0vw->SetNumberOfComponents(1);
-        p0vw->Allocate(numNodes_,10000);
-        p0vw->SetNumberOfTuples(numNodes_);
-        p0vw->SetName("ExternalPressure");
-        for(i = 0; i < numNodes_; i++){
-            p0vw->SetTuple1(i,P0vwSolution_[i]);
+            p0vw->Delete();
         }
-
-        grid->GetPointData()->AddArray(p0vw);
-
-        p0vw->Delete();
     }
+    
     /* --------------------------------------------------- */
 
 

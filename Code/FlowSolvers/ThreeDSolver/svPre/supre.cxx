@@ -89,15 +89,18 @@ int*    DisplacementConn_[3];
 int     DisplacementNumNodes_    = 0;
 int*    DisplacementNodeMap_     = NULL;
 double* DisplacementSolution_    = NULL;
+
 #if(VER_VARWALL == 1)
-//variable wall thickness and Young Mod, deformable wall nodes, like DisplacementSolution_
+// variable wall properties
 double* WallPropSolution_    = NULL;  // hold any given var wall prop at a time
 double* ThicknessSolution_   = NULL;
 double* EvwSolution_         = NULL;
 double* KsvwSolution_        = NULL;
 double* CsvwSolution_        = NULL;
 double* P0vwSolution_        = NULL;
+int itissuesuppt             = 0;
 #endif
+
 double  Displacement_Evw_        = 0;
 double  Displacement_nuvw_       = 0;
 double  Displacement_thickness_  = 0;
@@ -177,5 +180,4 @@ int main(int argc, char *argv[]) {
   return 0;
 
 }
-
 

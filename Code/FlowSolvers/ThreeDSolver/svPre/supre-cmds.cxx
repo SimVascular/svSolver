@@ -149,9 +149,9 @@ extern double* EvwSolution_;
 extern double* KsvwSolution_;
 extern double* CsvwSolution_;
 extern double* P0vwSolution_;
-
-
+extern int itissuesuppt;
 #endif
+
 extern double  Displacement_Evw_;
 extern double  Displacement_nuvw_;
 extern double  Displacement_thickness_;
@@ -1111,6 +1111,7 @@ int cmd_Laplace_Ksvw(char *cmd) {
 
     int Laplacetype  = 2; // KSVW
     calcWallPropDistribution(Laplacetype);
+    itissuesuppt = 1;
 
     // cleanup
     debugprint(stddbg,"Exiting cmd_Laplace_Ksvw.\n");
@@ -1129,6 +1130,7 @@ int cmd_Laplace_Csvw(char *cmd) {
 
     int Laplacetype  = 3; // CSVW
     calcWallPropDistribution(Laplacetype);
+    itissuesuppt = 1;
 
     // cleanup
     debugprint(stddbg,"Exiting cmd_Laplace_Csvw.\n");
@@ -1147,6 +1149,7 @@ int cmd_Laplace_P0vw(char *cmd) {
 
     int Laplacetype  = 4; // P0VW
     calcWallPropDistribution(Laplacetype);
+    itissuesuppt = 1;
 
     // cleanup
     debugprint(stddbg,"Exiting cmd_Laplace_P0vw.\n");
@@ -1334,9 +1337,14 @@ int append_varwallprop_to_file(char *filename) {
       return CV_ERROR;
   }
 
+  // Thickness, Evw, Ksvw, Csvw, P0vw
   if (wallpropsoln_ == NULL) {
-    
-    nsd = 5;                    // Thickness, Evw, Ksvw, Csvw, P0vw
+    if (itissuesuppt) {
+        nsd = 5;
+    } else {
+        nsd = 2;
+    }
+                   
     nshg = numNodes_;
     size = nsd*nshg;
 
@@ -1352,17 +1360,15 @@ int append_varwallprop_to_file(char *filename) {
   // stick in displacements
   for (i = 0; i < DisplacementNumNodes_; i++) {
     int nid = DisplacementNodeMap_[i];
-  //  wallpropsoln_[numNodes_*0+nid-1] = WallpropSolution_[2*i+0];
-  //  wallpropsoln_[numNodes_*1+nid-1] = WallpropSolution_[2*i+1];
-  // test! temporary
-  //    wallpropsoln_[numNodes_*0+nid-1] = Displacement_thickness_ ;
+
     wallpropsoln_[numNodes_*0+nid-1] = ThicknessSolution_[nid-1];
     wallpropsoln_[numNodes_*1+nid-1] = EvwSolution_[nid-1];
 
-    wallpropsoln_[numNodes_*2+nid-1] = KsvwSolution_[nid-1];
-    wallpropsoln_[numNodes_*3+nid-1] = CsvwSolution_[nid-1];
-    wallpropsoln_[numNodes_*4+nid-1] = P0vwSolution_[nid-1];
-
+    if (itissuesuppt) {
+        wallpropsoln_[numNodes_*2+nid-1] = KsvwSolution_[nid-1];
+        wallpropsoln_[numNodes_*3+nid-1] = CsvwSolution_[nid-1];
+        wallpropsoln_[numNodes_*4+nid-1] = P0vwSolution_[nid-1];
+    }
   }
 
     int filenum = -1;
@@ -1592,43 +1598,41 @@ int cmd_varwallprop_write_vtk(char *cmd) {
     }
 
     /* EXTERNAL TISSUE SUPPORT - ISL JULY 2019 */
-    if (KsvwSolution_ != NULL) {
-    fprintf(fp,"SCALARS SpringConstant double\n");
-    fprintf(fp,"LOOKUP_TABLE default\n");
-    for (i = 0; i < numNodes_; i++) {
+    if (itissuesuppt) {
+        if (KsvwSolution_ != NULL) {
+            fprintf(fp,"SCALARS SpringConstant double\n");
+            fprintf(fp,"LOOKUP_TABLE default\n");
+            for (i = 0; i < numNodes_; i++) {
 
-       scalarval=KsvwSolution_[i];
-      // printf("%lf\n",scalarval);
-        fprintf(fp,"%lf\n",scalarval);
+               scalarval=KsvwSolution_[i];
+              // printf("%lf\n",scalarval);
+                fprintf(fp,"%lf\n",scalarval);
+            }
+        }
+
+        if (CsvwSolution_ != NULL) {
+            fprintf(fp,"SCALARS DampingConstant double\n");
+            fprintf(fp,"LOOKUP_TABLE default\n");
+            for (i = 0; i < numNodes_; i++) {
+
+               scalarval=CsvwSolution_[i];
+              // printf("%lf\n",scalarval);
+                fprintf(fp,"%lf\n",scalarval);
+            }
+        }
+
+        if (P0vwSolution_ != NULL) {
+            fprintf(fp,"SCALARS ExternalPressure double\n");
+            fprintf(fp,"LOOKUP_TABLE default\n");
+            for (i = 0; i < numNodes_; i++) {
+
+               scalarval=P0vwSolution_[i];
+              // printf("%lf\n",scalarval);
+                fprintf(fp,"%lf\n",scalarval);
+            }
+        }
     }
-
-    }
-
-    if (CsvwSolution_ != NULL) {
-    fprintf(fp,"SCALARS DampingConstant double\n");
-    fprintf(fp,"LOOKUP_TABLE default\n");
-    for (i = 0; i < numNodes_; i++) {
-
-       scalarval=CsvwSolution_[i];
-      // printf("%lf\n",scalarval);
-        fprintf(fp,"%lf\n",scalarval);
-    }
-
-    }
-
-    if (P0vwSolution_ != NULL) {
-    fprintf(fp,"SCALARS ExternalPressure double\n");
-    fprintf(fp,"LOOKUP_TABLE default\n");
-    for (i = 0; i < numNodes_; i++) {
-
-       scalarval=P0vwSolution_[i];
-      // printf("%lf\n",scalarval);
-        fprintf(fp,"%lf\n",scalarval);
-    }
-
-    }
-
-
+    
     fclose(fp);
 
     // cleanup
@@ -1738,9 +1742,9 @@ int cmd_write_restartdat(char *cmd) {
 
     // do work
     if(infile[0]=='\0'){
-    	writeRESTARTDAT("restart.0.1");
+        writeRESTARTDAT("restart.0.1");
     }else{
-    	writeRESTARTDAT(infile);
+        writeRESTARTDAT(infile);
     }
 
     // cleanup
@@ -1850,11 +1854,11 @@ int cmd_read_varwallprop(char *cmd) {
 }
 
 int cmd_read_restart_varwallprop(char *cmd){
-	return cmd_read_varwallprop(cmd);
+    return cmd_read_varwallprop(cmd);
 }
 
 int cmd_read_geombc_varwallprop(char *cmd){
-	return cmd_read_varwallprop(cmd);
+    return cmd_read_varwallprop(cmd);
 }
 
 #endif
@@ -1869,9 +1873,9 @@ int cmd_write_geombcdat(char *cmd) {
 
     // do work
     if(infile[0]=='\0'){
-    	writeGEOMBCDAT("geombc.dat.1");
+        writeGEOMBCDAT("geombc.dat.1");
     }else{
-    	writeGEOMBCDAT(infile);
+        writeGEOMBCDAT(infile);
     }
 
     // cleanup

@@ -519,7 +519,7 @@ extern "C" {
     // CLOSED LOOP
     int numNormalSrfs;
     int nsrflistNormal[MAXSURF+1];
-    //============================
+    // ============================
     int Lagrange;
     int numLagrangeSrfs;
     int nsrflistLagrange[MAXSURF+1];
@@ -529,7 +529,9 @@ extern "C" {
     int applyWallDeformation;
     // VARWALL
     int ivarwallprop;
-    // =======
+    // EXTERNAL TISSUE SUPPORT
+    int itissuesuppt;
+    // ========================
     int iwallmassfactor;
     int iwallstiffactor;
     int nProps;

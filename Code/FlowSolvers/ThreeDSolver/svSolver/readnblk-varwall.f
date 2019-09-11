@@ -319,20 +319,29 @@ c
           intfromfile = 0
           call readheader(igeom,fname1,intfromfile,itwo, 'double'//CHAR(0), iotype)     
 
-          if(intfromfile(1).gt.0) then
+          if (intfromfile(1).gt.0) then
               use_restart=0
               numnp=intfromfile(1)
               nwallprop=intfromfile(2)
 
-c.... Check that 5 nwallprop exist: thicknessvw, evw, ksvw, csvw, p0vw
-              if(nwallprop.ne.5) then
-                 warning ='WARNING: number of properties not equal 5'
-                 write(*,*) warning
-                 if(nwallprop.gt.6) then
-                   PRINT *,'ERROR: Variable Wall Properties Component Number greater than 6 in geombc.dat.proc'
-                   stop
-                 endif
+c.... Check that either 2 or 5 nwallprop exist: (thicknessvw, evw) with/without (ksvw, csvw, p0vw)
+              if (nwallprop.gt.6) then
+                  PRINT *,'ERROR: Variable Wall Properties Component Number greater than 6 in geombc.dat.proc'
+                  stop
               endif
+
+              if (itissuesuppt .eq. 1) then 
+                  if (nwallprop .ne. 5) then
+                      warning = 'WARNING: number of properties not equal 5'
+                      write(*,*) warning
+                  endif
+              else
+                  if (nwallprop .ne. 2) then
+                      warning = 'WARNING: number of properties not equal 2'
+                      write(*,*) warning
+                  endif
+              endif 
+              
 
               allocate( wallpropg(numnp, nwallprop) )
               

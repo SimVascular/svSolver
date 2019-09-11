@@ -109,6 +109,13 @@ c
         real*8 bcinterp(100,ndof+1),interp_mask(ndof)
         logical exlog
 
+      INTERFACE
+        SUBROUTINE local_elemwallprop(rlocal, elem_prop)
+        REAL*8, DIMENSION(:, :, :) :: rlocal
+        REAL*8, DIMENSION(:, :) :: elem_prop
+        END SUBROUTINE local_elemwallprop
+      END INTERFACE
+
 c
 c.... generate the geometry and boundary conditions data
 c
@@ -134,22 +141,33 @@ c
 c
 c.... initialize AutoSponge
 c
-        if(matflg(5,1).ge.4) then ! cool case (sponge)
+        if (matflg(5,1).ge.4) then ! cool case (sponge)
            call initSponge( y,point2x)
         endif
 c
 c.... Write Message For Simulation Type
 c
-        if(myrank.eq.master) then
-          if(ideformwall.eq.1) then
+        if (myrank.eq.master) then
+          if (ideformwall.eq.1) then
             write(*,*) "Simulation Type: DEFORMABLE WALL"
-            if(ivarwallprop.eq.1) then
-              write(*,*) "Thickness Type: VARIABLE"
+            if (ivarwallprop.eq.1) then
+              write(*,*) "Wall Property Type: VARIABLE"
               write(*,*) ""
             else
-              write(*,*) "Thickness Type: CONSTANT"
+              write(*,*) "Wall Property Type: CONSTANT"
               write(*,*) ""
             endif
+
+c.... ------------> External Tissue Support - ISL July 2019 <-----------         
+            if (itissuesuppt.eq.1) then
+              write(*,*) "External Tissue Support: ON"
+              write(*,*) ""
+            else
+              write(*,*) "External Tissue Support: OFF"
+              write(*,*) ""
+            endif
+c.... ------------------------------------------------------------------
+
           else
             write(*,*) ""
             write(*,*) "Simulation Type: RIGID WALL"
@@ -160,7 +178,12 @@ c
 #if(VER_VARWALL == 1)
 
 c....   variable thicknessvw, evw, ksvw, csvw, p0vw
-        nwallprop = 5
+        if (itissuesuppt.eq.1) then    
+          nwallprop = 5
+        else
+          nwallprop = 2
+        endif
+        
 
         if((ideformwall.eq.1) .and. (ivarwallprop.eq.1)) then
 
@@ -180,7 +203,7 @@ c           get wall properties for each wall node for block iblk
 
 c           get coordinates for wall nodes in block iblk
 c           call localx(point2x,  xlb,  mienb(iblk)%p,  nsd,  'gather  ')
-
+          
             call local_elemwallprop(wallpropl,wallpropelem(iblk)%p)
 
 c            deallocate(xlb)

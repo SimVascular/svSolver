@@ -143,7 +143,7 @@ c
      &            flhsl(npro,nshl,1),      fnrml(npro,nshl,nsd),
      &            lnflx(npro),             lnode(27),
      &            ul(npro,nshl,nsd),       acl(npro,nshl,ndofl),
-     &			  dwl(npro,nshl)
+     &        dwl(npro,nshl)
         
         dimension xKebe(npro,9,nshl,nshl) 
 
@@ -3519,7 +3519,7 @@ c
      &            rl(npro,nshl,nflow),     ql(npro,nshl,idflx)
 c      
 
-      	dimension xKebe(npro,9,nshl,nshl), xGoC(npro,4,nshl,nshl)
+        dimension xKebe(npro,9,nshl,nshl), xGoC(npro,4,nshl,nshl)
 c
 c.... local declarations
 c
@@ -3877,7 +3877,6 @@ c
 
       integer   num
 
-
 c
 c.... compute the nodes which lie on the boundary (hierarchic)
 c
@@ -4157,10 +4156,10 @@ c
 c        
 c    ----------> External tissue support (ISL July 2019) <-------------
 
-        if(ideformwall.eq.1) then
-          rNa(:, 1) = rNa(:, 1) - WdetJb * f_suppt(:, 1)
-          rNa(:, 2) = rNa(:, 2) - WdetJb * f_suppt(:, 2)
-          rNa(:, 3) = rNa(:, 3) - WdetJb * f_suppt(:, 3)
+        if (itissuesuppt .eq. 1) then
+           rNa(:, 1) = rNa(:, 1) - WdetJb * f_suppt(:, 1)
+           rNa(:, 2) = rNa(:, 2) - WdetJb * f_suppt(:, 2)
+           rNa(:, 3) = rNa(:, 3) - WdetJb * f_suppt(:, 3)
         endif
 
 c
@@ -4208,7 +4207,7 @@ c      xKebe = zero
      &                    rKwall_glob(:,:,:,:) * iwallstiffactor
 
 
-         endif
+        endif
 c$$$        ttim(40) = ttim(40) + tmr()
 c
 c.... return
@@ -5013,24 +5012,32 @@ c
 c.... NOTE:  the wall mass contributions should only have 3 nodal components 
 c.... since the fourth node is an interior node... therefore, the loops should
 c.... be done from 1 to nshlb=3...
-      
+
       do b = 1, nshlb
          do aa = 1, nshlb
 
 c        The time term: tmp1=alpha_m*(1-lmp)*WdetJ*N^aN^b*rho*thickness
             tmp1 = tsFctvw * shpb(:,aa) * shpb(:,b)
 
+            xKebe(:,1,aa,b) = xKebe(:,1,aa,b) + tmp1
+            xKebe(:,5,aa,b) = xKebe(:,5,aa,b) + tmp1
+            xKebe(:,9,aa,b) = xKebe(:,9,aa,b) + tmp1
+
 c...     ----------> External tissue support (ISL July 2019) <----------
 
-            f_suppt_LHS = WdetJb * ( alfi * gami * Delt(itseq) * 
-     &                    csvw * shpb(:, aa) * shpb(:, b) + 
-     &                    alfi * betai * Delt(itseq) * Delt(itseq) * 
-     &                    ksvw * shpb(:, aa) * shpb(:, b) )
+            if (itissuesuppt .eq. 1) then
+
+               f_suppt_LHS = WdetJb * ( alfi * gami * Delt(itseq) * 
+     &                       csvw * shpb(:, aa) * shpb(:, b) + 
+     &                       alfi * betai * Delt(itseq) * Delt(itseq) * 
+     &                       ksvw * shpb(:, aa) * shpb(:, b) )
 c
-            xKebe(:,1,aa,b) = xKebe(:,1,aa,b) + tmp1 + f_suppt_LHS
-            xKebe(:,5,aa,b) = xKebe(:,5,aa,b) + tmp1 + f_suppt_LHS
-            xKebe(:,9,aa,b) = xKebe(:,9,aa,b) + tmp1 + f_suppt_LHS
-       
+               xKebe(:,1,aa,b) = xKebe(:,1,aa,b) + f_suppt_LHS
+               xKebe(:,5,aa,b) = xKebe(:,5,aa,b) + f_suppt_LHS
+               xKebe(:,9,aa,b) = xKebe(:,9,aa,b) + f_suppt_LHS
+
+            endif
+            
          enddo
       enddo
 
@@ -5140,9 +5147,14 @@ c.... This is ugly, but I will fix it later...
       endif
 
 c.... ----------> External tissue support (ISL July 2019) <-------------
-      f_suppt(:, 1) = -ksvw * disp(:, 1) - csvw * u1 - p0vw * bnorm(:, 1)
-      f_suppt(:, 2) = -ksvw * disp(:, 2) - csvw * u2 - p0vw * bnorm(:, 2)
-      f_suppt(:, 3) = -ksvw * disp(:, 3) - csvw * u3 - p0vw * bnorm(:, 3)
+      if (itissuesuppt .eq. 1) then
+         f_suppt(:, 1) = -ksvw * disp(:, 1) - csvw * u1 -
+     &                   p0vw * bnorm(:, 1)
+         f_suppt(:, 2) = -ksvw * disp(:, 2) - csvw * u2 - 
+     &                   p0vw * bnorm(:, 2)
+         f_suppt(:, 3) = -ksvw * disp(:, 3) - csvw * u3 - 
+     &                   p0vw * bnorm(:, 3)
+      endif
 
 
       endif                         ! end of deformable wall conditional
@@ -5997,7 +6009,7 @@ c
         include "common_blocks/solpar.h"
         include "common_blocks/timdat.h"
 C    
-C	 Argument variables
+C  Argument variables
 C
       REAL*8                rho,         rlui,        rmu,         shg
       REAL*8                shpfun,      taubar,      tauc,        taum
@@ -6268,7 +6280,7 @@ C
      &          WdetJ(npro),      rLS(npro),        rho(npro), 
      &          tauS(npro),       shpfun(npro,nshl),  
      &          src(npro),        shg(npro,nshl,3),
-     &			xSebe(npro,nshl,nshl)
+     &      xSebe(npro,nshl,nshl)
       
       real*8    diffus(npro),  cp,  kptmp(npro),tauSo(npro)
 
@@ -6329,22 +6341,22 @@ c
 c
                tmp = WdetJ * dcFct * lhsFct
 c
-               giju(:,1)	= tmp * giju(:,1)
-               giju(:,2)	= tmp * giju(:,2)
-               giju(:,3)	= tmp * giju(:,3)
-               giju(:,4)	= tmp * giju(:,4)
-               giju(:,5)	= tmp * giju(:,5)
-               giju(:,6)	= tmp * giju(:,6)
+               giju(:,1)  = tmp * giju(:,1)
+               giju(:,2)  = tmp * giju(:,2)
+               giju(:,3)  = tmp * giju(:,3)
+               giju(:,4)  = tmp * giju(:,4)
+               giju(:,5)  = tmp * giju(:,5)
+               giju(:,6)  = tmp * giju(:,6)
 c       
                t1(:,1) = t1(:,1) + giju(:,1) * shg(:,b,1) 
      2                           + giju(:,4) * shg(:,b,2) 
-     3			         + giju(:,6) * shg(:,b,3)
+     3               + giju(:,6) * shg(:,b,3)
                t1(:,2) = t1(:,2) + giju(:,4) * shg(:,b,1) 
      2                           + giju(:,2) * shg(:,b,2) 
-     3			         + giju(:,5) * shg(:,b,3)
+     3               + giju(:,5) * shg(:,b,3)
                t1(:,3) = t1(:,3) + giju(:,6) * shg(:,b,1) 
      2                           + giju(:,5) * shg(:,b,2) 
-     3			         + giju(:,3) * shg(:,b,3)
+     3               + giju(:,3) * shg(:,b,3)
             endif
          endif                  !end of idcsclr
 c
@@ -6855,7 +6867,7 @@ C
       INTEGER             j
 C
       REAL*8                dxidx,       g1yi,        g2yi,        g3yi
-      REAL*8                qdi,         qrl,	d
+      REAL*8                qdi,         qrl, d
       REAL*8                rmass,       rminv,       rmu,         shape
       REAL*8                shdrv,       shg
       REAL*8                wdetj
@@ -7036,7 +7048,7 @@ C
       INTEGER             j
 C
       REAL*8                diffus,      dxidx,       eviscv,      gradt
-      REAL*8                qdi,         qrl,	d
+      REAL*8                qdi,         qrl, d
       REAL*8                rmass,       rminv,       shape,       shdrv
       REAL*8                tmp,          wdetj
 C
@@ -7639,8 +7651,8 @@ c
 !> Calculate the residual for the advection-diffusion equation
 
       subroutine e3ResSclr ( uMod,              gGradS,
-     &                       Sclr,		Sdot,	gradS,  
-     &                       WdetJ,		rLS,	tauS,
+     &                       Sclr,    Sdot, gradS,  
+     &                       WdetJ,   rLS,  tauS,
      &                       shpfun,            shg,    src,
      &                       diffus,
      &                       rl )
@@ -7657,8 +7669,8 @@ C
       REAL*8                tmps
 C
       real*8    uMod(npro,nsd),   gGradS(npro, nsd),
-     &          Sclr(npro),       Sdot(npro),	gradS(npro,nsd),
-     &          WdetJ(npro),      rLS(npro),	rho(npro),
+     &          Sclr(npro),       Sdot(npro), gradS(npro,nsd),
+     &          WdetJ(npro),      rLS(npro),  rho(npro),
      &          tauS(npro),       shpfun(npro,nshl), src(npro), 
      &          shg(npro,nshl,3), rl(npro,nshl)
       
@@ -7713,7 +7725,7 @@ c.... multiply the residual pieces by the weight space
 c
       do aa = 1,nshl
 c
-         rl(:,aa) = rl(:,aa)	- WdetJ
+         rl(:,aa) = rl(:,aa)  - WdetJ
      &                        * ( shpfun(:,aa) * rNa(:)
      &                        + shg(:,aa,1) * rGNa(:,1)
      &                        + shg(:,aa,2) * rGNa(:,2)
@@ -8003,25 +8015,25 @@ c     fff = 144.0d0
 c
 c...  momentum tau
 c 
-         dts=  Dtgl*dtsfct	! Dtgl = (time step)^-1
+         dts=  Dtgl*dtsfct  ! Dtgl = (time step)^-1
          tauM = ( (two*dts)**2
-     3		      + ( u1 * ( gijd(:,1) * u1
-     4			             + gijd(:,4) * u2
-     5			             + gijd(:,6) * u3 )
-     6		        + u2 * ( gijd(:,4) * u1
-     7			             + gijd(:,2) * u2
-     8			             + gijd(:,5) * u3 )
-     9		        + u3 * ( gijd(:,6) * u1
-     a			             + gijd(:,5) * u2
-     1			             + gijd(:,3) * u3 ) ) )
-     2		    + fff * rnu** 2
-     3		    * ( gijd(:,1) ** 2
-     4		      + gijd(:,2) ** 2
-     5		      + gijd(:,3) ** 2
-     6		      + 2.
-     7		      * ( gijd(:,4) ** 2
-     8		        + gijd(:,5) ** 2
-     9		        + gijd(:,6) ** 2 ) 
+     3          + ( u1 * ( gijd(:,1) * u1
+     4                   + gijd(:,4) * u2
+     5                   + gijd(:,6) * u3 )
+     6            + u2 * ( gijd(:,4) * u1
+     7                   + gijd(:,2) * u2
+     8                   + gijd(:,5) * u3 )
+     9            + u3 * ( gijd(:,6) * u1
+     a                   + gijd(:,5) * u2
+     1                   + gijd(:,3) * u3 ) ) )
+     2        + fff * rnu** 2
+     3        * ( gijd(:,1) ** 2
+     4          + gijd(:,2) ** 2
+     5          + gijd(:,3) ** 2
+     6          + 2.
+     7          * ( gijd(:,4) ** 2
+     8            + gijd(:,5) ** 2
+     9            + gijd(:,6) ** 2 ) 
      b              +omegasq)
         
          fact = sqrt(tauM)
@@ -8095,15 +8107,15 @@ c  would be  ".01-factor"=minCFL^2*4
 c
 
          tauM = rho ** 2
-     1		    * ( four*taubar + fact
-     2		    + fff * rmu** 2
-     3		    * ( gijd(:,1) ** 2
-     4		      + gijd(:,2) ** 2
-     5		      + gijd(:,3) ** 2
-     6		      + 2.
-     7		      * ( gijd(:,4) ** 2
-     8		        + gijd(:,5) ** 2
-     9		        + gijd(:,6) ** 2 ) ) 
+     1        * ( four*taubar + fact
+     2        + fff * rmu** 2
+     3        * ( gijd(:,1) ** 2
+     4          + gijd(:,2) ** 2
+     5          + gijd(:,3) ** 2
+     6          + 2.
+     7          * ( gijd(:,4) ** 2
+     8            + gijd(:,5) ** 2
+     9            + gijd(:,6) ** 2 ) ) 
      b              +omegasq)
          fact=sqrt(tauM)
 cdebugcheck         tauBar = pt125*fact/(gijd(:,1)+gijd(:,2)+gijd(:,3)) !*dtsi
@@ -8155,15 +8167,15 @@ c  would be  ".01-factor"=minCFL^2*4
 c
 
          tauM = rho ** 2
-     1		    * ( four*taubar + fact
-     2		    + fff * rmu** 2
-     3		    * ( gijd(:,1) ** 2
-     4		      + gijd(:,2) ** 2
-     5		      + gijd(:,3) ** 2
-     6		      + 2.
-     7		      * ( gijd(:,4) ** 2
-     8		        + gijd(:,5) ** 2
-     9		        + gijd(:,6) ** 2 ) ) 
+     1        * ( four*taubar + fact
+     2        + fff * rmu** 2
+     3        * ( gijd(:,1) ** 2
+     4          + gijd(:,2) ** 2
+     5          + gijd(:,3) ** 2
+     6          + 2.
+     7          * ( gijd(:,4) ** 2
+     8            + gijd(:,5) ** 2
+     9            + gijd(:,6) ** 2 ) ) 
      b              +omegasq)
          fact=sqrt(tauM)
 c         tauBar = pt125*fact/(gijd(:,1)+gijd(:,2)+gijd(:,3)) !*dtsi
@@ -8288,24 +8300,24 @@ c
 
       dts  =  (Dtgl*dtsfct)
       tauM = rho ** 2
-     1		    * ( (two*dts)**2
-     3		      + ( ui(:,1) * ( gijd(:,1) * ui(:,1)
-     4			            + gijd(:,4) * ui(:,2)
-     5			            + gijd(:,6) * ui(:,3) )
-     6		        + ui(:,2) * ( gijd(:,4) * ui(:,1)
-     7			            + gijd(:,2) * ui(:,2)
-     8			            + gijd(:,5) * ui(:,3) )
-     9		        + ui(:,3) * ( gijd(:,6) * ui(:,1)
-     a			            + gijd(:,5) * ui(:,2)
-     1			            + gijd(:,3) * ui(:,3) ) ) )
-     2		    + fff * rmu** 2
-     3		    * ( gijd(:,1) ** 2
-     4		      + gijd(:,2) ** 2
-     5		      + gijd(:,3) ** 2
-     6		      + 2.
-     7		      * ( gijd(:,4) ** 2
-     8		        + gijd(:,5) ** 2
-     9		        + gijd(:,6) ** 2 ) )
+     1        * ( (two*dts)**2
+     3          + ( ui(:,1) * ( gijd(:,1) * ui(:,1)
+     4                  + gijd(:,4) * ui(:,2)
+     5                  + gijd(:,6) * ui(:,3) )
+     6            + ui(:,2) * ( gijd(:,4) * ui(:,1)
+     7                  + gijd(:,2) * ui(:,2)
+     8                  + gijd(:,5) * ui(:,3) )
+     9            + ui(:,3) * ( gijd(:,6) * ui(:,1)
+     a                  + gijd(:,5) * ui(:,2)
+     1                  + gijd(:,3) * ui(:,3) ) ) )
+     2        + fff * rmu** 2
+     3        * ( gijd(:,1) ** 2
+     4          + gijd(:,2) ** 2
+     5          + gijd(:,3) ** 2
+     6          + 2.
+     7          * ( gijd(:,4) ** 2
+     8            + gijd(:,5) ** 2
+     9            + gijd(:,6) ** 2 ) )
         
       tauM = one/sqrt(tauM)
 c
@@ -8469,25 +8481,25 @@ c
 c       DES - MODIFIED AFTER NATHAN TURBULENCE CLEANUP
         srcRat=srcP
         tauT = 
-     1	       (two*dts)**2 
+     1         (two*dts)**2 
      2       + srcRat ** 2
-     3	     + uMod(:,1) * ( gijd(:,1) * uMod(:,1)
-     4	                   + gijd(:,4) * uMod(:,2)
-     5	                   + gijd(:,6) * uMod(:,3) )
-     6	     + uMod(:,2) * ( gijd(:,4) * uMod(:,1)
-     7	                   + gijd(:,2) * uMod(:,2)
-     8	                   + gijd(:,5) * uMod(:,3) )
-     9	     + uMod(:,3) * ( gijd(:,6) * uMod(:,1)
-     a	                   + gijd(:,5) * uMod(:,2)
-     1	                   + gijd(:,3) * uMod(:,3) )
-     2	     + fff * diffus(:)** 2
-     3	           * ( gijd(:,1) ** 2
-     4		     + gijd(:,2) ** 2
-     5		     + gijd(:,3) ** 2
-     6		     + 2.
-     7		      * ( gijd(:,4) ** 2
-     8		        + gijd(:,5) ** 2
-     9		        + gijd(:,6) ** 2 ) )
+     3       + uMod(:,1) * ( gijd(:,1) * uMod(:,1)
+     4                     + gijd(:,4) * uMod(:,2)
+     5                     + gijd(:,6) * uMod(:,3) )
+     6       + uMod(:,2) * ( gijd(:,4) * uMod(:,1)
+     7                     + gijd(:,2) * uMod(:,2)
+     8                     + gijd(:,5) * uMod(:,3) )
+     9       + uMod(:,3) * ( gijd(:,6) * uMod(:,1)
+     a                     + gijd(:,5) * uMod(:,2)
+     1                     + gijd(:,3) * uMod(:,3) )
+     2       + fff * diffus(:)** 2
+     3             * ( gijd(:,1) ** 2
+     4         + gijd(:,2) ** 2
+     5         + gijd(:,3) ** 2
+     6         + 2.
+     7          * ( gijd(:,4) ** 2
+     8            + gijd(:,5) ** 2
+     9            + gijd(:,6) ** 2 ) )
         
         tauT = one/sqrt(tauT)
 c
@@ -10378,6 +10390,7 @@ c              lcblk(2,nelblk)  = iopen ! available for later use
 
 c             ELEMENT BLOCK ALLOCATION EXCEEDED
               IF(nelblk>MAXBLK) THEN
+                PRINT *, 'nelblk: ', nelblk
                 PRINT *,''
                 PRINT *,'Fatal: Total Element Block Allocation '//
      &           'Exceeded.'
@@ -11435,12 +11448,12 @@ CAD    epsilon_ls is an adjustment to control the width of the band over which
 CAD    the properties are blended. 
 
 c      DES - ONLY ONE FLUID PROPERTY CONSIDERED    
-       rho  = datmat(1,1,1)	! single fluid model, i.e., only 1 density
+       rho  = datmat(1,1,1) ! single fluid model, i.e., only 1 density
        rmu = datmat(1,2,1)
 c      DES ------------------------------------
 
-CAD	At this point we have a rho that is bounded by the two values for
-CAD 	density 1, datmat(1,1,1), the fluid,  and density 2, datmat(1,1,2)
+CAD At this point we have a rho that is bounded by the two values for
+CAD   density 1, datmat(1,1,1), the fluid,  and density 2, datmat(1,1,2)
 CAD     the gas
 
 c
@@ -11472,7 +11485,7 @@ C
       real*8   diffus(npro), rho(npro)
       real*8   yl(npro,nshl,ndof), dwl(npro,nshl), shape(npro,nshl)
       integer n, e
-      rho(:)  = datmat(1,1,1)	! single fluid model, i.e., only 1 density
+      rho(:)  = datmat(1,1,1) ! single fluid model, i.e., only 1 density
       if(isclr.eq.0) then  ! solving the temperature equation
          diffus(:) = datmat(1,4,1)
       else                      ! solving scalar advection diffusion equations
@@ -11924,7 +11937,7 @@ c
 C
 C     Argument variables
 C
-      INTEGER             mrank, 	mpoint,      npe
+      INTEGER             mrank,  mpoint,      npe
 C
 C     Local variables
 C
@@ -13096,7 +13109,7 @@ c.... gather the data to the current block
 c
 
 CAD      rlocal = yl={P, u, v, w, T, scalar1, ...}
-CAD	 global = y = {u, v, w, P, T, scalar1, ...}
+CAD  global = y = {u, v, w, P, T, scalar1, ...}
 
 CAD      Put u,v,w in the slots 2,3,4 of yl 
 
@@ -16564,7 +16577,7 @@ c
       include "common_blocks/conpar.h"
 c
 C
-      INTEGER             npars,	ierr
+      INTEGER             npars,  ierr
 
 C
       real*8  y(nshg,3)

@@ -529,7 +529,7 @@ c
 c
 c    ----------> External tissue support (ISL July 2019) <--------------
 
-        if(ideformwall.eq.1) then
+        if (itissuesuppt .eq.1) then
           rNa(:, 1) = rNa(:, 1) - WdetJb * f_suppt(:, 1)
           rNa(:, 2) = rNa(:, 2) - WdetJb * f_suppt(:, 2)
           rNa(:, 3) = rNa(:, 3) - WdetJb * f_suppt(:, 3)
@@ -1294,17 +1294,28 @@ c.... be done from 1 to nshlb=3...
 c        The time term: tmp1=alpha_m*(1-lmp)*WdetJ*N^aN^b*rho*thickness
             tmp1 = tsFctvw * shpb(:,aa) * shpb(:,b)
 
+            xKebe(:,1,aa,b) = xKebe(:,1,aa,b) + tmp1
+            xKebe(:,5,aa,b) = xKebe(:,5,aa,b) + tmp1
+            xKebe(:,9,aa,b) = xKebe(:,9,aa,b) + tmp1
+
 c...     ----------> External tissue support (ISL July 2019) <----------
 c...     elem_prop(elem, :) - var thicknessvw, evw, ksvw, csvw, p0vw 
 
-            f_suppt_LHS = WdetJb * ( alfi * gami * Delt(itseq) * 
-     &                    elem_prop(:, 4) * shpb(:, aa) * shpb(:, b) + 
-     &                    alfi * betai * Delt(itseq) * Delt(itseq) * 
-     &                    elem_prop(:, 3) * shpb(:, aa) * shpb(:, b) )      
+            if (itissuesuppt .eq. 1) then
 
-            xKebe(:,1,aa,b) = xKebe(:,1,aa,b) + tmp1 + f_suppt_LHS
-            xKebe(:,5,aa,b) = xKebe(:,5,aa,b) + tmp1 + f_suppt_LHS
-            xKebe(:,9,aa,b) = xKebe(:,9,aa,b) + tmp1 + f_suppt_LHS
+               f_suppt_LHS = WdetJb * 
+     &                       (alfi * gami * Delt(itseq) * 
+     &                       elem_prop(:, 4) * shpb(:, aa) * shpb(:, b) 
+     &                       + alfi * betai * Delt(itseq) * Delt(itseq)
+     &                       * elem_prop(:, 3)
+     &                       * shpb(:, aa) * shpb(:, b))
+
+               xKebe(:,1,aa,b) = xKebe(:,1,aa,b) + f_suppt_LHS
+               xKebe(:,5,aa,b) = xKebe(:,5,aa,b) + f_suppt_LHS
+               xKebe(:,9,aa,b) = xKebe(:,9,aa,b) + f_suppt_LHS
+
+            endif
+
          enddo
       enddo
 
@@ -1415,18 +1426,23 @@ c.... This is ugly, but I will fix it later...
 
 c.... ----------> External tissue support (ISL July 2019) <-------------
 c...     elem_prop(elem, :) - var thicknessvw, evw, ksvw, csvw, p0vw 
+      
+      if (itissuesuppt .eq. 1) then
 
-      f_suppt(:, 1) = -elem_prop(:, 3) * disp(:, 1) - 
-     &                 elem_prop(:, 4) * u1 - 
-     &                 elem_prop(:, 5) * bnorm(:, 1)
+         f_suppt(:, 1) = -elem_prop(:, 3) * disp(:, 1) - 
+     &                    elem_prop(:, 4) * u1 - 
+     &                    elem_prop(:, 5) * bnorm(:, 1)
 
-      f_suppt(:, 2) = -elem_prop(:, 3) * disp(:, 2) - 
-     &                 elem_prop(:, 4) * u2 - 
-     &                 elem_prop(:, 5) * bnorm(:, 2)
+         f_suppt(:, 2) = -elem_prop(:, 3) * disp(:, 2) - 
+     &                    elem_prop(:, 4) * u2 - 
+     &                    elem_prop(:, 5) * bnorm(:, 2)
 
-      f_suppt(:, 3) = -elem_prop(:, 3) * disp(:, 3) - 
-     &                 elem_prop(:, 4) * u3 - 
-     &                 elem_prop(:, 5) * bnorm(:, 3)      
+         f_suppt(:, 3) = -elem_prop(:, 3) * disp(:, 3) - 
+     &                    elem_prop(:, 4) * u3 - 
+     &                    elem_prop(:, 5) * bnorm(:, 3)  
+
+      endif    
+
 
       endif                         ! end of deformable wall conditional
 
@@ -1440,14 +1456,15 @@ c...     elem_prop(elem, :) - var thicknessvw, evw, ksvw, csvw, p0vw
       INCLUDE "common_blocks/nomodule.h"
 
       INTEGER i,k,j
-      REAL*8 rlocal, elem_prop, f
 
-      DIMENSION rlocal(npro, nshl, 5)
-      DIMENSION elem_prop(npro, 5)
-      DIMENSION f(3, 5)
+c      rlocal & elem_prop are already allocated prior to this func call
+      REAL*8, DIMENSION(:, :, :) :: rlocal
+      REAL*8, DIMENSION(:, :) :: elem_prop
 
+c.... nwallprop = # columns in elem_prop (5 with TS, 2 without TS)
+      REAL*8, DIMENSION(3, SIZE(elem_prop, 2)) :: f
 
-      DO i = 1,npro
+      DO i = 1, npro
         k = 0
 c        DO j=1,nshl
 c         IF (rlocal(i,j,1)>0.0D0 .AND. k<4) THEN
@@ -1466,7 +1483,11 @@ c....     Use thickness to determine the number of nodes on the wall
 c....     Take the average of nodal wall properties
           elem_prop(i, :) = (f(1,:) + f(2,:) + f(3,:)) / 3D0
         ELSE
-          elem_prop(i, :) = (/ thicknessvw, evw, ksvw, csvw, p0vw /)
+          IF (itissuesuppt .EQ. 1) THEN
+            elem_prop(i, :) =  (/ thicknessvw, evw, ksvw, csvw, p0vw /)
+          ELSE
+            elem_prop(i, :) =  (/ thicknessvw, evw /)
+          ENDIF
         END IF
       END DO
       END

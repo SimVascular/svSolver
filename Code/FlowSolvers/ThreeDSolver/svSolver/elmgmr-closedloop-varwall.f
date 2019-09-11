@@ -386,7 +386,7 @@ c
 #if (VER_VARWALL == 1)
           if (ivarwallprop .eq. 1) then
 
-            call AsBMFG2 (u,                       y,
+            call AsBMFG2 (u,                      y,
      &                   ac,                      x,
      &                   tmpshpb,               tmpshglb,
      &                   mienb(iblk)%p,           mmatb(iblk)%p,
