@@ -1301,7 +1301,9 @@ int calcMeanWallShearStressAndPressure(int start, int stop, int incr, bool sim_u
     for (i = 0; i < numPts; i++) {
         double pressure = 0.0;
         for (j = 0; j < numArrays; j++) {
-            pressure += p[j]->GetTuple1(i);
+            if (p[j] != NULL) { 
+                pressure += p[j]->GetTuple1(i);
+            }
         }
         pressure = pressure / numArrays;
         meanpressure->SetTuple1(i,pressure);

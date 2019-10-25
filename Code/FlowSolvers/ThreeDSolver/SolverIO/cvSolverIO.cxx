@@ -212,6 +212,9 @@ int cvsolverIO::readHeader (const char* keyphrase,int* valueArray,
 
          // skip to next header
          token = strtok( NULL, " ,;<>" );
+         if (token == NULL) { 
+           continue;
+         }
          skip_size = atoi( token );
          if ( binary_format_ ) {
              gzseek(filePointer_,skip_size,SEEK_CUR);
