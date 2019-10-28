@@ -304,12 +304,13 @@ int main( int argc, char *argv[] ) {
         }
 
         if(inpdat.solverTask==0){
+
             input(&size,&myrank);
+            
             /* now we can start the solver */
             proces();
         }
-    }
-    else{
+    } else{
         printf("error during reading ascii input \n");
     }
 

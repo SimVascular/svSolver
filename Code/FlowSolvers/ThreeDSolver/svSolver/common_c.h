@@ -477,10 +477,13 @@ extern "C" {
     double bcttimescale;
     double ValueListResist[MAXSURF+1];
     double rhovw;
-    double thicknessvw;
-    double evw;
     double rnuvw;
     double rshearconstantvw;
+    double thicknessvw;
+    double evw;
+    double ksvw;
+    double csvw;
+    double p0vw;
     double betai;
     double rescontrol;
     double ResCriteria;
@@ -516,7 +519,7 @@ extern "C" {
     // CLOSED LOOP
     int numNormalSrfs;
     int nsrflistNormal[MAXSURF+1];
-    //============================
+    // ============================
     int Lagrange;
     int numLagrangeSrfs;
     int nsrflistLagrange[MAXSURF+1];
@@ -526,7 +529,9 @@ extern "C" {
     int applyWallDeformation;
     // VARWALL
     int ivarwallprop;
-    // =======
+    // EXTERNAL TISSUE SUPPORT
+    int itissuesuppt;
+    // ========================
     int iwallmassfactor;
     int iwallstiffactor;
     int nProps;

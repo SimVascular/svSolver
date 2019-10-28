@@ -127,6 +127,7 @@ public:
     int GetNumberOfNodalCoordinates() {return nshgtot_;};
     int GetNumberOfElements() {return neltot_;};
     int GetNumberOfSolutionVariables() {return numvar_;};
+    int GetNumberOfWallProperties() {return numwallprop_;};
     int GetNumberOfProcessorsUsed() {return numprocs_;};
 
     double* GetCoordinatePtr() {return xglobal_;};
@@ -171,6 +172,7 @@ private:
     char indir_[255];
 
     int numvar_;
+    int numwallprop_;
     int numprocs_;
     int nshgtot_;
     int neltot_;
@@ -201,11 +203,12 @@ PostSolver::PostSolver() {
     indir_[1]='/';
     indir_[2]='\0';
 
-    numvar_    = 0;
-    numprocs_  = 0;
-    nshgtot_   = 0;
-    neltot_    = 0;
-    maxnshg_   = 0;
+    numvar_      = 0;
+    numwallprop_ = 0;
+    numprocs_    = 0;
+    nshgtot_     = 0;
+    neltot_      = 0;
+    maxnshg_     = 0;
 }
 
 PostSolver::~PostSolver() {
@@ -508,42 +511,55 @@ int PostSolver::QueryWallProperties(){
     char filename[255];
     filename[0]='\0';
 
-    wpglobal_ = new double [ 2*nshgtot_ ];
-    wplocal_ = new double [ 2*maxnshg_ ];
+    // ------------ Read the first proc to determine number of wall properties -------------- //
+    sprintf(filename,"%sgeombc.dat.%d",indir_,1);
+    if (openfilewithspaces_( filename, "read", &igeom ) !=  CVSOLVER_IO_OK) {
+        return CV_ERROR;
+    }
 
-    for(i=0; i< numprocs_; i++){
+    /* read variable wall properties  */
+    iarray[0]=0;
+    readheader_(&igeom,"varwallprop",(void*)iarray,&itwo_,"double",iotype_);
+    if (iarray[0] > 0){
+        numwallprop_ = iarray[1];
+    }
+    // --------------------------------------------------------------------------------------- //
+
+    wpglobal_ = new double [ numwallprop_ * nshgtot_ ];
+    wplocal_  = new double [ numwallprop_ * maxnshg_ ];
+
+    for (i=0; i< numprocs_; i++){
         sprintf(filename,"%sgeombc.dat.%d",indir_,i+1);
         cout << "Reducing : wall properties from " << filename << endl;
         if (openfilewithspaces_( filename, "read", &igeom ) !=  CVSOLVER_IO_OK) {
             delete [] wpglobal_;
             delete [] wplocal_;
-            wpglobal_=NULL;
-            wplocal_=NULL;
+            wpglobal_ = NULL;
+            wplocal_  = NULL;
             return CV_ERROR;
         }
 
         /* read variable wall properties  */
         iarray[0]=0;
         readheader_(&igeom,"varwallprop",(void*)iarray,&itwo_,"double",iotype_);
-        if(iarray[0]>0){
-            int numNode=iarray[0];
-            //int numComp=iarray[1];
-            int isize=2*numNode;
+        if (iarray[0] > 0){
+            int numNode = iarray[0];
+            int isize = numwallprop_ * numNode;
 
             readdatablock_(&igeom,"varwallprop",(void*)wplocal_,&isize, "double",iotype_);
 
-            for(k=0; k< 2; k++){
-                for(j=0; j< numNode ; j++){
+            for (k = 0; k < numwallprop_; k++){
+                for (j = 0; j < numNode; j++){
                     wpglobal_[k*nshgtot_+ncorpd2d_[i][j]-1] = wplocal_[k*numNode+j];
                 }
             }
             closefile_( &igeom, "read" );
-        }else{
+        } else{
             cout << "No wall properties found from " << filename<<". Will search from restart files." << endl;
             delete [] wpglobal_;
             delete [] wplocal_;
-            wpglobal_=NULL;
-            wplocal_=NULL;
+            wpglobal_ = NULL;
+            wplocal_  = NULL;
             closefile_( &igeom, "read" );
             break;
         }
@@ -2416,11 +2432,16 @@ int main(int argc, char* argv[])
     }
 
     if(RequestedWallprops){
-        if(pp->QueryWallProperties()==CV_ERROR){//must call after ReadConnectivity()
+        if(pp->QueryWallProperties()==CV_ERROR){ //must call after ReadConnectivity()
             return 1;
         }
+
         wpglobal = pp->GetWallProperties();
     }
+
+    int numwallprop = pp->GetNumberOfWallProperties();
+    cout << "Number of wall properties found (" << numwallprop << ")" << endl;
+
 
     // ===============================
     // NOW LOOP OVER THE RESTART FILES
@@ -2787,7 +2808,7 @@ int main(int argc, char* argv[])
                 gzprintf(frest, "      length 2\n");
                 gzprintf(frest, "      data\n");
                 for (i=0; i< nshgtot; i++) {
-                    for (j=0; j < 2; j++) {
+                    for (j=0; j < numwallprop; j++) {
                         gzprintf(frest,"%25.15le ",wpglobal[j*nshgtot+i]);
                     }
                     gzprintf(frest,"\n");
@@ -3056,12 +3077,21 @@ int main(int argc, char* argv[])
             if (RequestedWallprops) {
 
                 vtkDoubleArray *wallproperty = vtkDoubleArray::New();
-                wallproperty->SetNumberOfComponents(2);
+                if (numwallprop == 2) {
+                    wallproperty->SetNumberOfComponents(2);
+                } else {
+                    wallproperty->SetNumberOfComponents(5);
+                }
                 wallproperty->Allocate(nshgtot,10000);
                 wallproperty->SetNumberOfTuples(nshgtot);
                 wallproperty->SetName(wpname);
-                for (i=0; i< nshgtot; i++) {
-                    wallproperty->SetTuple2(i,wpglobal[0*nshgtot+i],wpglobal[1*nshgtot+i]);
+
+                int count = 0;
+
+                for (i = 0; i < nshgtot; i++) {
+                    for (j = 0; j < numwallprop; j++) {
+                        wallproperty->SetComponent(i, j, wpglobal[j*nshgtot+i]);
+                    }
                 }
 
                 grid->GetPointData()->AddArray(wallproperty);
@@ -3069,6 +3099,7 @@ int main(int argc, char* argv[])
                 wallproperty->Delete();
 
             }
+
             // ===
             // WSS
             // ===

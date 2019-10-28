@@ -86,10 +86,10 @@ int input_fform(char inpfname[])
 //    else strcpy(complete_filename,".");
 //    strcat(complete_filename, "/input.config");
 //    printf("\n Complete Filename: %s \n", complete_filename);
-	if(myrank==0){
-		printf("Solver Input Files listed as below:\n------------------------------------\n");
-		printf(" Local Config: %s \n", inpfname);
-	}
+  if(myrank==0){
+    printf("Solver Input Files listed as below:\n------------------------------------\n");
+    printf(" Local Config: %s \n", inpfname);
+  }
 //    string def(complete_filename);
 //    Input inp(inpfname,def);
     string inpfile(inpfname);
@@ -99,35 +99,35 @@ int input_fform(char inpfname[])
     printf("Parameter Values setup as below:\n----------------------------------------------\n");
     }
     // ========================
-	// BCT CONTROL KEY WORDS
+  // BCT CONTROL KEY WORDS
     // ========================
     strvalue=(string)inp.GetValue("Time Varying Boundary Conditions From File","True",false,true);
     (strvalue=="True")? nomodule.itvn = 1: nomodule.itvn = 0;
     if ( nomodule.itvn ==1){
         strvalue=(string)inp.GetValue("BCT File Type","DAT",false,true);
         if(strvalue=="DAT"){
-        	inpdat.BCTFlag=0;
+          inpdat.BCTFlag=0;
         }else if(strvalue=="VTP"){
-        	inpdat.BCTFlag=1;
+          inpdat.BCTFlag=1;
         }else{
-        	if(myrank==0){
-        	cerr << " ERROR: Invalid BCT File Type." << endl;
-        	}
-        	return 001;
+          if(myrank==0){
+          cerr << " ERROR: Invalid BCT File Type." << endl;
+          }
+          return 001;
         }
 
         inpdat.BCTFileNumber = inp.GetValue("Number of BCT Files","1",false,true);
 
         strvalue=(string)inp.GetValue("BCT Matching Type","Global Node ID",false,true);
         if(strvalue=="Coordinates"){
-        	inpdat.BCTMatchingFlag=0;
+          inpdat.BCTMatchingFlag=0;
         }else if(strvalue=="Global Node ID"){
-        	inpdat.BCTMatchingFlag=1;
+          inpdat.BCTMatchingFlag=1;
         }else{
-        	if(myrank==0){
-        	cerr << " ERROR: Invalid BCT Matching Type." << endl;
-        	}
-        	return 001;
+          if(myrank==0){
+          cerr << " ERROR: Invalid BCT Matching Type." << endl;
+          }
+          return 001;
         }
 
         nomodule.bcttimescale = inp.GetValue("BCT Time Scale Factor","1.0",false,true);
@@ -160,10 +160,10 @@ int input_fform(char inpfname[])
     // Solve Scalars
     solscalr = inp.GetValue("Solve Scalars","0",false,false);
     if ( solscalr > 4 ) {
-    	if(myrank==0){
-    	 cout << " Only Four Scalars are supported \n";
+      if(myrank==0){
+       cout << " Only Four Scalars are supported \n";
          cout <<" Please reduce number of scalars \n";
-    	}
+      }
       exit(1);
     }
     inpdat.impl[0] = 10*solflow+solscalr*100+solheat;
@@ -234,10 +234,10 @@ int input_fform(char inpfname[])
     }
 
     if(nomodule.numCalcSrfs=inp.GetValue("Number of Surfaces which Output Pressure and Flow","0",false,true)){
-	    ivec = inp.GetValue("List of Output Surfaces","",true,true);
-	    for(i=0; i<MAXSURF+1; i++) nomodule.nsrflistCalc[i] = 0;
+      ivec = inp.GetValue("List of Output Surfaces","",true,true);
+      for(i=0; i<MAXSURF+1; i++) nomodule.nsrflistCalc[i] = 0;
         for(i=0; i<nomodule.numCalcSrfs; i++){
-	        nomodule.nsrflistCalc[i+1]=ivec[i];
+          nomodule.nsrflistCalc[i+1]=ivec[i];
         }
     }
     ivec.erase(ivec.begin(),ivec.end());
@@ -402,7 +402,7 @@ int input_fform(char inpfname[])
     if( strvalue =="CG" ){
       inpdat.svLSType=1;
     }else if ( strvalue =="GMRES" ){
-    	inpdat.svLSType=2;
+      inpdat.svLSType=2;
     }else if( strvalue =="NS"){
       inpdat.svLSType=3;
     }else{
@@ -476,7 +476,7 @@ int input_fform(char inpfname[])
       inpdat.rhoinf[0] = -1 ;
     }
     else {
-    	inpdat.rhoinf[0] = (double)inp.GetValue("Time Integration Rho Infinity","0.5",false,true);
+      inpdat.rhoinf[0] = (double)inp.GetValue("Time Integration Rho Infinity","0.5",false,true);
     }
     
     strvalue=(string)inp.GetValue("Predictor at Start of Step","Same Velocity",false,false);
@@ -537,7 +537,7 @@ int input_fform(char inpfname[])
     else if(strvalue == "DC-minimum") solpar.iDC = 3;
     else {
       if(myrank==0){
-    	cout<< "Condition not defined for Discontinuity Capturing \n ";
+      cout<< "Condition not defined for Discontinuity Capturing \n ";
       }
       exit(1);
     }
@@ -554,7 +554,7 @@ int input_fform(char inpfname[])
         if(genpar.ipord == 1 ) genpar.idiff = 1;
         else genpar.idiff = 2;
     }else{
-    	genpar.idiff = 0;
+      genpar.idiff = 0;
     }
 
     timdat.flmpl = inp.GetValue("Lumped Mass Fraction on Left-hand-side","0",false,false);
@@ -575,9 +575,9 @@ int input_fform(char inpfname[])
     nomodule.ipvsq=0;
     if(nomodule.icardio = inp.GetValue("Number of Coupled Surfaces","0",false,true)){
       if ( nomodule.icardio > MAXSURF ) {
-    	 if(myrank==0){
-    	  cout << "Number of Coupled Surfaces > MAXSURF \n";
-    	 }
+       if(myrank==0){
+        cout << "Number of Coupled Surfaces > MAXSURF \n";
+       }
         exit(1);
       } 
       strvalue=(string)inp.GetValue("Pressure Coupling","Implicit",false,true);
@@ -610,7 +610,7 @@ int input_fform(char inpfname[])
       if ( strvalue == "True")
          nomodule.iGenFromFile = 1;
       else
-    	 nomodule.iGenFromFile = 0;
+       nomodule.iGenFromFile = 0;
 
       if(nomodule.numDirichletSrfs=inp.GetValue("Number of Dirichlet Surfaces","0",false,false)){
           ivec = inp.GetValue("List of Dirichlet Surfaces","",true,true);
@@ -629,10 +629,10 @@ int input_fform(char inpfname[])
       }
 
       if(nomodule.numNormalSrfs=inp.GetValue("Number of Normal Constrained Surfaces","0",false,false)){
-	     ivec = inp.GetValue("List of Normal Constrained Surfaces","",true,true);
+       ivec = inp.GetValue("List of Normal Constrained Surfaces","",true,true);
          for(i=0; i<MAXSURF+1; i++) nomodule.nsrflistNormal[i] = 0;
          for(i=0; i<nomodule.numNormalSrfs; i++){
-	        nomodule.nsrflistNormal[i+1]=ivec[i];
+          nomodule.nsrflistNormal[i+1]=ivec[i];
          }
      }
 //    =============================================
@@ -664,7 +664,7 @@ int input_fform(char inpfname[])
 
 #if(VER_CORONARY == 1)
       //CORONARY
-	  if(nomodule.numCORSrfs=inp.GetValue("Number of COR Surfaces","0",false,false)){
+    if(nomodule.numCORSrfs=inp.GetValue("Number of COR Surfaces","0",false,false)){
           ivec = inp.GetValue("List of COR Surfaces","",true,true);
           for(i=0;i<MAXSURF+1; i++) nomodule.nsrflistCOR[i] = 0;
           for(i=0; i< nomodule.numCORSrfs; i++){
@@ -676,69 +676,88 @@ int input_fform(char inpfname[])
       }      
 #endif
 //      if(nomodule.numCalcSrfs=inp.GetValue("Number of Surfaces which Output Pressure and Flow","0",false)){
-//	     ivec = inp.GetValue("List of Output Surfaces","",true);
+//       ivec = inp.GetValue("List of Output Surfaces","",true);
 //         for(i=0; i<MAXSURF+1; i++) nomodule.nsrflistCalc[i] = 0;
 //          for(i=0; i<nomodule.numCalcSrfs; i++){
-//	        nomodule.nsrflistCalc[i+1]=ivec[i];
+//          nomodule.nsrflistCalc[i+1]=ivec[i];
 //          }
 //         }
 
-	  //Backflow control
-	  nomodule.backFlowStabCoef = (double)inp.GetValue("Backflow Stabilization Coefficient","0.2",false,true);
+    //Backflow control
+    nomodule.backFlowStabCoef = (double)inp.GetValue("Backflow Stabilization Coefficient","0.2",false,true);
 
-	  if(nomodule.numVisFluxSrfs=inp.GetValue("Number of Surfaces which zero out in-plane tractions","0",false,false)){
-		 ivec = inp.GetValue("List of Surfaces which zero out in-plane tractions","",true,true);
-		 for(i=0; i<MAXSURF+1; i++) nomodule.nsrflistVisFlux[i] = 0;
-		 for(i=0; i<nomodule.numVisFluxSrfs; i++){
-			nomodule.nsrflistVisFlux[i+1]=ivec[i];
-		 }
-	  }
+    if(nomodule.numVisFluxSrfs=inp.GetValue("Number of Surfaces which zero out in-plane tractions","0",false,false)){
+     ivec = inp.GetValue("List of Surfaces which zero out in-plane tractions","",true,true);
+     for(i=0; i<MAXSURF+1; i++) nomodule.nsrflistVisFlux[i] = 0;
+     for(i=0; i<nomodule.numVisFluxSrfs; i++){
+      nomodule.nsrflistVisFlux[i+1]=ivec[i];
+     }
+    }
       strvalue=(string)inp.GetValue("Lagrange Multipliers","False",false,false);
-	  if ( strvalue == "True")
+    if ( strvalue == "True")
          nomodule.Lagrange = 1; else nomodule.Lagrange = 0;
-	  if ( nomodule.Lagrange ==1) {
+    if ( nomodule.Lagrange ==1) {
          nomodule.numLagrangeSrfs = inp.GetValue("Number of Constrained Surfaces","",true,true);
-	     ivec = inp.GetValue("List of Constrained Surfaces","",true,true);
+       ivec = inp.GetValue("List of Constrained Surfaces","",true,true);
          for(i=0;i<MAXSURF+1; i++) nomodule.nsrflistLagrange[i] = 0;
-		 for(i=0; i< nomodule.numLagrangeSrfs; i++) {
+     for(i=0; i< nomodule.numLagrangeSrfs; i++) {
                     nomodule.nsrflistLagrange[i+1] = ivec[i];
-		 }
-		 strvalue=(string)inp.GetValue("Constrained Surface Information From File","False",false,true);
+     }
+     strvalue=(string)inp.GetValue("Constrained Surface Information From File","False",false,true);
          if ( strvalue == "True")
             nomodule.iLagfile = 1; else nomodule.iLagfile = 0;
-	  }
+    }
 
-	}
+  }
 
    // =========================
    // DEEFORMABLE WALL SETTINGS
    // =========================
-   nomodule.ideformwall = 0;
-   nomodule.ivarwallprop = 0;
+   nomodule.ideformwall   = 0;
+   nomodule.ivarwallprop  = 0;
+   nomodule.itissuesuppt  = 0;
+
+   // Set Deformable Wall Flag
    strvalue=(string)inp.GetValue("Deformable Wall","False",false,true);
-   if(strvalue=="True"){
-     // Set Deformable Wall Flag
+   if (strvalue=="True") {
      nomodule.ideformwall = 1;
 
-#if(VER_VARWALL == 1)
-     // Check Variable wall properties
+#if (VER_VARWALL == 1)
+     // Check variable wall thickness and young's modulus
      strvalue=(string)inp.GetValue("Variable Wall Thickness and Young Mod","False",false,true);
-     if(strvalue == "True"){
+     if (strvalue == "True") {
        nomodule.ivarwallprop = 1;
-     }else{
-       nomodule.ivarwallprop = 0;
-     } 
+     }
 #endif
+     // Check External Tissue Support
+     strvalue=(string)inp.GetValue("External Tissue Support","False",false,true);
+     if (strvalue=="True") {
+       nomodule.itissuesuppt = 1;
+     }
 
-     // Read isotropic material properties only if the thi
-     if(nomodule.ivarwallprop == 0){
+     // 4 cases. Read isotropic material properties. 
+     if (nomodule.ivarwallprop == 0) {
        nomodule.thicknessvw = inp.GetValue("Thickness of Vessel Wall","",true,true);
        nomodule.evw = inp.GetValue("Young Mod of Vessel Wall","",true,true);
-     }else{
-       // Read Isotropic values from File
+
+       if (nomodule.itissuesuppt == 1) {
+         nomodule.ksvw = inp.GetValue("Spring Constant of External Support", "", true, true);
+         nomodule.csvw = inp.GetValue("Damping Constant of External Support", "", true, true);
+         nomodule.p0vw = inp.GetValue("External Pressure", "", true, true);
+       }
+     
+     // For variable wall properties, read isotropic values from File
+     } else {
        nomodule.thicknessvw = 0.0;
        nomodule.evw = 0.0;
+
+       if (nomodule.itissuesuppt == 1) {
+         nomodule.ksvw = 0.0;
+         nomodule.csvw = 0.0;
+         nomodule.p0vw = 0.0;
+       }
      }
+
      // Density and shear constant of the walls need to be defined
      nomodule.rhovw = inp.GetValue("Density of Vessel Wall","",true,true);
      nomodule.rshearconstantvw = inp.GetValue("Shear Constant of Vessel Wall","",true,true);
@@ -747,79 +766,79 @@ int input_fform(char inpfname[])
      nomodule.nProps = inp.GetValue("Number of Wall Properties per Node","10",false,true);
 
      strvalue=(string)inp.GetValue("Wall Mass Matrix for LHS","True",false,true);
-     if(strvalue == "True"){
+     if (strvalue == "True") {
        nomodule.iwallmassfactor = 1;
-     }else{
+     } else {
        nomodule.iwallmassfactor = 0;
      }
      strvalue=(string)inp.GetValue("Wall Stiffness Matrix for LHS","True",false,true);
-     if(strvalue == "True"){
+     if (strvalue == "True") {
        nomodule.iwallstiffactor = 1;
-     }else{
+     } else {
        nomodule.iwallstiffactor = 0;
      }
-    }
+   }  
 
-    // ============================
-    // Non-linear Iteration Control
-    // ============================
-    strvalue=(string)inp.GetValue("Residual Control","True",false,true);
-    if (strvalue == "True") nomodule.rescontrol = 1;
-    else nomodule.rescontrol = 0;
-    if ( nomodule.rescontrol ==1) {
+   // ============================
+   // Non-linear Iteration Control
+   // ============================
+   strvalue=(string)inp.GetValue("Residual Control","True",false,true);
+   if (strvalue == "True") nomodule.rescontrol = 1;
+   else nomodule.rescontrol = 0;
+   if (nomodule.rescontrol == 1) {
        nomodule.ResCriteria = inp.GetValue("Residual Criteria","0.01",false,true);
        nomodule.MinNumIter = inp.GetValue("Minimum Required Iterations","3",false,true);
-    }
-    // Step Sequencing
-    ivec = inp.GetValue("Step Construction","0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1",false,true);
-    sequence.seqsize = ivec.size();
-    if( sequence.seqsize > 100 || sequence.seqsize < 2 ){
-      if(myrank==0){
-    	cerr<<"Sequence size must be between 2 and 100 "<<endl;
-      }
-    }
-    for(i=0; i< sequence.seqsize; i++){
-      sequence.stepseq[i] = ivec[i];
-    }
+   }
+   // Step Sequencing
+   ivec = inp.GetValue("Step Construction","0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1",false,true);
+   sequence.seqsize = ivec.size();
+   if (sequence.seqsize > 100 || sequence.seqsize < 2) {
+       if (myrank==0) {
+       cerr << "Sequence size must be between 2 and 100 " << endl;
+       }
+   }
+   for (i=0; i< sequence.seqsize; i++) {
+       sequence.stepseq[i] = ivec[i];
+   }
 
-    // ============================
-    // Task Control
-    // ============================
-    strvalue=(string)inp.GetValue("Solver Task","Full Simulation",false,true);
-    if( strvalue =="Full Simulation" ){
-        inpdat.solverTask=0;
-    }else if ( strvalue =="Only Partition" ){
-        inpdat.solverTask=1;
-    }else{
-        if(myrank==0){
-            cerr << " ERROR: Invalid Solver Task." << endl;
-        }
-        return 001;
-    }
+   // ============================
+   // Task Control
+   // ============================
+   strvalue=(string)inp.GetValue("Solver Task","Full Simulation",false,true);
+   if ( strvalue =="Full Simulation" ) {
+       inpdat.solverTask=0;
+   } else if ( strvalue =="Only Partition" ) {
+       inpdat.solverTask=1;
+   } else {
+       if(myrank==0){
+           cerr << " ERROR: Invalid Solver Task." << endl;
+       }
+       return 001;
+   }
 
-    // ==================
-    // SCALING PARAMETERS
-    // ==================
-    outpar.ro = inp.GetValue("Density Scaling","1.0",false,false);
-    outpar.vel = inp.GetValue("Velocity Scaling","1.0",false,false);
-    outpar.press = inp.GetValue("Pressure Scaling","1.0",false,false);
-    outpar.temper = inp.GetValue("Temperature Scaling","1.0",false,false);
-    outpar.entrop = inp.GetValue("Entropy Scaling","1.0",false,false);
+   // ==================
+   // SCALING PARAMETERS
+   // ==================
+   outpar.ro = inp.GetValue("Density Scaling","1.0",false,false);
+   outpar.vel = inp.GetValue("Velocity Scaling","1.0",false,false);
+   outpar.press = inp.GetValue("Pressure Scaling","1.0",false,false);
+   outpar.temper = inp.GetValue("Temperature Scaling","1.0",false,false);
+   outpar.entrop = inp.GetValue("Entropy Scaling","1.0",false,false);
 
-    cout << endl ;
+   cout << endl;
   }
-  catch ( exception &e ) {
-	ierr = 001;
-	if(myrank==0){
-	 cout << endl << "Input exception: " << e.what() << endl << endl;
-     print_error_code(ierr);
-	}
-    return ierr;
-  }
-
-  return ierr;
   
+  catch ( exception &e ) {
+   ierr = 001;
+   if (myrank==0) {
+       cout << endl << "Input exception: " << e.what() << endl << endl;
+       print_error_code(ierr);
+   }
+   return ierr;
+  }
+  return ierr;
 }
+
 
 void print_error_code(int ierr) {
   /*

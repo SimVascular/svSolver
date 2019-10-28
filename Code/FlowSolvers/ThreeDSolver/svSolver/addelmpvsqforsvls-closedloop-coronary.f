@@ -83,7 +83,7 @@ c
 
 #include "cvFlowsolverOptions.h"
 
-!> Routine to add resistance of current step to faceRef array
+!> Routine to add resistance of current step to faceRes array
 
       SUBROUTINE AddElmpvsQForsvLS (faceRes, svLS_nFaces)     
 

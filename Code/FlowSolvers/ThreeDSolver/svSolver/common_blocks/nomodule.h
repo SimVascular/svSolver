@@ -40,9 +40,9 @@ c  DAMAGE.
 
 c      \\Common Block variables for "no module"
 
-       REAL*8 bcttimescale,ValueListResist(0:MAXSURF),rhovw,thicknessvw,
-     & evw,rnuvw
-       REAL*8 rshearconstantvw, betai,rescontrol,ResCriteria,
+       REAL*8 bcttimescale,ValueListResist(0:MAXSURF),rhovw,rnuvw, 
+     & rshearconstantvw, thicknessvw, evw, ksvw, csvw, p0vw
+       REAL*8 betai,rescontrol,ResCriteria,
      & backflowstabcoef
        INTEGER icardio, itvn, ipvsq, numResistSrfs,
      & nsrflistResist(0:MAXSURF)
@@ -54,8 +54,9 @@ c      \\Common Block variables for "no module"
        INTEGER Lagrange, numLagrangeSrfs,nsrflistLagrange(0:MAXSURF),
      & iLagfile
        INTEGER MinNumIter,ideformwall, ivarwallprop
+       INTEGER itissuesuppt
        INTEGER applyWallDeformation
-       INTEGER iwallmassfactor,iwallstiffactor,
+       INTEGER iwallmassfactor, iwallstiffactor,
      & nProps
        INTEGER iGenInitialization,iGenFromFile
        INTEGER numNeumannSrfs,nsrflistNeumann(0:MAXSURF)
@@ -63,15 +64,18 @@ c      \\Common Block variables for "no module"
        INTEGER numNormalSrfs,nsrflistNormal(0:MAXSURF)
 
         common /nomodule/ bcttimescale,ValueListResist,
-     &            rhovw, thicknessvw, evw, rnuvw,
-     &            rshearconstantvw, betai,rescontrol,ResCriteria,
+     &            rhovw, rnuvw, rshearconstantvw, thicknessvw, evw,
+c         ======= External Tissue Support / ISL July 2019 ======
+     &            ksvw, csvw, p0vw,
+c         ======================================================
+     &            betai, rescontrol,ResCriteria,
      &            backFlowStabCoef, icardio, itvn, ipvsq,
      &            numResistSrfs, nsrflistResist,
 c                 ADDED FOR CONSISTENCY - CLOSED LOOP
      &            numNeumannSrfs,nsrflistNeumann,
      &            iGenInitialization,iGenFromFile,
      &            numDirichletSrfs,nsrflistDirichlet,
-c                 ===================================
+c                 ==============================================
      &            numImpSrfs, nsrflistImp,impfile,
      &            numRCRSrfs, nsrflistRCR,ircrfile,
      &            numCORSrfs,nsrflistCOR,icorfile,
@@ -79,13 +83,12 @@ c                 ===================================
      &            numCalcSrfs, nsrflistCalc,
 c                 ADDED FOR CONSISTENCY - CLOSED LOOP
      &            numNormalSrfs,nsrflistNormal,
-c                 ===================================
+c                 ==============================================
      &            Lagrange, numLagrangeSrfs,
      &            nsrflistLagrange,iLagfile,
      &            MinNumIter,
      &            ideformwall, applyWallDeformation,
-c                 ADDED FOR CONSISTENCY - VARWALL
-     &            ivarwallprop, 
-c                 ===============================
+     &            ivarwallprop, itissuesuppt,
+c                 ==============================================
      &            iwallmassfactor,
      &            iwallstiffactor, nProps

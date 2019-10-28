@@ -349,7 +349,7 @@ Partition_Problem( int  numProcs,
     readheader_( &igeombc, "number of variables", (void*)iarray, 
                  &ione, "integer", iformat );
 
-    ndof = iarray[0] ;
+    ndof = iarray[0];
 
     readheader_( &igeombc, "maximum number of element nodes", (void*)iarray, 
                  &ione, "integer", iformat );
@@ -695,6 +695,7 @@ Partition_Problem( int  numProcs,
 
     /* varwallprop */
 #if(VER_VARWALL == 1)
+
   if (nomodule.ivarwallprop != 0) {
     iarray[0]=0;
     readheader_( &igeombc, "varwallprop", (void*)iarray, &itwo, "double",
@@ -753,7 +754,7 @@ Partition_Problem( int  numProcs,
     }
   }
 #endif
-   
+
     /* let us take care of Essential BCs.*/
     // BCs are in the indirect numbering of nBC so only nBC needs to be sorted 
     // according to nshg
@@ -938,7 +939,6 @@ Partition_Problem( int  numProcs,
     iBCpart.clear();
     BCpart.clear();
         
-
     /* done writing ebcs */
 
     /* ienb and BCB and iBCB */
@@ -1298,8 +1298,8 @@ Partition_Problem( int  numProcs,
 
     delete [] periodic;
 
-    // now to generate ILwork and Periodicity
 
+    // now to generate ILwork and Periodicity
     vector<int>  ilwork;
 
 #if defined ( DEBUG)
@@ -1474,6 +1474,7 @@ Partition_Problem( int  numProcs,
     delete [] rtask;
     delete [] stask;
 
+
     // write ncorp
     // generating ncorp 
     // ncorp is our map between the "partition local" and the global (sms) 
@@ -1576,7 +1577,6 @@ Partition_Problem( int  numProcs,
     }
 
 
-
 //       The end of writing data
 
     //write restart
@@ -1588,7 +1588,7 @@ Partition_Problem( int  numProcs,
 
     nshg  = iarray[0];
     ndof  = iarray[1];
-    isize = nshg * ndof ;
+    isize = nshg * ndof;
 
     double* solution = new double [ isize ];
 
@@ -1612,7 +1612,8 @@ Partition_Problem( int  numProcs,
         }
     }
       
-    delete [] solution;   
+    delete [] solution; 
+
 
     int nsd = 3;
     double* displacement;
@@ -1688,7 +1689,14 @@ Partition_Problem( int  numProcs,
 	  }
 
 #if(VER_VARWALL == 1)
-    int nsdwp = 2;
+
+    int nsdwp;
+    if (nomodule.itissuesuppt == 1) {
+        nsdwp = 5;               // variable thicknessvw, evw, ksvw, csvw, p0vw
+    } else {
+        nsdwp = 2;               // variable thicknessvw, evw
+    }
+
     double* wallprop;
     double* fWallprop;
     int nshgLocalWallprop;
@@ -1707,7 +1715,8 @@ Partition_Problem( int  numProcs,
       	  use_restart=1;
 
 		  nshg  = iarray[0];
-		  nsdwp  = iarray[1];
+		  nsdwp = iarray[1];
+
 		  isize = nshg * nsdwp ;
 
 		  wallprop = new double [ isize ];
@@ -1715,18 +1724,18 @@ Partition_Problem( int  numProcs,
 		  readdatablock_( &irestart,"varwallprop?", (void*)wallprop, &isize,
 						"double", iformat  );
 
-		  for( int x = 1; x < nshg+1; x++ ){
-			for( map<int,int>::iterator pIter = ParallelData[x].begin();
+		  for (int x = 1; x < nshg+1; x++) {
+			for (map<int,int>::iterator pIter = ParallelData[x].begin();
 				 pIter != ParallelData[x].end();
-				 pIter++ ) {
-				for( int v=0; v< nsdwp ; v++ )
+				 pIter++) {
+				for (int v = 0; v < nsdwp ; v++)
 					wallpropPart[ (*pIter).first ][ (*pIter).second ].push_back(
 													   wallprop[ v*nshg + x -1 ] );
 			}
 		  }
 
 		  delete [] wallprop;
-      }else{
+      } else {
           use_restart=0;
       }
     }
@@ -1750,7 +1759,7 @@ Partition_Problem( int  numProcs,
         }
 
 #if(VER_VARWALL == 1)
-        if (nomodule.ivarwallprop != 0 && use_restart==1) {
+        if (nomodule.ivarwallprop != 0 && use_restart==1) {         
           nshgLocalWallprop = wallpropPart[a].size();
           fWallprop = new double [ nshgLocalWallprop * nsdwp ];
 	    }
@@ -1785,7 +1794,9 @@ Partition_Problem( int  numProcs,
         }
 
 #if(VER_VARWALL == 1)
+
         if (nomodule.ivarwallprop != 0 && use_restart==1) {
+            
 			fprintf( rascii, "nshgLocalwallprop: %d\n", nshgLocalWallprop);
 			fprintf( rascii, "numVars: %d\n", nsdwp );
 			fprintf( rascii, "Step Number: %d\n", stepno);

@@ -94,10 +94,7 @@ extern "C" {
 }
 
 // actual commands
-
-//
 // can use VTU to replace all of these calls
-//
 int CALLTYPE cmd_number_of_nodes(char*);
 int CALLTYPE cmd_number_of_elements(char*);
 int CALLTYPE cmd_number_of_mesh_edges(char*);
@@ -205,12 +202,29 @@ int CALLTYPE cmd_append_displacements(char*);
 #if(VER_VARWALL == 1)
 int CALLTYPE cmd_Laplace_Thickness(char*);
 int CALLTYPE cmd_Laplace_Evw(char*);
+
+/*** EXTERNAL TISSUE SUPPORT - ISL July 2019 ***/
+int CALLTYPE cmd_Laplace_Ksvw(char*);
+int CALLTYPE cmd_Laplace_Csvw(char*);
+int CALLTYPE cmd_Laplace_P0vw(char*);
+/***********************************************/
+
 int CALLTYPE cmd_Transient_Laplace_Evw(char*);
 int CALLTYPE cmd_set_scalar_BCs(char*);
 int CALLTYPE cmd_set_thickness_BCs(char*);
 int CALLTYPE cmd_set_thickness_BCs_vtp(char*);
 int CALLTYPE cmd_set_Evw_BCs(char*);
 int CALLTYPE cmd_set_Evw_BCs_vtp(char*);
+
+/*** EXTERNAL TISSUE SUPPORT - ISL July 2019 ***/
+int CALLTYPE cmd_set_ksvw_BCs(char*);
+int CALLTYPE cmd_set_ksvw_BCs_vtp(char*);
+int CALLTYPE cmd_set_csvw_BCs(char*);
+int CALLTYPE cmd_set_csvw_BCs_vtp(char*);
+int CALLTYPE cmd_set_p0vw_BCs(char*);
+int CALLTYPE cmd_set_p0vw_BCs_vtp(char*);
+/***********************************************/
+
 int CALLTYPE cmd_set_Initial_Evw(char*);
 int CALLTYPE cmd_set_Initial_Evw_vtp(char*);
 int CALLTYPE cmd_varwallprop_write_vtp(char*);

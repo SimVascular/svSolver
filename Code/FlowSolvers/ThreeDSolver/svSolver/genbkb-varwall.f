@@ -72,6 +72,8 @@ C
       INTEGER             itpblk     
       INTEGER             n,           n1,          n2
       INTEGER             neltp,       numnbc
+      INTEGER             nwallprop
+
 C
         integer, allocatable :: ientp(:,:),iBCBtp(:,:)
         real*8, allocatable :: BCBtp(:,:)
@@ -176,8 +178,19 @@ c
               allocate (mmatb(nelblb)%p(npro))
 
 #if(VER_VARWALL == 1)
+
               IF (ivarwallprop .eq. 1) THEN
-                allocate (wallpropelem(nelblb)%p(npro,2))
+
+c....           EXTERNAL TISSUE SUPPORT - ISL JULY 2019
+c,,,,           var thicknessvw, evw, ksvw, csvw, p0vw
+                IF (itissuesuppt .eq. 1) THEN
+                  nwallprop = 5
+                ELSE 
+                  nwallprop = 2
+                ENDIF
+
+                allocate (wallpropelem(nelblb)%p(npro,nwallprop))
+
               ENDIF
 #endif
 c

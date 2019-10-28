@@ -85,6 +85,7 @@ C
 #if(VER_VARWALL == 1)
       character*255 fname0
       integer nwallprop
+
 #endif
       character*255 warning
 c     CAREFUL IGEOM,IBNDC,IRSTIN REDECLARED IN VARWALL
@@ -207,11 +208,13 @@ c
       call readheader(igeom,fname1,intfromfile,itwo, 'double'//CHAR(0), iotype)
       numnp=intfromfile(1)
 c      nsd=intfromfile(2)
+
       allocate( point2x(numnp,nsd) )
       allocate( xread(numnp,nsd) )
       ixsiz=numnp*nsd
       call readdatablock(igeom,fname1,xread,ixsiz, 'double'//CHAR(0),iotype)
       point2x = xread
+
 c
 c.... read the local to global node id mapping
 c
@@ -304,6 +307,7 @@ c
       call genbkb (ibksiz)
 
 #if(VER_VARWALL == 1)
+
 c.... read the values of wall property variables from geombc into wallpropg
 c
       if ((ideformwall.eq.1) .and. (ivarwallprop.eq.1)) then
@@ -313,26 +317,38 @@ c
           itwo=2
           fname1='varwallprop?'
           intfromfile = 0
-          call readheader(igeom,fname1,intfromfile,itwo, 'double'//CHAR(0), iotype)
+          call readheader(igeom,fname1,intfromfile,itwo, 'double'//CHAR(0), iotype)     
 
-          if(intfromfile(1).gt.0) then
+          if (intfromfile(1).gt.0) then
               use_restart=0
               numnp=intfromfile(1)
               nwallprop=intfromfile(2)
-              if(nwallprop.ne.2) then
-                 warning ='WARNING number of properties not equal 2'
-                 write(*,*) warning
-                 if(nwallprop.gt.3) then
-                   PRINT *,'ERROR: Variable Wall Properties Component Number greater than 3 in geombc.dat.proc'
-                   stop
-                 endif
+
+c.... Check that either 2 or 5 nwallprop exist: (thicknessvw, evw) with/without (ksvw, csvw, p0vw)
+              if (nwallprop.gt.6) then
+                  PRINT *,'ERROR: Variable Wall Properties Component Number greater than 6 in geombc.dat.proc'
+                  stop
               endif
 
-              allocate( wallpropg(numnp,nwallprop) )
+              if (itissuesuppt .eq. 1) then 
+                  if (nwallprop .ne. 5) then
+                      warning = 'WARNING: number of properties not equal 5'
+                      write(*,*) warning
+                  endif
+              else
+                  if (nwallprop .ne. 2) then
+                      warning = 'WARNING: number of properties not equal 2'
+                      write(*,*) warning
+                  endif
+              endif 
+              
+
+              allocate( wallpropg(numnp, nwallprop) )
+              
               ixsiz=numnp*nwallprop
-              wallpropg = 0.0D0
-              call readdatablock(igeom,fname1,xread(:,1:nwallprop),ixsiz, 'double'//CHAR(0),iotype)
-              wallpropg = xread(:,1:nwallprop)
+              wallpropg = 0.0D0          
+
+              call readdatablock(igeom,fname1,wallpropg,ixsiz, 'double'//CHAR(0),iotype)
           endif
       endif
 #endif
@@ -430,6 +446,7 @@ c
        endif
 
 c
+
 #if(VER_VARWALL == 1)
 c.... read the values of wall property variables from restart into wallpropg
 c
@@ -452,13 +469,17 @@ c
         if (intfromfile(1).gt.0) then
            nshg2 = intfromfile(1)
            nwallprop = intfromfile(2)
+
 c          lstep=intfromfile(3) is not necessary since this is step 0
-c          not real lstep
-           if(nwallprop.ne.2) then
-             warning ='WARNING number of properties not equal 2'
+c          not real 
+
+
+c.... Check that 5 nwallprop exist: thicknessvw, evw, ksvw, csvw, p0vw
+           if(nwallprop.ne.5) then
+             warning ='WARNING: number of properties not equal 5'
              write(*,*) warning
-             if(nwallprop.gt.3) then
-               PRINT *,'ERROR: Variable Wall Properties Component Number greater than 3 in restart.0.proc'
+             if(nwallprop.gt.6) then
+               PRINT *,'ERROR: Variable Wall Properties Component Number greater than 6 in restart.0.proc'
                stop
              endif
            endif
@@ -483,14 +504,16 @@ c.... close c-binary files
 c
       call closefile( irstin, "read"//CHAR(0) )
       call closefile( igeom,  "read"//CHAR(0) )
-c
+
       deallocate(xread)
       deallocate(qread)
+
       if ( numpbc > 0 )  then
          deallocate(bcinpread)
          deallocate(ibctmpread)
       endif
       deallocate(iperread)
+
       if(numpe.gt.1)
      &     deallocate(ilworkread)
       deallocate(nbcread)
