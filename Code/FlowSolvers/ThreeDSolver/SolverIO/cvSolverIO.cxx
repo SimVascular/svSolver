@@ -174,11 +174,14 @@ int cvsolverIO::readHeader (const char* keyphrase,int* valueArray,
          }
          //fprintf(stdout,"Line_: %s",Line_);
          char* token = strtok ( Line_, ":" );
-         //fprintf(stdout,"token: %s\n",token);
          if( cscompare( keyphrase , token ) ) {
             LastHeaderKey_[0] = '\0';
             sprintf(LastHeaderKey_,"%s",keyphrase); 
             token = strtok( NULL, " ,;<>" );
+            if (token == NULL) { 
+               fprintf(stderr, "ERROR: Unexpected end of line. \n",token);
+               continue;
+            }
             skip_size = 0;
             skip_size = atoi( token );
             for( i=0;i < nItems && ( token = strtok( NULL," ,;<>") );i++) {
