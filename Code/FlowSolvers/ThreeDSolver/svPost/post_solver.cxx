@@ -1231,15 +1231,19 @@ int PostSolver::ParseRestartFile( int stepNumber, const char* field , int *numva
             cout << "NOTE: No (" << field << ") in " << filename << endl;
             return CV_ERROR;
 
-        } else if (nshgl != 0) {
+        // Set qlocal[] to zero to add zeros to the global solution.
+        } else if (nshgl == 0) {
+            for (int nate = 0; nate < numvar_*maxnshg_; nate++) {
+                qlocal[nate] = 0.0;
+            }
+
+        } else {
             numvar = intfromfile[1];
             lstep = intfromfile[2];
             iqsiz = nshgl*numvar;
             readdatablock_(&irstin,field,(void*)qlocal, &iqsiz, "double", iotype_);
             closefile_( &irstin, "read" );
         }
-
-        cout << "Done reading (" << field << ") results : " << filename << endl;
 
         /* map solution to global */
         for(k=0; k< numvar; k++){
