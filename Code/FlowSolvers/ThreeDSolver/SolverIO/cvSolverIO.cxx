@@ -651,6 +651,7 @@ int openfilewithspaces_( const char* filename,
             delete cvsolverIOfp[i];
             cvsolverIOfp[i] = NULL;
             *fileDescriptor = 0;
+            fprintf(stderr,"ERROR: could not open file '%s'.\n", filename);
             return CVSOLVER_IO_ERROR;
         }
         *fileDescriptor = i;
