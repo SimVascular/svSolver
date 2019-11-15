@@ -1213,8 +1213,10 @@ int PostSolver::ParseRestartFile( int stepNumber, const char* field , int *numva
         // read in solution for current processor
         sprintf(filename,"%srestart.%d.%d",indir_,stepNumber, i+1);
         cout << "Reducing (" << field << ") results : " << filename << endl;
+        // [TODO:DaveP] Not sure to continue here or return.
         if (openfilewithspaces_(filename, "read", &irstin ) !=  CVSOLVER_IO_OK) {
-            return CV_ERROR;
+            continue; 
+            //return CV_ERROR;
         }
 
         // Read the restart file header.
