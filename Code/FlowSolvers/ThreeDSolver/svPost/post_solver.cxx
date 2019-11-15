@@ -1242,8 +1242,8 @@ int PostSolver::ParseRestartFile( int stepNumber, const char* field , int *numva
             lstep = intfromfile[2];
             iqsiz = nshgl*numvar;
             readdatablock_(&irstin,field,(void*)qlocal, &iqsiz, "double", iotype_);
-            closefile_( &irstin, "read" );
         }
+        closefile_( &irstin, "read" );
 
         /* map solution to global */
         for(k=0; k< numvar; k++){

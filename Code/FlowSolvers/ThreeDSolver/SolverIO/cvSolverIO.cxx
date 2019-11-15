@@ -618,7 +618,7 @@ int openfile_( const char* filename,
             return CVSOLVER_IO_ERROR;
         }
         *fileDescriptor = i;
-        //fprintf(stdout,"file pointer (%i) opened\n",(*fileDescriptor));
+        //fprintf(stdout,"[openfile_] file pointer (%i) opened\n",(*fileDescriptor));
         return CVSOLVER_IO_OK;
       }
     }
@@ -655,7 +655,7 @@ int openfilewithspaces_( const char* filename,
             return CVSOLVER_IO_ERROR;
         }
         *fileDescriptor = i;
-        //fprintf(stdout,"file pointer (%i) opened\n",(*fileDescriptor));
+        //fprintf(stdout,"[openfilewithspaces_] file pointer (%i) opened\n",(*fileDescriptor));
         return CVSOLVER_IO_OK;
       }
     }
