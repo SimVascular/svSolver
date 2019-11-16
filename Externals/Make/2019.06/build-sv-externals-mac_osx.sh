@@ -1,12 +1,12 @@
-EXTERNALS_TOP=/usr/local/svsolver/externals
+#EXTERNALS_TOP=/usr/local/svsolver/ext/2019.06/release/gl1
+EXTERNALS_TOP=/usr/local/svsolver/ext/2019.06/release/gl2
 EXTERNALS_BUILD_TOP=$EXTERNALS_TOP/build
+
+SV_EXTERN_OS=mac_osx
 
 #
 #  must have write permissions to dirs!
 #
-
-sudo mkdir -p /usr/local/package
-sudo chmod a+rwx /usr/local/package
 
 sudo mkdir -p /usr/local/svsolver
 sudo chmod a+rwx /usr/local/svsolver
@@ -16,21 +16,23 @@ sudo chmod a+rwx /usr/local/svsolver
 #
 
 echo "Deleting previous build dir ($EXTERNALS_BUILD_TOP)"
-rm -Rf $EXTERNALS_BUILD_TOP
-mkdir $EXTERNALS_BUILD_TOP
+sudo rm -Rf $EXTERNALS_BUILD_TOP
+sudo mkdir -p $EXTERNALS_BUILD_TOP
 
 echo "Deleting previous src+bin dir ($EXTERNALS_TOP)"
-rm -Rf $EXTERNALS_TOP
-mkdir -p $EXTERNALS_TOP
+sudo rm -Rf $EXTERNALS_TOP
+
+sudo mkdir -p /usr/local/svsolver
+sudo chmod a+rwx /usr/local/svsolver
+sudo chown -R $USER /usr/local/svsolver
+
+sudo mkdir -p $EXTERNALS_TOP
+sudo chown -R $USER $EXTERNALS_TOP
+sudo chgrp -R $USER $EXTERNALS_TOP
 mkdir -p $EXTERNALS_TOP/src
+ 
 cp -Rf BuildHelpers $EXTERNALS_TOP/src
-
-#
-# wget the original src files
-#
-
-source build-sv-externals-helper-wget-generic.sh
-mv Originals $EXTERNALS_TOP/src/BuildHelpers
+cp -Rf ../../Patches $EXTERNALS_TOP/src/BuildHelpers
 
 #
 # let's do it

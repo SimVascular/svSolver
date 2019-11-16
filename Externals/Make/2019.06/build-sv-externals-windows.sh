@@ -1,6 +1,13 @@
-EXTERNALS_TOP=/usr/local/svsolver/externals
-EXTERNALS_BUILD_TOP=$EXTENALS_TOP
-#EXTERNALS_BUILD_TOP=/cygdrive/c/svsolver
+#EXTERNALS_TOP=/usr/local/svsolver/ext/2019.06/release/gl1
+#EXTERNALS_BUILD_TOP=/cygdrive/c/svsolver-ext-2019-06-gl1
+EXTERNALS_TOP=/usr/local/svsolver/ext/2019.06/release/gl2
+EXTERNALS_BUILD_TOP=/cygdrive/c/svsolver-ext-2019-06-gl2
+
+SV_EXTERN_OS=windows
+
+#
+#  must have write permissions to dirs!
+#
 
 #
 # initial setup
@@ -8,20 +15,18 @@ EXTERNALS_BUILD_TOP=$EXTENALS_TOP
 
 echo "Deleting previous build dir ($EXTERNALS_BUILD_TOP)"
 rm -Rf $EXTERNALS_BUILD_TOP
-mkdir $EXTERNALS_BUILD_TOP
+mkdir -p $EXTERNALS_BUILD_TOP
 
 echo "Deleting previous src+bin dir ($EXTERNALS_TOP)"
 rm -Rf $EXTERNALS_TOP
+
+mkdir -p /usr/local/svsolver
+chmod a+rwx /usr/local/svsolver
+
 mkdir -p $EXTERNALS_TOP
 mkdir -p $EXTERNALS_TOP/src
 cp -Rf BuildHelpers $EXTERNALS_TOP/src
-
-#
-# wget the original src files
-#
-
-source build-sv-externals-helper-wget-generic.sh
-mv Originals $EXTERNALS_TOP/src/BuildHelpers
+cp -Rf ../../Patches $EXTERNALS_TOP/src/BuildHelpers
 
 #
 # let's do it
@@ -35,5 +40,3 @@ echo "  note: see individual build logs as well"
 source Scripts/superbuild-windows-cl.sh >& stdout.superbuild.txt
 
 popd
-
-

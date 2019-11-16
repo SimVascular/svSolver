@@ -1,34 +1,34 @@
 # Hey emacs, this is a -*- makefile -*-
 
-# Copyright (c) 2009-2011 Open Source Medical Software Corporation,
-#                         University of California, San Diego.
-# 
-# All rights reserved. 
+# Copyright (c) Stanford University, The Regents of the University of
+#               California, and others.
 #
-# Portions copyright (c) 1999-2007 Stanford University,
-# Nathan Wilson, Ken Wang, Charles Taylor.
-# 
-# See SimVascular Acknowledgements file for additional
-# contributors to the source code. 
+# All Rights Reserved.
+#
+# See Copyright-SimVascular.txt for additional details.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-# OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-# CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+# IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+# TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+# PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+# OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # This is where we want to define things that will be useful for
 # multiple packages.  Vtk, for example, is used by both the level set
@@ -50,19 +50,29 @@ NO_DEPEND = 1
 # CLUSTER = { x64_cygwin, x64_linux, x64_macosx }
 # -----------------------------------------------------------
 
-#CLUSTER = x64_cygwin
-CLUSTER = x64_linux
+CLUSTER = x64_cygwin
+#CLUSTER = x64_linux
+#CLUSTER = x64_macosx
 
 # ---------------------------------------------------------------------
-# CXX_COMPILER_VERSION = { icpc, vs10.1, msvc-12.5, mingw-gcc, gcc}
+# CXX_COMPILER_VERSION = { icpc, msvc-19.0, msvc-19.16, clang,
+#                          mingw-gcc, gcc}
 # FORTRAN_COMPILER_VERSION = { ifort, mingw-gfortran, gfortran }
 # ---------------------------------------------------------------------
 
-#CXX_COMPILER_VERSION = msvc-12.5
-#FORTRAN_COMPILER_VERSION = ifort
+# NOTE: CXX_COMPILER_VERSION and FORTRAN_COMPILER_VERSION
+#       should be replaced with additional variables
 
-CXX_COMPILER_VERSION=gcc
-FORTRAN_COMPILER_VERSION=gfortran
+SV_COMPILER = msvc
+#SV_COMPILER_VERSION = 19.0
+#CXX_COMPILER_VERSION = msvc-19.0
+SV_COMPILER_VERSION = 19.16
+CXX_COMPILER_VERSION = msvc-19.16
+
+FORTRAN_COMPILER_VERSION = ifort
+
+# optionally override with cluster options
+# -----------------------------------------------------------------------
 
 ifeq ($(LOCAL_DIR_CLUSTER_OVERRIDES),1)
 -include cluster_overrides.mk
@@ -146,6 +156,7 @@ endif
 # -----------------------------------------------------
 
 SV_USE_VTK = 1
+SV_USE_VTK_SHARED = 0
 
 # -----------------------------------------------------
 # Compile with sparse, metis, nspcg
@@ -187,34 +198,39 @@ ifeq ($(CLUSTER), x64_cygwin)
   SVEXTERN_COMPILER_VERSION = $(CXX_COMPILER_VERSION)
 endif
 ifeq ($(CLUSTER), x64_linux)
-  SVEXTERN_COMPILER_VERSION = gnu-4.4
+  SVEXTERN_COMPILER_VERSION = gnu-5.4
 endif
 ifeq ($(CLUSTER), x64_macosx)
-  SVEXTERN_COMPILER_VERSION = clang-7.0
+  SVEXTERN_COMPILER_VERSION = clang-8.1
 endif
 
+#SV_EXTERNALS_VERSION_NUMBER = 2019.02
+SV_EXTERNALS_VERSION_NUMBER = 2019.06
+SV_VTK_OPENGL_VERSION=gl2
+
 ifeq ($(CLUSTER), x64_cygwin)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/svsolver/externals/bin/$(SVEXTERN_COMPILER_VERSION)/x64
-    LICENSED_SOFTWARE_TOPLEVEL      = C:/cygwin64/usr/local/svsolver/licensed
+    SV_LOWERCASE_CMAKE_BUILD_TYPE=release
+    SV_CMAKE_BUILD_TYPE=Release
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)/$(SV_VTK_OPENGL_VERSION)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
 endif
 
 ifeq ($(CLUSTER), x64_linux)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/svsolver/externals/bin/$(SVEXTERN_COMPILER_VERSION)/x64
-    LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/svsolver/licensed
+    SV_LOWERCASE_CMAKE_BUILD_TYPE=release
+    SV_CMAKE_BUILD_TYPE=Release
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)/$(SV_VTK_OPENGL_VERSION)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/svsolver/externals/bin/$(SVEXTERN_COMPILER_VERSION)/x64
-    LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/svsolver/licensed
+    SV_LOWERCASE_CMAKE_BUILD_TYPE=release
+    SV_CMAKE_BUILD_TYPE=Release
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)/$(SV_VTK_OPENGL_VERSION)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
 endif
 
 # -------------------------------------------
-#   Release version numbers for SimVascular 
+#   Release version numbers for SimVascular
 # -------------------------------------------
 
-SV_MAJOR_VER_NO = "2.17"
-SV_FULL_VER_NO = "2.17.0118"
-SV_USE_WIN32_REGISTRY=0
+SV_USE_WIN32_REGISTRY=1
 SV_REGISTRY_TOPLEVEL=SIMVASCULAR
 
 # if you need to override anything above, stuff it in global_overrides.mk
@@ -226,24 +242,43 @@ else
 -include $(TOP)/global_overrides.mk
 endif
 
-ifeq ($(CLUSTER),x64_cygwin) 
-  SV_VERSION  = simvascular
+SV_MAJOR_VERSION ?= $(shell date +"%Y")
+SV_MINOR_VERSION ?= $(shell date +"%m")
+SV_PATCH_VERSION ?= $(shell date +"%d")
+SV_MAJOR_VERSION_TWO_DIGIT ?= $(shell date +"%y")
+SV_MAJOR_VER_NO = "$(SV_MAJOR_VERSION_TWO_DIGIT).$(SV_MINOR_VERSION)"
+SV_FULL_VER_NO = "$(SV_MAJOR_VERSION_TWO_DIGIT).$(SV_MINOR_VERSION).$(SV_PATCH_VERSION)"
+
+ifeq ($(CLUSTER),x64_cygwin)
+  SV_VERSION  = SimVascular
   SV_PLATFORM = x64
   SV_POSTFIX=
   SV_OS=windows
 endif
-ifeq ($(CLUSTER),x64_linux) 
+ifeq ($(CLUSTER),x64_linux)
   SV_VERSION  = simvascular
   SV_PLATFORM = x64
   SV_POSTFIX=
   SV_OS=linux
+endif
+ifeq ($(CLUSTER),x64_macosx)
+  SV_VERSION  = simvascular
+  SV_PLATFORM = x64
+  SV_POSTFIX=
+  SV_OS=macosx
 endif
 
 # --------------
 # Global defines
 # --------------
 
-GLOBAL_DEFINES = -DSV_VERSION=\"$(SV_VERSION)\" -DSV_MAJOR_VER_NO=\"$(SV_MAJOR_VER_NO)\" -DSV_FULL_VER_NO=\"$(SV_FULL_VER_NO)\" -DSV_REGISTRY_TOPLEVEL=\"$(SV_REGISTRY_TOPLEVEL)\"
+GLOBAL_DEFINES = -DSV_VERSION=\"$(SV_VERSION)\" \
+                 -DSV_MAJOR_VERSION=\"$(SV_MAJOR_VERSION)\" \
+                 -DSV_MINOR_VERSION=\"$(SV_MINOR_VERSION)\" \
+                 -DSV_PATCH_VERSION=\"$(SV_PATCH_VERSION)\" \
+                 -DSV_MAJOR_VER_NO=\"$(SV_MAJOR_VER_NO)\" \
+                 -DSV_FULL_VER_NO=\"$(SV_FULL_VER_NO)\" \
+                 -DSV_REGISTRY_TOPLEVEL=\"$(SV_REGISTRY_TOPLEVEL)\"
 
 ifeq ($(SV_USE_WIN32_REGISTRY), 1)
   GLOBAL_DEFINES += -DSV_USE_WIN32_REGISTRY
@@ -273,60 +308,64 @@ ifeq ($(SV_USE_ZLIB),1)
   GLOBAL_DEFINES += -DSV_USE_ZLIB
 endif
 
+ifeq ($(SV_USE_VTK),1)
+  GLOBAL_DEFINES += -DSV_USE_VTK
+endif
+
 # ----------------------------------
 # Platform-specific compiler options
 # ----------------------------------
 
 ifeq ($(CLUSTER), x64_cygwin)
-  ifeq ($(CXX_COMPILER_VERSION), vs10.1)
-	include $(TOP)/MakeHelpers/compiler.vs10.1.x64_cygwin.mk
+  ifeq ($(CXX_COMPILER_VERSION), msvc-19.0)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.vs19.0.x64_cygwin.mk
   endif
-  ifeq ($(CXX_COMPILER_VERSION), msvc-12.5)
-	include $(TOP)/MakeHelpers/compiler.vs12.5.x64_cygwin.mk
+  ifeq ($(CXX_COMPILER_VERSION), msvc-19.16)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.vs19.16.x64_cygwin.mk
   endif
   ifeq ($(FORTRAN_COMPILER_VERSION), ifort)
-	include $(TOP)/MakeHelpers/compiler.ifort.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.ifort.x64_cygwin.mk
         GLOBAL_DEFINES += -DSV_WRAP_FORTRAN_IN_CAPS_NO_UNDERSCORE
   endif
   ifeq ($(CXX_COMPILER_VERSION), mingw-gcc)
-	include $(TOP)/MakeHelpers/compiler.mingw-gcc.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.mingw-gcc.x64_cygwin.mk
   endif
   ifeq ($(FORTRAN_COMPILER_VERSION), mingw-gfortran)
-	include $(TOP)/MakeHelpers/compiler.mingw-gfortran.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.mingw-gfortran.x64_cygwin.mk
         GLOBAL_DEFINES += -DSV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
   endif
 endif
 
 ifeq ($(CLUSTER), x64_linux)
   ifeq ($(CXX_COMPILER_VERSION), icpc)
-	include $(TOP)/MakeHelpers/compiler.icpc.x64_linux.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.icpc.x64_linux.mk
   endif
   ifeq ($(FORTRAN_COMPILER_VERSION), ifort)
-	include $(TOP)/MakeHelpers/compiler.ifort.x64_linux.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.ifort.x64_linux.mk
         GLOBAL_DEFINES += -DSV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
   endif
   ifeq ($(CXX_COMPILER_VERSION), gcc)
-	include $(TOP)/MakeHelpers/compiler.gcc.x64_linux.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.gcc.x64_linux.mk
   endif
   ifeq ($(FORTRAN_COMPILER_VERSION), gfortran)
-	include $(TOP)/MakeHelpers/compiler.gfortran.x64_linux.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.gfortran.x64_linux.mk
         GLOBAL_DEFINES += -DSV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
   endif
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
   ifeq ($(CXX_COMPILER_VERSION), clang)
-	include $(TOP)/MakeHelpers/compiler.clang.x64_macosx.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.clang.x64_macosx.mk
   endif
   ifeq ($(FORTRAN_COMPILER_VERSION), ifort)
-	include $(TOP)/MakeHelpers/compiler.ifort.x64_macosx.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.ifort.x64_macosx.mk
         GLOBAL_DEFINES += -DSV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
   endif
   ifeq ($(CXX_COMPILER_VERSION), gcc)
-	include $(TOP)/MakeHelpers/compiler.gcc.x64_macosx.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.gcc.x64_macosx.mk
   endif
   ifeq ($(FORTRAN_COMPILER_VERSION), gfortran)
-	include $(TOP)/MakeHelpers/compiler.gfortran.x64_macosx.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.gfortran.x64_macosx.mk
         GLOBAL_DEFINES += -DSV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
   endif
 endif
@@ -371,9 +410,14 @@ LOCAL_SUBDIRS   = $(LIBDIRS) $(SHARED_LIBDIRS) ../Code/Source/Include ../Code/So
 LOCAL_INCDIR    := $(foreach i, ${LOCAL_SUBDIRS}, -I$(TOP)/$(i))
 
 # include path to find libs when linking
-GLOBAL_LFLAGS 	 += $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib/$(LIB_BUILD_DIR)
+ifeq ($(CLUSTER), x64_cygwin)
+  TOP_WINDOWS_STYLE=$(shell cygpath -m $(TOP))
+  GLOBAL_LFLAGS 	 += $(LIBPATH_COMPILER_FLAG)$(TOP_WINDOWS_STYLE)/Lib/$(LIB_BUILD_DIR)
+else
+  GLOBAL_LFLAGS 	 += $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib/$(LIB_BUILD_DIR)
+endif
 
-LFLAGS 	 = $(GLOBAL_LFLAGS) $(VTK_LIBS) $(TCLTK_LIBS)
+LFLAGS 	 = $(GLOBAL_LFLAGS)
 
 #
 # ThirdParty software that must be built
@@ -402,10 +446,11 @@ endif
 # ----
 
 ifeq ($(SV_USE_ZLIB),1)
+  SV_LIB_THIRDPARTY_ZLIB_NAME=_simvascular_thirdparty_zlib
   THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/zlib
   ZLIB_TOP = $(TOP)/../Code/ThirdParty/zlib
   ZLIB_INCDIR  = -I $(ZLIB_TOP)
-  ZLIB_LIBS    = $(SVLIBFLAG)_simvascular_thirdparty_zlib$(LIBLINKEXT)
+  ZLIB_LIBS    = $(SVLIBFLAG)$(SV_LIB_THIRDPARTY_ZLIB_NAME)$(LIBLINKEXT)
 endif
 
 # -----------------------------------------
@@ -458,7 +503,7 @@ endif
 
 
 #
-# ThirdParty software included from /sv_extern
+# ThirdParty software included from externals
 #
 
 # ---------------------------------------
@@ -471,17 +516,15 @@ endif
 # ------------------
 
 ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/tcltk-8.6.4.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/tcltk.x64_cygwin.mk
 endif
 
 ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/tcltk-8.6.4.x64_linux.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/tcltk.x64_linux.mk
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
-	ifeq ($(SV_USE_SYSTEM_TCLTK),0)
-	  include $(TOP)/MakeHelpers/tcltk-8.6.4.x64_macosx.mk
-	endif
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/tcltk.x64_macosx.mk
 endif
 
 # ---------------------
@@ -490,25 +533,17 @@ endif
 
 ifeq ($(SV_USE_VTK),1)
 
-ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/vtk-6.2.0.x64_cygwin.mk
-endif
+  ifeq ($(CLUSTER), x64_cygwin)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.$(SV_VTK_OPENGL_VERSION).x64_cygwin.mk
+  endif
 
-ifeq ($(CLUSTER), x64_linux)
-	ifeq ($(SV_USE_PYTHON),1)
-	  include $(TOP)/MakeHelpers/vtk-6.2.0.x64_linux.mk
-        else
-	  include $(TOP)/MakeHelpers/vtk-6.2.0.x64_linux.mk
-        endif
-endif
+  ifeq ($(CLUSTER), x64_linux)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.$(SV_VTK_OPENGL_VERSION).x64_linux.mk
+  endif
 
-ifeq ($(CLUSTER), x64_macosx)
-	ifeq ($(SV_USE_PYTHON),1)
-	  include $(TOP)/MakeHelpers/vtk-6.2.0.x64_macosx.mk
-        else
-	  include $(TOP)/MakeHelpers/vtk-6.2.0.x64_macosx.mk
-	endif
-endif
+  ifeq ($(CLUSTER), x64_macosx)
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/vtk.$(SV_VTK_OPENGL_VERSION).x64_macosx.mk
+  endif
 
 endif
 
@@ -539,25 +574,25 @@ else
   MPI_NAME ?= mpi
 
   ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/msmpi.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/msmpi.x64_cygwin.mk
   endif
 
   # on linux, use the OS installed version of mpich2
   ifeq ($(CLUSTER), x64_linux)
     ifeq ($(SV_USE_OPENMPI),1)
-      include $(TOP)/MakeHelpers/openmpi.x64_linux.mk
+      include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/openmpi.x64_linux.mk
     endif
     ifeq ($(SV_USE_MPICH),1)
-      include $(TOP)/MakeHelpers/mpich.x64_linux.mk
+      include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/mpich.x64_linux.mk
     endif
   endif
 
   ifeq ($(CLUSTER), x64_macosx)
     ifeq ($(SV_USE_OPENMPI),1)
-      include $(TOP)/MakeHelpers/openmpi.x64_macosx.mk
+      include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/openmpi.x64_macosx.mk
     endif
     ifeq ($(SV_USE_MPICH),1)
-      include $(TOP)/MakeHelpers/mpich.x64_macosx.mk
+      include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/mpich.x64_macosx.mk
     endif
   endif
 
@@ -581,11 +616,11 @@ endif
 ifeq ($(SV_USE_BINARY_LESLIB),1)
 
   ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/leslib-1.5.x64_cygwin.mk
+	  include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/leslib-1.5.x64_cygwin.mk
   endif
 
   ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/leslib-1.5.x64_linux.mk
+	  include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/leslib-1.5.x64_linux.mk
   endif
 
   #No leslib for mac osx
@@ -626,13 +661,13 @@ endif
 # --------------------------------
 
 ifeq ($(CLUSTER), x64_cygwin)
-	  include $(TOP)/MakeHelpers/rules.x64_cygwin.mk
+	  include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/rules.x64_cygwin.mk
 endif
 
 ifeq ($(CLUSTER), x64_linux)
-	  include $(TOP)/MakeHelpers/rules.x64_linux.mk
+	  include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/rules.x64_linux.mk
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
-	  include $(TOP)/MakeHelpers/rules.x64_macosx.mk
+	  include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/rules.x64_macosx.mk
 endif
