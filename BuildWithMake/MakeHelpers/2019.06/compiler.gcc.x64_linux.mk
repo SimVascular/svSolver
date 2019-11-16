@@ -36,16 +36,16 @@ ifeq ($(CLUSTER), x64_linux)
     CCDEP           = $(CC) -MM
     AR              = ar -cru 
 ifeq ($(MAKE_FULLY_OPTIMIZED),1)
-    OPT_FLAGS       = -O3 -fPIC
+    OPT_FLAGS       = -O3 -std=gnu++11 -fPIC
     DEBUG_FLAGS     =
     LINK_EXE        = $(CXX) -o
 else
   ifeq ($(MAKE_OPTIMIZED),1)
     DEBUG_FLAGS     =
-    OPT_FLAGS       = -O2 -fPIC
+    OPT_FLAGS       = -O2 -std=gnu++11 -fPIC
     LINK_EXE        = $(CXX) -o
   else
-    DEBUG_FLAGS     = -O0 -g -fstack-protector-all
+    DEBUG_FLAGS     = -O0 -std=gnu++11 -g -fstack-protector-all
     OPT_FLAGS       =
     LINK_EXE        = $(CXX) -g -fstack-protector-all -o
   endif
