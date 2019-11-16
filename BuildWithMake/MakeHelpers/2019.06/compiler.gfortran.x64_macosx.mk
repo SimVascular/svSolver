@@ -43,7 +43,8 @@ else
   endif
 endif
     GLOBAL_FFLAGS   = $(BUILDFLAGS) $(DEBUG_FFLAGS) $(OPT_FFLAGS) -ffixed-line-length-132 -fmax-stack-var-size=256
-    F90_LIBS        = $(wordlist 2,99,$(shell mpif90 -link_info)) -lm
+#    F90_LIBS        = $(wordlist 2,99,$(shell mpif90 -link_info)) -lm
+    F90_LIBS        = $(shell gfortran --print-file-name=libquadmath.a) $(shell gfortran -print-libgcc-file-name) $(shell gfortran --print-file-name=libgfortran.a) -lm
 ifeq ($(LINK_WITH_DEBUG),1)
     GLOBAL_LFLAGS   += -g
 endif

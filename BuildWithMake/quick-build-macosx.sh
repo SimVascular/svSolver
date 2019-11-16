@@ -60,7 +60,8 @@ export TAR_FILE_PREFIX=$EXTERNALS_SV_OS_LONG_NAME_DIR.$EXTERNALS_SV_FULL_OS_VER_
 
 echo "CLUSTER=x64_macosx" > cluster_overrides.mk
 echo "CXX_COMPILER_VERSION=clang" >> cluster_overrides.mk
-echo "FORTRAN_COMPILER_VERSION=ifort" >> cluster_overrides.mk
+#echo "FORTRAN_COMPILER_VERSION=ifort" >> cluster_overrides.mk
+echo "FORTRAN_COMPILER_VERSION=gfortran" >> cluster_overrides.mk
 echo "SV_COMPILER=clang" >> cluster_overrides.mk
 echo "SV_COMPILER_VERSION=$EXTERNALS_SV_COMPILER_VER_NO" >> cluster_overrides.mk
 
