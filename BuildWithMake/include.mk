@@ -109,12 +109,6 @@ SV_USE_SOURCE_CODE_SVLS = 1
 SV_USE_ZLIB = 1
 
 # -----------------------------------------------------
-# system tcltk
-# -----------------------------------------------------
-
-SV_USE_SYSTEM_TCLTK = 0
-
-# -----------------------------------------------------
 # Compile with 3-D Solver and Related Programs
 # -----------------------------------------------------
 
@@ -211,19 +205,19 @@ SV_VTK_OPENGL_VERSION=gl2
 ifeq ($(CLUSTER), x64_cygwin)
     SV_LOWERCASE_CMAKE_BUILD_TYPE=release
     SV_CMAKE_BUILD_TYPE=Release
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)/$(SV_VTK_OPENGL_VERSION)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/svsolver/ext/$(SV_EXTERNALS_VERSION_NUMBER)/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)/$(SV_VTK_OPENGL_VERSION)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
 endif
 
 ifeq ($(CLUSTER), x64_linux)
     SV_LOWERCASE_CMAKE_BUILD_TYPE=release
     SV_CMAKE_BUILD_TYPE=Release
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)/$(SV_VTK_OPENGL_VERSION)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/svsolver/ext/$(SV_EXTERNALS_VERSION_NUMBER)/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)/$(SV_VTK_OPENGL_VERSION)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
     SV_LOWERCASE_CMAKE_BUILD_TYPE=release
     SV_CMAKE_BUILD_TYPE=Release
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/$(SV_EXTERNALS_VERSION_NUMBER)/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)/$(SV_VTK_OPENGL_VERSION)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/svsolver/ext/$(SV_EXTERNALS_VERSION_NUMBER)/$(SV_LOWERCASE_CMAKE_BUILD_TYPE)/$(SV_VTK_OPENGL_VERSION)/bin/$(SV_COMPILER)/$(SV_COMPILER_VERSION)/x64
 endif
 
 # -------------------------------------------
@@ -510,22 +504,6 @@ endif
 # ***  Required Open Source Packages  ***
 # ***  (no commercial restrictions)   ***
 # ---------------------------------------
-
-# ------------------
-# Tcl/Tk & Tkcximage
-# ------------------
-
-ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/tcltk.x64_cygwin.mk
-endif
-
-ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/tcltk.x64_linux.mk
-endif
-
-ifeq ($(CLUSTER), x64_macosx)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/tcltk.x64_macosx.mk
-endif
 
 # ---------------------
 # Visualization toolkit

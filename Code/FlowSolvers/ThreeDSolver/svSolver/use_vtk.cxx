@@ -143,7 +143,7 @@ void getdatafrombctvtp_(const char* filename, double x1[],double x2[],double x3[
 		  if(array){
 			  for(int i=0;i<ntv;i++){
 			      double vel[3];
-			      array->GetTupleValue(i, vel);
+			      array->GetTypedTuple(i, vel);
 
 			      v1[i*nptsmax+j]=vel[0];
 			      v2[i*nptsmax+j]=vel[1];

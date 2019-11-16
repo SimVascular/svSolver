@@ -186,8 +186,8 @@ int main( int argc, char *argv[] ) {
   flowsolver_map_shared_directory = getenv("FLOWSOLVER_MAP_SHARED_DIRECTORY");
 
   if(flowsolver_map_shared_directory != NULL) {
-      std::cout << "Changing to shared directory \("
-                << flowsolver_map_shared_directory << "\)" << std::endl;
+      std::cout << "Changing to shared directory ("
+                << flowsolver_map_shared_directory << ")" << std::endl;
       fflush(stdout);
       fflush(stderr);
       if(_chdir( flowsolver_map_shared_directory ) )
