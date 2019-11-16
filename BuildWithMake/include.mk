@@ -63,13 +63,20 @@ CLUSTER = x64_cygwin
 # NOTE: CXX_COMPILER_VERSION and FORTRAN_COMPILER_VERSION
 #       should be replaced with additional variables
 
+# Windows 10
 SV_COMPILER = msvc
 #SV_COMPILER_VERSION = 19.0
 #CXX_COMPILER_VERSION = msvc-19.0
 SV_COMPILER_VERSION = 19.16
 CXX_COMPILER_VERSION = msvc-19.16
-
 FORTRAN_COMPILER_VERSION = ifort
+
+# Ubuntu 18
+# CLUSTER=x64_linux
+# CXX_COMPILER_VERSION=gcc
+# FORTRAN_COMPILER_VERSION=gfortran
+# SV_COMPILER=gnu
+# SV_COMPILER_VERSION=7.3
 
 # optionally override with cluster options
 # -----------------------------------------------------------------------
@@ -187,16 +194,6 @@ endif
 # ----------------
 
 TARGETDIR = .
-
-ifeq ($(CLUSTER), x64_cygwin)
-  SVEXTERN_COMPILER_VERSION = $(CXX_COMPILER_VERSION)
-endif
-ifeq ($(CLUSTER), x64_linux)
-  SVEXTERN_COMPILER_VERSION = gnu-5.4
-endif
-ifeq ($(CLUSTER), x64_macosx)
-  SVEXTERN_COMPILER_VERSION = clang-8.1
-endif
 
 #SV_EXTERNALS_VERSION_NUMBER = 2019.02
 SV_EXTERNALS_VERSION_NUMBER = 2019.06
