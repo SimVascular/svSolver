@@ -4,7 +4,7 @@ matrix:
   include:
     - os: linux
       compiler: gcc
-      dist: trusty
+      dist: xenial
       sudo: required
       env: WITH_CMAKE=true BUILD_VTK=false
     - os: osx
