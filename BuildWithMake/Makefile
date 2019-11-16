@@ -40,6 +40,11 @@ all: mixed
 
 mixed: static-pre-build static-build shared-build exec-build
 
+fast:
+	-make shared-pre-build static-build
+	-make -j6 shared-build exec-shared-build
+	make shared-build exec-shared-build
+
 mksedscript:
 	if [ -e tclscript ];then /bin/rm -f tclscript;fi
 	if [ -e sedscript ];then /bin/rm -f sedscript;fi
