@@ -26,10 +26,13 @@ endif()
 #-----------------------------------------------------------------------------
 # VTK
 if (SV_USE_VTK)
+  #message("SV_VTK_DIR ${SV_VTK_DIR}")
   # If using toplevel dir, foce VTK_DIR to be the SV_VTK_DIR set by the
   if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
     set(VTK_DIR ${SV_VTK_DIR}/lib/cmake/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION} CACHE PATH "Force VTK dir to externals" FORCE)
   endif()
+
+  #message("VTK_DIR ${VTK_DIR}")
 
   # Find VTK, specific components
   simvascular_external(VTK COMPONENTS

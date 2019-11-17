@@ -6,12 +6,12 @@ matrix:
       compiler: gcc
       dist: xenial
       sudo: required
-      env: WITH_CMAKE=true BUILD_VTK=false
+      env: WITH_CMAKE=true SV_EXTERNALS_VERSION_NUMBER=2019.06 BUILD_VTK=false
     - os: osx
       compiler: clang
-      osx_image: xcode7.3
+      osx_image: xcode8.3
       sudo: required
-      env: WITH_CMAKE=true BUILD_VTK=false
+      env: WITH_CMAKE=true SV_EXTERNALS_VERSION_NUMBER=2019.06 BUILD_VTK=false
   allow_failures:
     - os: osx
 
@@ -29,11 +29,14 @@ git:
 before_install:
   - export NUM_THREADS=4
   - export cwd=$(pwd)
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cwd=$(pwd -W); fi
+  - echo "CWD=$cwd"
   - export SCRIPTS=$cwd/travis
   - export BUILD_DIR=$cwd/build
   - export SV_TOP_DIR=$cwd
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update       ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install gcc  ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install mpich; fi
+  - if $WITH_CMAKE; then $SCRIPTS/travis_get_cmake_latest.sh; fi
 
 script: $SCRIPTS/travis_build.sh
