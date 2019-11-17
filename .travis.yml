@@ -9,7 +9,7 @@ matrix:
       env: WITH_CMAKE=true SV_EXTERNALS_VERSION_NUMBER=2019.06 BUILD_VTK=false
     - os: osx
       compiler: clang
-      osx_image: xcode8.3
+      osx_image: xcode9.4
       sudo: required
       env: WITH_CMAKE=true SV_EXTERNALS_VERSION_NUMBER=2019.06 BUILD_VTK=false
   allow_failures:
@@ -21,7 +21,7 @@ addons:
       - gfortran
       - libglu1-mesa-dev
       - libgl1-mesa-dev
-      - libmpich2-dev
+      - libmpich-dev
 
 git:
   submodules: false
