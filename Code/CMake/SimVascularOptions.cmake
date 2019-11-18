@@ -83,7 +83,7 @@ set(SV_EXTERNALS_INSTALL_PREFIX "sv_externals" CACHE PATH "Externals toplevel di
 option(SV_EXTERNALS_USE_TOPLEVEL_DIR "If ON, SV_EXTERNALS_TOPLEVEL_DIR will be used as location for external packages" OFF)
 # VTK
 
-simvascular_add_new_external(VTK 6.2.0 ON OFF vtk)
+simvascular_add_new_external(VTK 8.1.1 ON OFF vtk)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

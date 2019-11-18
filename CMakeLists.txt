@@ -33,7 +33,7 @@
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.6.1)
 
 if (POLICY CMP0040)
   cmake_policy(SET CMP0040 OLD)
@@ -86,10 +86,13 @@ include(SimVascularFunctionCheckCompilerFlags)
 #-----------------------------------------------------------------------------
 # Externals!
 set(SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the sv_externals build, they can be with this string")
-set(SV_EXTERNALS_APPLE_CMAKE_ARGS)
-if(APPLE AND NOT SV_PLATFORM_VERSION_DIR VERSION_EQUAL 10.11)
-  list(APPEND SV_EXTERNALS_APPLE_CMAKE_ARGS -DSV_EXTERNALS_VTK_VERSION:STRING=7.0.0)
-endif()
+
+set(SV_EXTERNALS_VERSION_NUMBER "2019.06" CACHE STRING "SimVascular Externals Release Version")
+mark_as_advanced(SV_EXTERNALS_VERSION_NUMBER)
+set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${CMAKE_BINARY_DIR}/Externals-build/sv_externals/bin")
+set(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR ON)
+set(SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the sv_externals build, they can be with this string")
+
 ExternalProject_Add(Externals
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Externals
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Externals-build
@@ -105,7 +108,6 @@ ExternalProject_Add(Externals
     -DCMAKE_MACOSX_RPATH:BOOL=ON
     -DBUILD_TESTING:BOOL=OFF
     -DBUILD_EXAMPLES:BOOL=OFF
-    ${SV_EXTERNALS_APPLE_CMAKE_ARGS}
     ${SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS}
     )
 set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_BINARY_DIR}/Externals-build/sv_externals")
@@ -114,10 +116,7 @@ set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_BINARY_DIR}/Externals-build/sv_externals"
 #-----------------------------------------------------------------------------
 # svSolver!
 set(SV_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the sv_externals build, they can be with this string")
-set(SV_APPLE_CMAKE_ARGS)
-if(APPLE AND NOT SV_PLATFORM_VERSION_DIR VERSION_EQUAL 10.11)
-  list(APPEND SV_APPLE_CMAKE_ARGS -DVTK_VERSION:STRING=7.0.0)
-endif()
+
 ExternalProject_Add(svSolver
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Code
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/svSolver-build
@@ -136,8 +135,9 @@ ExternalProject_Add(svSolver
     -DBUILD_EXAMPLES:BOOL=OFF
     -DBUILD_SHARED_LIBS:BOOL=OFF
     -DSV_EXTERNALS_USE_TOPLEVEL_DIR:BOOL=ON
+    -DSV_EXTERNALS_TOPLEVEL_BIN_DIR:PATH=${SV_EXTERNALS_TOPLEVEL_BIN_DIR}
+    -DSV_EXTERNALS_USE_TOPLEVEL_BIN_DIR:BOOL=ON
     -DSV_EXTERNALS_TOPLEVEL_DIR:PATH=${SV_EXTERNALS_TOPLEVEL_DIR}
-    ${SV_APPLE_CMAKE_ARGS}
     ${SV_ADDITIONAL_CMAKE_ARGS}
     )
 #-----------------------------------------------------------------------------

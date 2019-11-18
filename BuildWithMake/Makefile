@@ -40,6 +40,11 @@ all: mixed
 
 mixed: static-pre-build static-build shared-build exec-build
 
+fast:
+	-make shared-pre-build static-build
+	-make -j6 shared-build exec-shared-build
+	make shared-build exec-shared-build
+
 mksedscript:
 	if [ -e tclscript ];then /bin/rm -f tclscript;fi
 	if [ -e sedscript ];then /bin/rm -f sedscript;fi
@@ -54,12 +59,6 @@ ifeq ($(CLUSTER),x64_cygwin)
 	-echo "puts \"s+REPLACEME_SV_OS+windows+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_OPEN_SOFTWARE_BINARIES_TOPLEVEL+`cygpath -u $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_LICENSED_SOFTWARE_TOPLEVEL+`cygpath -u $(LICENSED_SOFTWARE_TOPLEVEL)`+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_TCL_LIBRARY+`cygpath -u $(TCL_LIBRARY)`+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_TK_LIBRARY+`cygpath -u $(TK_LIBRARY)`+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_TCLTK_SO_PATH+`cygpath -u $(TCLTK_SO_PATH)`+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_TCLSH+`cygpath -u $(TCLSH)`+g\"" >> tclscript
-# leave intel compilers blank for now on windows
-#	-echo "puts \"s+REPLACEME_INTEL_COMPILER_SO_PATH+`cygpath -u $(INTEL_COMPILER_SO_PATH)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_INTEL_COMPILER_SO_PATH++g\"" >> tclscript
 ifeq ($(SV_USE_MPI),1)
   ifdef $(MPI_SO_PATH)
@@ -78,7 +77,6 @@ ifeq ($(SV_USE_VTK),1)
 	-echo "puts \"s+REPLACEME_VTK_SO_PATH+`cygpath -u $(VTK_SO_PATH)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_BIN_PATH+`cygpath -u $(VTK_BINDIRS)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_LIB_PATH+`cygpath -u $(VTK_LIBDIRS)`+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_VTK_TCL_LIB_PATH+`cygpath -u $(VTK_TCL_LIB_PATH)`+g\"" >> tclscript
 endif
 endif
 ifeq ($(CLUSTER),x64_linux)
@@ -86,11 +84,6 @@ ifeq ($(CLUSTER),x64_linux)
 	-echo "puts \"s+REPLACEME_SV_OS+linux+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_OPEN_SOFTWARE_BINARIES_TOPLEVEL+$(OPEN_SOFTWARE_BINARIES_TOPLEVEL)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_LICENSED_SOFTWARE_TOPLEVEL+$(LICENSED_SOFTWARE_TOPLEVEL)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_TCL_LIBRARY+$(TCL_LIBRARY)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_TK_LIBRARY+$(TK_LIBRARY)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_TCLTK_SO_PATH+$(TCLTK_SO_PATH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_TCLSH+$(TCLSH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_VTK_TCL_LIB_PATH+$(VTK_TCL_LIB_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_MPI_SO_PATH+$(MPI_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_MPIEXEC_PATH+$(MPIEXEC_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_SO_PATH+$(VTK_SO_PATH)+g\"" >> tclscript
@@ -105,11 +98,6 @@ ifeq ($(CLUSTER),x64_macosx)
 	-echo "puts \"s+REPLACEME_SV_OS+macosx+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_OPEN_SOFTWARE_BINARIES_TOPLEVEL+$(OPEN_SOFTWARE_BINARIES_TOPLEVEL)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_LICENSED_SOFTWARE_TOPLEVEL+$(LICENSED_SOFTWARE_TOPLEVEL)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_TCL_LIBRARY+$(TCL_LIBRARY)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_TK_LIBRARY+$(TK_LIBRARY)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_TCLTK_SO_PATH+$(TCLTK_SO_PATH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_TCLSH+$(TCLSH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_VTK_TCL_LIB_PATH+$(VTK_TCL_LIB_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_MPI_SO_PATH+$(MPI_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_MPIEXEC_PATH+$(MPIEXEC_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_SO_PATH+$(VTK_SO_PATH)+g\"" >> tclscript
@@ -223,7 +211,10 @@ veryclean:
 	for fn in $(TOP)/*~; do /bin/rm -f $$fn;done
 	for fn in $(TOP)/Lib/*; do /bin/rm -f -r $$fn; done
 	for fn in $(TOP)/Bin/*; do /bin/rm -f -r $$fn; done
-	if [ -e mysolver ];then /bin/rm -f mysolver;fi
+	if [ -e mysolver-nompi ];then /bin/rm -f mysolver-nompi;fi
+	if [ -e mysolver-msmpi ];then /bin/rm -f mysolver-msmpi;fi
+	if [ -e mypost ];then /bin/rm -f mypost;fi
+	if [ -e mypre ];then /bin/rm -f mypre;fi
 	/bin/rm -f  ../Code/Source/Include/Make/simvascular_options.h
 	/bin/rm -f  ../Code/Source/Include/Make/simvascular_version.h
 	/bin/rm -f  ../Code/FlowSolvers/Include/Make/cvFlowsolverOptions.h

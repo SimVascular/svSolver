@@ -72,7 +72,7 @@ macro(simvascular_external _pkg)
     set(_paths "${CMAKE_MODULE_PATH}")
   endif()
 
-  #message(STATUS "Search paths for ${_pkg}Config.cmake: ${_paths}")
+  dev_message("Search paths for ${_pkg}Config.cmake: ${_paths}")
 
   if(simvascular_external_SYSTEM_DEFAULT)
     option(SV_USE_SYSTEM_${_pkg} "Use system ${_pkg}" ON)

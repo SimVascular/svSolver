@@ -68,17 +68,17 @@ proc file_find {dir wildcard args} {
     if {!$outputRegistry} {
         set outputRegistry 1
         set regid 11
-        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\svSolver\\$SV_TIMESTAMP' Name='SVSOLVER_HOME' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP' />"
+        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Solvers\\svSolver\\$SV_TIMESTAMP' Name='SVSOLVER_HOME' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP' />"
         incr regid
-	puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\svSolver\\$SV_TIMESTAMP' Name='TimeStamp' Action='write' Type='string' Value='$SV_TIMESTAMP' />"
+	puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Solvers\\svSolver\\$SV_TIMESTAMP' Name='TimeStamp' Action='write' Type='string' Value='$SV_TIMESTAMP' />"
 	incr regid
-	puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\svSolver\\$SV_TIMESTAMP' Name='SVPRE_EXE' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\svpre-bin.exe' />"
+	puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Solvers\\svSolver\\$SV_TIMESTAMP' Name='SVPRE_EXE' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\svpre-bin.exe' />"
         incr regid
-        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\svSolver\\$SV_TIMESTAMP' Name='SVPOST_EXE' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\svpost-bin.exe' />"
+        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Solvers\\svSolver\\$SV_TIMESTAMP' Name='SVPOST_EXE' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\svpost-bin.exe' />"
         incr regid
-        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\svSolver\\$SV_TIMESTAMP' Name='SVSOLVER_NOMPI_EXE' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\svsolver-nompi-bin.exe'  />"
+        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Solvers\\svSolver\\$SV_TIMESTAMP' Name='SVSOLVER_NOMPI_EXE' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\svsolver-nompi-bin.exe'  />"
         incr regid
-	puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\svSolver\\$SV_TIMESTAMP' Name='SVSOLVER_MSMPI_EXE' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\svsolver-msmpi-bin.exe'  />"
+	puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Solvers\\svSolver\\$SV_TIMESTAMP' Name='SVSOLVER_MSMPI_EXE' Action='write' Type='string' Value='\[INSTALLDIR\]$SV_TIMESTAMP\\svsolver-msmpi-bin.exe'  />"
         incr regid
     }
     foreach i $files {

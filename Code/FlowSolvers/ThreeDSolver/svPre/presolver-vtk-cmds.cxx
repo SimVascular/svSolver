@@ -324,7 +324,7 @@ int cmd_mesh_vtu(char *cmd) {
         ptids->Reset();
         cells->GetCell(5 * i, ptids);
         if (ptids->GetNumberOfIds() != 4) {
-            fprintf(stderr, "ERROR:  invalid number of ids in cell (%i)!",
+            fprintf(stderr, "ERROR:  invalid number of ids in cell (%lli)!",
                     ptids->GetNumberOfIds());
             return CV_ERROR;
         }
@@ -369,7 +369,7 @@ int cmd_mesh_vtu(char *cmd) {
         ptids->Reset();
         cells->GetCell(4 * i, ptids);
         if (ptids->GetNumberOfIds() != 3) {
-            fprintf(stderr, "ERROR:  invalid number of ids in cell (%i)!",
+            fprintf(stderr, "ERROR:  invalid number of ids in cell (%lli)!",
                     ptids->GetNumberOfIds());
             return CV_ERROR;
         }
@@ -575,7 +575,7 @@ int cmd_mesh_and_adjncy_vtu(char *cmd) {
         ptids->Reset();
         cells->GetCell(5 * i, ptids);
         if (ptids->GetNumberOfIds() != 4) {
-            fprintf(stderr, "ERROR:  invalid number of ids in cell (%i)!",
+            fprintf(stderr, "ERROR:  invalid number of ids in cell (%lli)!",
                     ptids->GetNumberOfIds());
             return CV_ERROR;
         }
@@ -620,7 +620,7 @@ int cmd_mesh_and_adjncy_vtu(char *cmd) {
         ptids->Reset();
         cells->GetCell(4 * i, ptids);
         if (ptids->GetNumberOfIds() != 3) {
-            fprintf(stderr, "ERROR:  invalid number of ids in cell (%i)!",
+            fprintf(stderr, "ERROR:  invalid number of ids in cell (%lli)!",
                     ptids->GetNumberOfIds());
             return CV_ERROR;
         }
@@ -885,7 +885,7 @@ int read_variables_vtu(char* vtufn,string presName, string velName, string dispN
         for (int i = 0; i < numNodes_; i++) {
 
             nodeID=nodeIDArray->GetValue(i);
-            velArray->GetTupleValue(i, vel);
+            velArray->GetTypedTuple(i, vel);
 
             soln_[1 * numNodes_ + nodeID - 1] = vel[0];
             soln_[2 * numNodes_ + nodeID - 1] = vel[1];
@@ -917,7 +917,7 @@ int read_variables_vtu(char* vtufn,string presName, string velName, string dispN
         for (int i = 0; i < numNodes_; i++) {
 
             nodeID=nodeIDArray->GetValue(i);
-            dispArray->GetTupleValue(i,disp);
+            dispArray->GetTypedTuple(i,disp);
 
             dispsoln_[0 * numNodes_ + nodeID - 1] = disp[0];
             dispsoln_[1 * numNodes_ + nodeID - 1] = disp[1];
@@ -1349,7 +1349,7 @@ int setBoundaryFacesWithCodeVTK(char *cmd, int setSurfID, int surfID,
         ptids->Reset();
         cells->GetCell(4 * icell, ptids);
         if (ptids->GetNumberOfIds() != 3) {
-            fprintf(stderr, "ERROR:  invalid number of ids in cell (%i)!",
+            fprintf(stderr, "ERROR:  invalid number of ids in cell (%lli)!",
                     ptids->GetNumberOfIds());
             return CV_ERROR;
         }
@@ -1633,7 +1633,7 @@ int cmd_fix_free_edge_nodes_vtp(char *cmd) {
         ptids->Reset();
         cells->GetCell(4 * icell, ptids);
         if (ptids->GetNumberOfIds() != 3) {
-            fprintf(stderr, "ERROR:  invalid number of ids in cell (%i)!",
+            fprintf(stderr, "ERROR:  invalid number of ids in cell (%lli)!",
                     ptids->GetNumberOfIds());
             return CV_ERROR;
         }
@@ -1844,7 +1844,7 @@ int cmd_create_mesh_deformable_vtp(char *cmd) {
         ptids->Reset();
         cells->GetCell(4 * icell, ptids);
         if (ptids->GetNumberOfIds() != 3) {
-            fprintf(stderr, "ERROR:  invalid number of ids in cell (%i)!",
+            fprintf(stderr, "ERROR:  invalid number of ids in cell (%lli)!",
                     ptids->GetNumberOfIds());
             return CV_ERROR;
         }
