@@ -1,27 +1,32 @@
 ------------------------------------------------------------------------
-            Compiling Instructions for svSolver on Mac OSX
-                       Revised 2016-09-18
+            Compiling Instructions for svSolver on MacOS
+                       Revised 2019-11-17
 ------------------------------------------------------------------------
 
 --------
 Overview
 --------
 
-By default, svSolver is configured to build on osx using
-makefiles.  Our base test configuration for OSX is:
+By default, SimVascular is configured to build on Windows using
+makefiles.  You must override the deafult options to build on MacOS.
 
-Apple OSX 10.11 64-bit
-Intel 7 processor
+Our base test configuration for MacOS is:
 
-clang/clang++ version 7.3
-macports mpich/gfortran5
+MacOS 10.13
+Intel 7/9 processor
+clang/clang++ version 8.3+
+gcc/g++/gfortran via home brew
 
 and/or
 
 ifort/icpc/icc intel compilers
 
-NOTE: The CMake system is currently broken for svSolver and
-      is under revision.
+Building with the Intel compilers (ifort/icpc/icc) should
+work but this has limited testing.
+
+-------------------------------
+Major Steps (2019.06 externals)
+-------------------------------
 
 -----------
 Major Steps
@@ -29,70 +34,74 @@ Major Steps
 
 1. System Prerequisities
 ------------------------
-The following packages are required to build svsolver
 
-XCode command line tools are required
-% xcode-select --install
-% sudo xcodebuild -license
-
-MacPorts is required which can be downloaded at https://www.macports.org
-The following packages are required to build simvascular
-
-### compilers
-% sudo port install gcc5
-% sudo port install gfortran5
-% sudo port install mpich-devel-clang
+brew update
+brew install gcc
+brew install mpich
 
 2. Checkout svSolver source code
 --------------------------------
 % git clone https://github.com/SimVascular/svSolver.git svsolver
 
-3. vtk libraries
-----------------
-svSolver requires vtk libraries.  They can be build using the
-the scripts in "../Externals", or pre-built binaries can be
-downloaded using the script
+3. Building svSolver
+---------------------
+
+By default, on MacOS svSolver is built with a dummy version of MPI.
+This is a single processor only version of MPI for testing.  See
+below on how to use openmpi or mpich.
 
 % cd svsolver/BuildWithMake
-% ./get-vtk-binaries.sh macosx_11
+% source quick-build-macos.sh
 
-4. Override options
--------------------
-Override defaults with:
+4. Launching svSolver
+---------------------
+
+% cd BuildWithMake
+% mypre  (preprocessor)
+% mypost (postprocessor)
+% mysolver-nompi (wrapper script for solver)
+
+5. Building an Installer (optional)
+-----------------------------------
+
+Use the CMake build if you want to build an installer
+for svSolver.  The executable files built by the
+make build should have limited dependencies.
+
+6. Optional override options
+----------------------------
+You can override defaults in the make build
+using one or more of the "override" files:
 
   * cluster_overrides.mk
   * global_overrides.mk
   * site_overrides.mk
   * pkg_overrides.mk
 
-See include.mk for all options.  Sample override files
-can be found in:
+See include.mk for all options.
 
-SampleOverrides
+See the "quick-build" script to see what must
+be set in cluster_overrides.mk to build on linux.
 
-to use one of these files, copy into local BuildWithMake
-directory and modify as needed, e.g.:
+For example, to build with a dummy MPI (only
+can use a single core), put the folllowing into
+global_overrides.mk:
 
-% cd svsolver/BuildWithMake
-% cp SampleOverrides/macosx_11/global_overrides.mk
+*** start file "global_overrides.mk"
 
-6. Build
---------
-% cd svsolver/BuildWithMake
-% make
+#
+# Notes on MPI:
+# * default is to use dummy mpi
+# * can only build one at a time
 
-7. Running developer version
-----------------------------
-Binaries are in "BuildWithMake/Bin" directory.
+SV_USE_DUMMY_MPI=0
+SV_USE_OPENMPI=0
+SV_USE_MPICH=1
 
-You may need to set the path for the intel shared libraries before running svsolver, e.g.:
+*** end file "global_overrides.mk"
 
-% export DYLD_LIBRARY_PATH=/opt/intel/compilers_and_libraries_2016.1.111/mac/compiler/lib/
+7.  To build external open source packages (very optional)
+----------------------------------------------------------
 
-8. Build release (NOTE: out-of-date!)
------------------
-To be updated.
-
-9. Installing a distribution (NOTE: out-of-date!)
-----------------------------
-To be updated.
+% cd Externals/Make/2019.06
+% source build-sv-exeternals-macos.sh
