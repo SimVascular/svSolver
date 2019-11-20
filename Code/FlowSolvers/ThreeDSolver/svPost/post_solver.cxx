@@ -1213,10 +1213,8 @@ int PostSolver::ParseRestartFile( int stepNumber, const char* field , int *numva
         // read in solution for current processor
         sprintf(filename,"%srestart.%d.%d",indir_,stepNumber, i+1);
         cout << "Reducing (" << field << ") results : " << filename << endl;
-        // [TODO:DaveP] Not sure to continue here or return.
         if (openfilewithspaces_(filename, "read", &irstin ) !=  CVSOLVER_IO_OK) {
-            continue; 
-            //return CV_ERROR;
+            return CV_ERROR;
         }
 
         // Read the restart file header.
@@ -1353,6 +1351,8 @@ int calcMeanWallShearStressAndPressure(int start, int stop, int incr, bool sim_u
         if (traction[count] == NULL) {
             delete [] traction;
             HaveTractions = false;
+            fprintf(stderr,"WARNING: No data found for %s at time step %d.", "vinplane_traction", i);
+            fprintf(stderr," vTAWSS, vshear_pulse and vOSI will not be calculated.\n");
             break;
         }
         count++;
@@ -1372,6 +1372,8 @@ int calcMeanWallShearStressAndPressure(int start, int stop, int incr, bool sim_u
         if (wss[count] == NULL) {
             delete [] wss;
             HaveWSS = false;
+            fprintf(stderr,"WARNING: No data found for %s at time step %d.", "vWSS", i);
+            fprintf(stderr," vTAWSS_wss, vshear_pulse_wss and vOSI_wss will not be calculated.\n");
             break;
         }
         count++;
@@ -1500,6 +1502,8 @@ int calcMeanWallShearStressAndPressure(int start, int stop, int incr, bool sim_u
         if (traction[count] == NULL) {
             delete [] traction;
             HaveTractions = false;
+            fprintf(stderr,"WARNING: No data found for %s at time step %d.", "rinplane_traction", i);
+            fprintf(stderr," rTAWSS, rshear_pulse and rOSI will not be calculated.\n", tname);
             break;
         }
         count++;
@@ -1519,6 +1523,8 @@ int calcMeanWallShearStressAndPressure(int start, int stop, int incr, bool sim_u
         if (wss[count] == NULL) {
             delete [] wss;
             HaveWSS = false;
+            fprintf(stderr,"WARNING: No data found for %s at time step %d.", "rWSS", i);
+            fprintf(stderr," rTAWSS_wss, rshear_pulse_wss and rOSI_wss will not be calculated.\n");
             break;
         }
         count++;
