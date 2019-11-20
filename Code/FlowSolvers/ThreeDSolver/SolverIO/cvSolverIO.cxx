@@ -144,8 +144,20 @@ int cvsolverIO::rewindFile() {
 //  READ functions
 //
 
-int cvsolverIO::readHeader (const char* keyphrase,int* valueArray,
-                          int  nItems,const char*  datatype,
+//------------
+// readHeader
+//------------
+// Read a file header.
+//
+// If the header does not contain 'keyphrase' then valueArray[0] is 
+// not set and retains the value (-1) set in the calling function. 
+//
+// If the header has been corrupted then return valueArray[0] = 0.
+//
+// [TODO:DaveP] This is horrible to return valueArray[0] = 0 but 
+// what else to do, return status? 
+//
+int cvsolverIO::readHeader(const char* keyphrase,int* valueArray, int  nItems,const char*  datatype,
                           const char*  iotype) {
 
    int i,skip_size,integer_value;
@@ -174,11 +186,15 @@ int cvsolverIO::readHeader (const char* keyphrase,int* valueArray,
          }
          //fprintf(stdout,"Line_: %s",Line_);
          char* token = strtok ( Line_, ":" );
-         //fprintf(stdout,"token: %s\n",token);
          if( cscompare( keyphrase , token ) ) {
             LastHeaderKey_[0] = '\0';
             sprintf(LastHeaderKey_,"%s",keyphrase); 
             token = strtok( NULL, " ,;<>" );
+            if (token == NULL) { 
+               fprintf(stderr, "ERROR parsing header: Unexpected end of line. \n");
+               valueArray[0] = 0;
+               return CVSOLVER_IO_ERROR;
+            }
             skip_size = 0;
             skip_size = atoi( token );
             for( i=0;i < nItems && ( token = strtok( NULL," ,;<>") );i++) {
@@ -188,6 +204,7 @@ int cvsolverIO::readHeader (const char* keyphrase,int* valueArray,
             if ( i < nItems ) {
                 fprintf(stderr,"Expected # of ints not recoverd from head\n");
                 fprintf(stderr,"when looking for : %s\n", keyphrase);
+                valueArray[0] = 0;
                 return CVSOLVER_IO_ERROR;
             } else {
                 return CVSOLVER_IO_OK;
@@ -212,6 +229,11 @@ int cvsolverIO::readHeader (const char* keyphrase,int* valueArray,
 
          // skip to next header
          token = strtok( NULL, " ,;<>" );
+         if (token == NULL) { 
+           valueArray[0] = 0;
+           fprintf(stderr, "ERROR parsing header: Unexpected end of line. \n");
+           return CVSOLVER_IO_ERROR;
+         }
          skip_size = atoi( token );
          if ( binary_format_ ) {
              gzseek(filePointer_,skip_size,SEEK_CUR);
@@ -596,7 +618,7 @@ int openfile_( const char* filename,
             return CVSOLVER_IO_ERROR;
         }
         *fileDescriptor = i;
-        //fprintf(stdout,"file pointer (%i) opened\n",(*fileDescriptor));
+        //fprintf(stdout,"[openfile_] file pointer (%i) opened\n",(*fileDescriptor));
         return CVSOLVER_IO_OK;
       }
     }
@@ -629,10 +651,11 @@ int openfilewithspaces_( const char* filename,
             delete cvsolverIOfp[i];
             cvsolverIOfp[i] = NULL;
             *fileDescriptor = 0;
+            fprintf(stderr,"ERROR: could not open file '%s'.\n", filename);
             return CVSOLVER_IO_ERROR;
         }
         *fileDescriptor = i;
-        //fprintf(stdout,"file pointer (%i) opened\n",(*fileDescriptor));
+        //fprintf(stdout,"[openfilewithspaces_] file pointer (%i) opened\n",(*fileDescriptor));
         return CVSOLVER_IO_OK;
       }
     }
@@ -660,8 +683,7 @@ void readheader_( int* fileDescriptor,
                   const char*  datatype,
                   const char*  iotype ) {
     int num = *nItems;
-    cvsolverIOfp[(*fileDescriptor)]->readHeader(keyphrase,(int*)valueArray,
-                                            num,datatype,iotype);
+    cvsolverIOfp[(*fileDescriptor)]->readHeader(keyphrase,(int*)valueArray, num,datatype,iotype);
     return;
 }
 

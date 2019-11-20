@@ -1190,13 +1190,15 @@ int PostSolver::ExistRestartFile( int stepNumber) {
     return CV_OK;
 }
 
-
-int PostSolver::ParseRestartFile( int stepNumber, const char* field , int *numval, double **myglobal) {
-
-    // We loop over the processors and read each processors
-    // solution database.  Using the ncorpd2d_ array, we reconstruct
-    // the global solution data
-
+//------------------
+// ParseRestartFile
+//------------------
+// We loop over the processors and read each processors
+// solution database. Using the ncorpd2d_ array, we reconstruct
+// the global solution data
+//
+int PostSolver::ParseRestartFile( int stepNumber, const char* field , int *numval, double **myglobal) 
+{
     int i,j,k;
     int nshgl, lstep, iqsiz;
     int numvar;
@@ -1217,6 +1219,11 @@ int PostSolver::ParseRestartFile( int stepNumber, const char* field , int *numva
         qlocal[nate] = 0.0;
     }
 
+    // Read in data for each procssor. 
+    //
+    // If a restart file was corrupted then don't read the data for
+    // the processor but just add zeros to the global results array.
+    //
     for(i=0; i<numprocs_; i++){
 
         // read in solution for current processor
@@ -1226,24 +1233,33 @@ int PostSolver::ParseRestartFile( int stepNumber, const char* field , int *numva
             return CV_ERROR;
         }
 
+        // Read the restart file header.
+        //
+        // If an error occurs while reading then intfromfile[0] = 0.
+        // If a field was not found then intfromfile[0] = -1.
+        //
         intfromfile[0] = -1;
-        readheader_(&irstin,field,(void*)intfromfile,&ithree_,"double",iotype_);
+        readheader_(&irstin, field, (void*)intfromfile, &ithree_, "double", iotype_);
+        nshgl = intfromfile[0];
 
-        nshgl=intfromfile[0];
-        if ( nshgl == -1 ) {
+        if (nshgl == -1) {
             closefile_( &irstin, "read" );
             cout << "NOTE: No (" << field << ") in " << filename << endl;
             return CV_ERROR;
+
+        // Set qlocal[] to zero to add zeros to the global solution.
+        } else if (nshgl == 0) {
+            for (int nate = 0; nate < numvar_*maxnshg_; nate++) {
+                qlocal[nate] = 0.0;
+            }
+
+        } else {
+            numvar = intfromfile[1];
+            lstep = intfromfile[2];
+            iqsiz = nshgl*numvar;
+            readdatablock_(&irstin,field,(void*)qlocal, &iqsiz, "double", iotype_);
         }
-
-        numvar = intfromfile[1];
-        lstep=intfromfile[2];
-        iqsiz=nshgl*numvar;
-
-        readdatablock_(&irstin,field,(void*)qlocal, &iqsiz, "double", iotype_);
         closefile_( &irstin, "read" );
-
-        cout << "Done reading (" << field << ") results : " << filename << endl;
 
         /* map solution to global */
         for(k=0; k< numvar; k++){
@@ -1256,11 +1272,9 @@ int PostSolver::ParseRestartFile( int stepNumber, const char* field , int *numva
 
     *numval = numvar;
     *myglobal =  rtnglobal;
-
     delete [] qlocal;
 
     return CV_OK;
-
 }
 
 
@@ -1317,7 +1331,9 @@ int calcMeanWallShearStressAndPressure(int start, int stop, int incr, bool sim_u
     for (i = 0; i < numPts; i++) {
         double pressure = 0.0;
         for (j = 0; j < numArrays; j++) {
-            pressure += p[j]->GetTuple1(i);
+            if (p[j] != NULL) { 
+                pressure += p[j]->GetTuple1(i);
+            }
         }
         pressure = pressure / numArrays;
         meanpressure->SetTuple1(i,pressure);
@@ -1351,6 +1367,8 @@ int calcMeanWallShearStressAndPressure(int start, int stop, int incr, bool sim_u
         if (traction[count] == NULL) {
             delete [] traction;
             HaveTractions = false;
+            fprintf(stderr,"WARNING: No data found for %s at time step %d.", "vinplane_traction", i);
+            fprintf(stderr," vTAWSS, vshear_pulse and vOSI will not be calculated.\n");
             break;
         }
         count++;
@@ -1370,6 +1388,8 @@ int calcMeanWallShearStressAndPressure(int start, int stop, int incr, bool sim_u
         if (wss[count] == NULL) {
             delete [] wss;
             HaveWSS = false;
+            fprintf(stderr,"WARNING: No data found for %s at time step %d.", "vWSS", i);
+            fprintf(stderr," vTAWSS_wss, vshear_pulse_wss and vOSI_wss will not be calculated.\n");
             break;
         }
         count++;
@@ -1498,6 +1518,8 @@ int calcMeanWallShearStressAndPressure(int start, int stop, int incr, bool sim_u
         if (traction[count] == NULL) {
             delete [] traction;
             HaveTractions = false;
+            fprintf(stderr,"WARNING: No data found for %s at time step %d.", "rinplane_traction", i);
+            fprintf(stderr," rTAWSS, rshear_pulse and rOSI will not be calculated.\n", tname);
             break;
         }
         count++;
@@ -1517,6 +1539,8 @@ int calcMeanWallShearStressAndPressure(int start, int stop, int incr, bool sim_u
         if (wss[count] == NULL) {
             delete [] wss;
             HaveWSS = false;
+            fprintf(stderr,"WARNING: No data found for %s at time step %d.", "rWSS", i);
+            fprintf(stderr," rTAWSS_wss, rshear_pulse_wss and rOSI_wss will not be calculated.\n");
             break;
         }
         count++;
