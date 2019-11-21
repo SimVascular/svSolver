@@ -63,9 +63,10 @@ c
         INTEGER nstep(MAXTS),niter(MAXTS),impl(MAXTS),LHSupd(6),loctim(MAXTS)
         INTEGER svLSFlag,BCTFlag,BCTMatchingFlag,svLSType,BCTFileNumber,tractionMethod
         INTEGER solverTask
+        REAL*8 restol
         common /inpdat/ epstol,  Delt,    CFLfl,
      &                  CFLsl,   nstep,   niter,
      &                  impl,    rhoinf,
      &                  LHSupd,  loctim,  deltol,
      &                  svLSFlag,BCTFlag,BCTMatchingFlag,svLSType,BCTFileNumber,tractionMethod,
-     &                  solverTask
+     &                  solverTask, restol
