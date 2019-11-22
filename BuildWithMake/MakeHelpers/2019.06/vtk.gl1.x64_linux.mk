@@ -40,7 +40,7 @@ VTK_LIBDIRS = $(VTK_BINDIR)/lib
 VTK_BINDIRS = $(VTK_BINDIR)/bin
 VTK_SO_PATH = $(VTK_BINDIR)/lib
 VTK_DLLS    = $(VTK_BINDIRS)/*.$(SOEXT)
-VTK_SYS_LIBS  = -lGLU -lX11 -lXt -lXext -lpthread -lm -lGL -lGLEW -lm -ldl
+VTK_SYS_LIBS  = -lpthread -lm -lm -ldl
 
 VTK_INCDIRS = \
 -I$(VTK_INCLUDE_DIR_BASE) \
