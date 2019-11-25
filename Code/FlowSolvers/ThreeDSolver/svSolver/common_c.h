@@ -294,6 +294,7 @@ extern "C" {
     int BCTFileNumber;
     int tractionMethod;
     int solverTask;
+    double restol;  /* residual tolerance */ 
   } inpdat ;
 
   extern struct {

@@ -14070,6 +14070,14 @@ c
            controlResidual = totres
            CurrentIter = CurrentIter + 1
         endif
+c  
+c.... if the residual is too large then exit
+c
+        if ((totres .gt. restol) .or. isnan(totres) ) then
+           write(*,*) 'FATAL ERROR: Residual has exceeded tolerance ', restol
+           stop
+        endif
+
 c     
 c.... get the CPU-time
 c
