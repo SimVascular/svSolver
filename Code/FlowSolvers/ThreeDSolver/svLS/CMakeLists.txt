@@ -22,10 +22,15 @@ set(FSRCS ADDBCMUL.f
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${FSRCS})
 
+## Set the MPI include directory here so we can use 
+#  the dummyMPI mpi.h when building svLS. 
+#
 if(SV_USE_DUMMY_MPI)
   target_link_libraries(${lib} ${SV_LIB_DUMMY_FORTRAN_MPI_NAME})
+  target_include_directories(${lib} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../dummyMPI)
 else()
   target_link_libraries(${lib} ${MPI_LIBRARY} ${MPI_Fortran_LIBRARIES})
+  target_include_directories(${lib} PUBLIC ${SV_MPI_INCLUDE_PATH})
 endif()
 
 if(SV_INSTALL_LIBS)
