@@ -110,7 +110,7 @@ if(SV_USE_DUMMY_MPI)
     ${SV_LIB_DUMMY_MPI_NAME} ${SV_LIB_DUMMY_FORTRAN_MPI_NAME})
 else()
   target_link_libraries(${lib_restart}
-    ${SV_MPI_Fortran_LIBRARIES})
+    ${SV_MPI_EXTRA_LIBRARY} ${SV_MPI_Fortran_LIBRARIES})
 endif()
 
 add_library(${lib_flowsolver} ${SV_LIBRARY_TYPE} ${FSRCS})
@@ -127,7 +127,7 @@ if(SV_USE_DUMMY_MPI)
   target_link_libraries(${lib_flowsolver} ${SV_LIB_DUMMY_MPI_NAME}
     ${SV_LIB_DUMMY_FORTRAN_MPI_NAME})
 else()
-  target_link_libraries(${lib_flowsolver} 
+  target_link_libraries(${lib_flowsolver} ${SV_MPI_EXTRA_LIBRARY}
     ${SV_MPI_Fortran_LIBRARIES})
 endif()
 set(HDRS Input.h ValType.h common_c.h)
@@ -152,16 +152,11 @@ target_link_libraries(${SV_FLOWSOLVER_EXE}${SV_MPI_NAME_EXT} ${lib_flowsolver}
   ${NSPCG_LIBRARY} ${SV_LIB_SOLVERIO_NAME}
   ${VTKLIB}
   )
-
-## Set the MPI include directory here so we can use 
-#  the dummyMPI mpi.h when building the flow solver.
-#
 if(SV_USE_DUMMY_MPI)
   target_link_libraries(${SV_FLOWSOLVER_EXE}${SV_MPI_NAME_EXT} ${SV_LIB_DUMMY_MPI_NAME}
     ${SV_LIB_DUMMY_FORTRAN_MPI_NAME})
 else()
-  target_link_libraries(${SV_FLOWSOLVER_EXE}${SV_MPI_NAME_EXT} )
-  target_include_directories(${SV_FLOWSOLVER_EXE}${SV_MPI_NAME_EXT} PUBLIC ${SV_MPI_INCLUDE_PATH}) 
+  target_link_libraries(${SV_FLOWSOLVER_EXE}${SV_MPI_NAME_EXT} ${SV_MPI_EXTRA_LIBRARY})
 endif()
 
 if(SV_INSTALL_LIBS)
