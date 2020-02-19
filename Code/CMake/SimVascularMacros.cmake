@@ -726,7 +726,7 @@ macro(sv_externals_check_versioning check_file_contents platform_version compile
   else()
     # The worst! fatal error
     message(WARNING "${GENERIC_MESSAGE} Pre-built binaries for ${SV_PLATFORM_DIR} version ${nothing_oldest_platform_ver} and compiler ${nothing_oldest_compiler}/${nothing_oldest_compiler_ver}")
-    set(${output_dir} "${nothing_oldest_platform_ver}/${nothing_oldest_compiler}-${nothing_oldest_compiler_ver}/${nothing_rest_of_line}")
+    set(${output_dir} "${nothing_oldest_platform_ver}/${nothing_oldest_compiler}/${nothing_oldest_compiler_ver}/${nothing_rest_of_line}")
   endif()
 
 endmacro()
