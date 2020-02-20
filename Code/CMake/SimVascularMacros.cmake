@@ -606,7 +606,16 @@ endmacro()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
+
+#-------------------------------
 # sv_externals_check_versioning
+#-------------------------------
+# This macro tries to match the build host platform, compiler and compiler version against
+# those listed in the externals externals_compiler_info.txt file to determine the best
+# externals version to use.
+#
+# The 'output_dir' variable is used as part of the externals download url.
+#
 macro(sv_externals_check_versioning check_file_contents platform_version compiler compiler_version output_dir)
 
   # Initiate loop variables
