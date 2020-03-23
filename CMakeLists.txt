@@ -93,24 +93,32 @@ set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${CMAKE_BINARY_DIR}/Externals-build/sv_extern
 set(SV_EXTERNALS_USE_TOPLEVEL_BIN_DIR ON)
 set(SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the sv_externals build, they can be with this string")
 
-ExternalProject_Add(Externals
-  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Externals
-  BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Externals-build
-  DOWNLOAD_COMMAND ""
-  UPDATE_COMMAND ""
-  INSTALL_COMMAND ""
-  CMAKE_CACHE_ARGS
-    -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
-    -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
-    -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
-    -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
-    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    -DCMAKE_MACOSX_RPATH:BOOL=ON
-    -DBUILD_TESTING:BOOL=OFF
-    -DBUILD_EXAMPLES:BOOL=OFF
-    ${SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS}
-    )
-set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_BINARY_DIR}/Externals-build/sv_externals")
+set(SV_USE_LOCAL_VTK OFF CACHE BOOL "If ON then use locally installed VTK version instead of a downloaded version.")
+
+if(NOT ${SV_USE_LOCAL_VTK}) 
+  ExternalProject_Add(Externals
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Externals
+    BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Externals-build
+    DOWNLOAD_COMMAND ""
+    UPDATE_COMMAND ""
+    INSTALL_COMMAND ""
+    CMAKE_CACHE_ARGS
+      -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
+      -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
+      -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
+      -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
+      -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+      -DCMAKE_MACOSX_RPATH:BOOL=ON
+      -DBUILD_TESTING:BOOL=OFF
+      -DBUILD_EXAMPLES:BOOL=OFF
+      ${SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS}
+      )
+  set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_BINARY_DIR}/Externals-build/sv_externals")
+  set(EXTERNALS_DEPENDS Externals)
+else()
+  set(EXTERNALS_DEPENDS "")
+endif()
+
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -120,7 +128,7 @@ set(SV_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provide
 ExternalProject_Add(svSolver
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Code
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/svSolver-build
-  DEPENDS Externals
+  DEPENDS ${EXTERNALS_DEPENDS} 
   DOWNLOAD_COMMAND ""
   UPDATE_COMMAND ""
   INSTALL_COMMAND ""
@@ -134,10 +142,7 @@ ExternalProject_Add(svSolver
     -DBUILD_TESTING:BOOL=OFF
     -DBUILD_EXAMPLES:BOOL=OFF
     -DBUILD_SHARED_LIBS:BOOL=OFF
-    -DSV_EXTERNALS_USE_TOPLEVEL_DIR:BOOL=ON
-    -DSV_EXTERNALS_TOPLEVEL_BIN_DIR:PATH=${SV_EXTERNALS_TOPLEVEL_BIN_DIR}
-    -DSV_EXTERNALS_USE_TOPLEVEL_BIN_DIR:BOOL=ON
-    -DSV_EXTERNALS_TOPLEVEL_DIR:PATH=${SV_EXTERNALS_TOPLEVEL_DIR}
     ${SV_ADDITIONAL_CMAKE_ARGS}
     )
+
 #-----------------------------------------------------------------------------
