@@ -115,7 +115,7 @@ if(CMAKE_Fortran_COMPILER_ID MATCHES "GNU")
   simvascular_get_major_minor_version(${CMAKE_Fortran_COMPILER_VERSION} COMPILER_MAJOR_VERSION 
     COMPILER_MINOR_VERSION)
   # Set the -std=legacy option to compile code using gcc 8.1 (see svSolver GitHub Issue #32). 
-  if(APPLE AND (Fortran_COMPILER_NAME MATCHES "gfortran.*") AND (COMPILER_MAJOR_VERSION EQUAL 8))
+  if(APPLE AND (Fortran_COMPILER_NAME MATCHES "gfortran.*") AND (COMPILER_MAJOR_VERSION GREATER 7))
       set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -std=legacy")
   endif()
 else()
