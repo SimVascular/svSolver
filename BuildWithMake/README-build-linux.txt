@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
             Compiling Instructions for svSolver on Linux
-                       Revised 2019-11-17
+                       Revised 2020-04-08
 ------------------------------------------------------------------------
 
 --------
@@ -52,8 +52,8 @@ The following packages are required to build svsolver
 ### mpi versions
 % yum install openmpi
 % yum install openmpi-devel
-% yum install mpich
-% yum install mpich-devel
+% yum install mpich-3.2
+% yum install mpich-3.2-devel
 
 1b. Ubuntu (18.04)
 --------------------
@@ -70,6 +70,7 @@ The following packages are required to build simvascular
 
 ### for flowsolver
 % sudo apt-get install libmpich-dev
+% sudo apt-get install libopenmpi-dev
 
 ### for vtk
 % sudo apt-get install libglu1-mesa-dev
@@ -92,7 +93,8 @@ This is a single processor only version of MPI for testing.  See
 below on how to use openmpi or mpich.
 
 % cd svsolver/BuildWithMake
-% module add openmpi-x86_64  (if needed on centos)
+% module add mpi/openmpi-x86_64  (if needed on centos)
+% module add mpi/mpich-3.2-x86_64  (if needed on centos)
 % source quick-build-linux.sh
 
 4. Launching svSolver
@@ -142,65 +144,69 @@ SV_USE_MPICH=0
 
 *** end file "global_overrides.mk"
 
-7.  To build external open source packages (very optional)
+7. Building with mpich or openmpi
+
+Make sure that the system mpich or openmpi is installed on your
+system (see above), update "global_overrides.mk", e.g.:
+
+*** start file "global_overrides.mk"
+
+SV_USE_DUMMY_MPI=0
+SV_USE_OPENMPI=0
+SV_USE_MPICH=1
+
+*** end file "global_overrides.mk"
+
+And then run:
+
+% cd BuildWithMake
+% make fast
+
+Note: you can build the dummy, openmpi, and mpich version
+in the same source try but you must build them once at a time!
+
+For any non-standard MPI installation, you must override the
+parameters automatically detected by either:
+
+MakeHelpers/2019.06/mpich.x64_linux.mk 
+MakeHelpers/2019.06/openmpi.x64_linux.mk 
+
+You can do this in:
+
+*** start file "pkg_overrides.mk"
+
+#
+# customize the commands or hardcode the paths
+# for your system
+#
+
+MPI_NAME    = some_version_mpi
+MPI_INCDIR  = $(shell mpif90 --showme:compile)
+MPI_LIBS    = $(shell mpicxx --showme:link) $(shell mpif90 --showme:link)
+MPI_SO_PATH = $(shell which mpiexec)/../..
+MPIEXEC_PATH  = $(dir $(shell which mpiexec))
+MPIEXEC       = mpiexec
+
+*** end file "pkg_overrides.mk"
+
+And then run:
+
+% make fast
+
+8. No installers necessary
+--------------------------
+The executables generated in Bin link against static libraries as
+much as possible, so you shouldn't need wrapper scripts for svpre,
+svpost, or the svsolver.  The executables can be added to your path
+or copied as needed.  If you link against a non-system MPI, make
+sure that the shared libraries for MPI are accesssible from each
+computational node on your cluster.  Some compilers (e.g. Intel)
+may require compiler runtime libraries as well.  The linux command
+"ldd" can be used to see what shared libraries are needed for
+each executable.
+
+9.  To build external open source packages (very optional)
 ----------------------------------------------------------
 
 % cd Externals/Make/2019.06
 % source build-sv-exeternals-linux.sh
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-4. Override options
--------------------
-Override defaults with:
-
-  * cluster_overrides.mk
-  * global_overrides.mk
-  * site_overrides.mk
-  * pkg_overrides.mk
-
-Building with gnu compilers and the vtk binaries should
-build "out of the box" without required overrides.
-
-See include.mk for all options.  Sample override files
-can be found in:
-
-SampleOverrides
-
-to use one of these files, copy into local BuildWithMake
-directory and modify as needed, e.g.:
-
-% cd svsolver/BuildWithMake
-% cp SampleOverrides/centos_6/global_overrides.mk .  (centos)
-% cp SampleOverrides/ubuntu_14/global_overrides.mk .  (ubuntu)
-
-6. Build
---------
-% cd svsolver/BuildWithMake
-% module add openmpi-x86_64  (if needed on centos)
-% make
-
-7. Running developer version
-----------------------------
-Binaries are in "BuildWithMake/Bin" directory.
-
-8. Build release (NOTE: out-of-date!)
------------------
-% cd svsolver/BuildWithMake/Release
-% make
-
-9. Installing a distribution (NOTE: out-of-date!)
-----------------------------
-To be updated.
