@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
             Compiling Instructions for svSolver on Linux
-                       Revised 2019-11-17
+                       Revised 2020-04-08
 ------------------------------------------------------------------------
 
 --------
@@ -70,6 +70,7 @@ The following packages are required to build simvascular
 
 ### for flowsolver
 % sudo apt-get install libmpich-dev
+% sudo apt-get install libopenmpi-dev
 
 ### for vtk
 % sudo apt-get install libglu1-mesa-dev
@@ -142,7 +143,56 @@ SV_USE_MPICH=0
 
 *** end file "global_overrides.mk"
 
-7.  To build external open source packages (very optional)
+7. Building with mpich or openmpi
+
+Make sure that the system mpich or openmpi is installed on your
+system (see above), update "global_overrides.mk", e.g.:
+
+*** start file "global_overrides.mk"
+
+SV_USE_DUMMY_MPI=0
+SV_USE_OPENMPI=0
+SV_USE_MPICH=1
+
+*** end file "global_overrides.mk"
+
+And then run:
+
+% cd BuildWithMake
+% make fast
+
+Note: you can build the dummy, openmpi, and mpich version
+in the same source try but you must build them once at a time!
+
+For any non-standard MPI installation, you must override the
+parameters automatically detected by either:
+
+MakeHelpers/2019.06/mpich.x64_linux.mk 
+MakeHelpers/2019.06/openmpi.x64_linux.mk 
+
+You can do this in:
+
+*** start file "pkg_overrides.mk"
+
+#
+# customize the commands or hardcode the paths
+# for your system
+#
+
+MPI_NAME    = some_version_mpi
+MPI_INCDIR  = $(shell mpif90 --showme:compile)
+MPI_LIBS    = $(shell mpicxx --showme:link) $(shell mpif90 --showme:link)
+MPI_SO_PATH = $(shell which mpiexec)/../..
+MPIEXEC_PATH  = $(dir $(shell which mpiexec))
+MPIEXEC       = mpiexec
+
+*** end file "pkg_overrides.mk"
+
+And then run:
+
+% make fast
+
+8.  To build external open source packages (very optional)
 ----------------------------------------------------------
 
 % cd Externals/Make/2019.06
