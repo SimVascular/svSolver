@@ -192,65 +192,20 @@ And then run:
 
 % make fast
 
-8.  To build external open source packages (very optional)
+8. No installers necessary
+--------------------------
+The executables generated in Bin link against static libraries as
+much as possible, so you shouldn't need wrapper scripts for svpre,
+svpost, or the svsolver.  The executables can be added to your path
+or copied as needed.  If you link against a non-system MPI, make
+sure that the shared libraries for MPI are accesssible from each
+computational node on your cluster.  Some compilers (e.g. Intel)
+may require compiler runtime libraries as well.  The linux command
+"ldd" can be used to see what shared libraries are needed for
+each executable.
+
+9.  To build external open source packages (very optional)
 ----------------------------------------------------------
 
 % cd Externals/Make/2019.06
 % source build-sv-exeternals-linux.sh
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-4. Override options
--------------------
-Override defaults with:
-
-  * cluster_overrides.mk
-  * global_overrides.mk
-  * site_overrides.mk
-  * pkg_overrides.mk
-
-Building with gnu compilers and the vtk binaries should
-build "out of the box" without required overrides.
-
-See include.mk for all options.  Sample override files
-can be found in:
-
-SampleOverrides
-
-to use one of these files, copy into local BuildWithMake
-directory and modify as needed, e.g.:
-
-% cd svsolver/BuildWithMake
-% cp SampleOverrides/centos_6/global_overrides.mk .  (centos)
-% cp SampleOverrides/ubuntu_14/global_overrides.mk .  (ubuntu)
-
-6. Build
---------
-% cd svsolver/BuildWithMake
-% module add openmpi-x86_64  (if needed on centos)
-% make
-
-7. Running developer version
-----------------------------
-Binaries are in "BuildWithMake/Bin" directory.
-
-8. Build release (NOTE: out-of-date!)
------------------
-% cd svsolver/BuildWithMake/Release
-% make
-
-9. Installing a distribution (NOTE: out-of-date!)
-----------------------------
-To be updated.
