@@ -52,8 +52,8 @@ The following packages are required to build svsolver
 ### mpi versions
 % yum install openmpi
 % yum install openmpi-devel
-% yum install mpich
-% yum install mpich-devel
+% yum install mpich-3.2
+% yum install mpich-3.2-devel
 
 1b. Ubuntu (18.04)
 --------------------
@@ -93,7 +93,8 @@ This is a single processor only version of MPI for testing.  See
 below on how to use openmpi or mpich.
 
 % cd svsolver/BuildWithMake
-% module add openmpi-x86_64  (if needed on centos)
+% module add mpi/openmpi-x86_64  (if needed on centos)
+% module add mpi/mpich-3.2-x86_64  (if needed on centos)
 % source quick-build-linux.sh
 
 4. Launching svSolver
