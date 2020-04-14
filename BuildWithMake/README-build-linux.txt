@@ -42,6 +42,9 @@ Major Steps
 ----------------
 The following packages are required to build svsolver
 
+### compiler
+% yum install gcc-gfortran
+
 ### helpers for build
 % yum install tcl
 
