@@ -24,6 +24,10 @@ Ubuntu 18.04 64-bit desktop (w/ patches)
 Intel 7/9 processor
 gcc/g++/gfortran version 7.4
 
+CentOS 8.1 64-bit desktop (w/ patches)
+Intel 7/9 processor
+gcc/g++/gfortran version 8.3
+
 Building with the Intel compilers (ifort/icpc/icc) should
 work but this has limited testing.
 
@@ -38,9 +42,42 @@ Major Steps
 1. System Prerequisities
 ------------------------
 
-1a. CentOS (7.6)
+1a. CentOS (8.1)
+----------------
+### compiler
+% yum install gcc-gfortran
+
+### helpers for build
+% yum install tcl
+
+### cmake tools
+% yum install cmake
+% yum install cmake-gui
+
+### mpi versions
+% yum install openmpi
+% yum install openmpi-devel
+% yum install mpich
+% yum install mpich-devel
+
+### may be necessary, depending on config
+% source /etc/profile.d/modules.sh
+% module avail
+
+% module load mpi/mpich-x86_64
+
+or
+
+% module load mpi/openmpi-x86_64
+
+NOTE: "module load mpi" appears to load openmpi!
+
+1b. CentOS (7.6)
 ----------------
 The following packages are required to build svsolver
+
+### compiler
+% yum install gcc-gfortran
 
 ### helpers for build
 % yum install tcl
@@ -55,7 +92,7 @@ The following packages are required to build svsolver
 % yum install mpich-3.2
 % yum install mpich-3.2-devel
 
-1b. Ubuntu (18.04)
+1c. Ubuntu (18.04)
 --------------------
 The following packages are required to build simvascular
 

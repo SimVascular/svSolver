@@ -388,7 +388,7 @@ c                  (i + t1 + t2)*x = y
 c
 c ... specifications for parameters
 c
-      dimension t1(1), t2(1), x(1)
+      dimension t1(*), t2(*), x(*)
 c
       x(n-1) = x(n-1) - t1(n-1)*x(n)
       do 10 i = n-2,1,-1
@@ -446,7 +446,7 @@ c                  super-diagonal elements of the matrix
 c
 c ... specifications for parameters
 c
-      dimension d(1), t1(1), t2(1)
+      dimension d(*), t1(*), t2(*)
 c
       n = nn
       do 10 i = 1,n-2
@@ -524,7 +524,7 @@ c                  sub-diagonal elements of the matrix
 c
 c ... specifications for parameters
 c
-      dimension d(1), t1(1), t2(1), b1(1), b2(1)
+      dimension d(*), t1(*), t2(*), b1(*), b2(*)
 c
       n = nn
       do 10 i = 1,n-2
@@ -679,7 +679,7 @@ c          x      the solution to ax = y
 c
 c ... specifications for parameters
 c
-      dimension d(1), t1(1), t2(1), b1(1), b2(1), x(1), y(1)
+      dimension d(*), t1(*), t2(*), b1(*), b2(*), x(*), y(*)
 c
       n = nn
       do 10 i = 1,n 
@@ -717,7 +717,7 @@ c          x      the solution to ax = y
 c
 c ... specifications for parameters
 c
-      dimension d(1), t1(1), t2(1), b1(1), b2(1), x(1), y(1)
+      dimension d(*), t1(*), t2(*), b1(*), b2(*), x(*), y(*)
 c
       n = nn
       do 10 i = 1,n 
@@ -788,8 +788,8 @@ c     if ( p(i) = j ) row i gets mapped into row j)
 c
 c ... specifications for parameters
 c
-      dimension a(1), wksp(1) 
-      integer   ia(1), ja(1), p(1)
+      dimension a(*), wksp(*) 
+      integer   ia(*), ja(*), p(*)
 c
       n = nn
       nz = nzz
@@ -842,8 +842,8 @@ c     if ( p(i) = j ) row i gets mapped into row j)
 c
 c ... specifications for parameters
 c
-      dimension coef(ndim,1), wksp(1)
-      integer   jcoef(ndim,1), iwksp(1), p(1)
+      dimension coef(ndim,1), wksp(*)
+      integer   jcoef(ndim,1), iwksp(*), p(*)
 c
       n = nn
       if (n .le. 0) return
@@ -889,8 +889,8 @@ c
 c ... specifications for parameters
 c
       external suba 
-      dimension rhs(1), u(1), wksp(1), coef(1), jcoef(2),
-     a          wfac(1), jwfac(1)
+      dimension rhs(*), u(*), wksp(*), coef(*), jcoef(2),
+     a          wfac(*), jwfac(*)
 c
 c *** begin -- package common 
 c
@@ -956,8 +956,8 @@ c          wksp    workspace vector of length n
 c
 c ... specifications for parameters
 c
-      integer   p(1)
-      dimension v(1), wksp(1) 
+      integer   p(*)
+      dimension v(*), wksp(*) 
 c
       n = nn
       if (n .le. 0) return
@@ -985,7 +985,7 @@ c         ncolor    number of colors
 c
 c ... specifications for parameters
 c
-      integer p(1), ip(1), nc(1)
+      integer p(*), ip(*), nc(*)
 c
       n = nn
 c
@@ -1036,7 +1036,7 @@ c         z       output vector
 c
 c ... specifications for parameters
 c
-      dimension r(1), z(1), diag(1)
+      dimension r(*), z(*), diag(*)
 c
       n = nn
       do 10 i = 1,n 
@@ -1085,9 +1085,9 @@ c                          matrix in diagonal format
 c
 c ... specifications for parameters
 c
-      integer jcoef(2), nc(1), p(1), maxnew(1), jcnew(ncol,1),
-     a        iwksp(1), ip(1) 
-      dimension coef(ndim,1), wksp(1)
+      integer jcoef(2), nc(*), p(*), maxnew(*), jcnew(ncol,1),
+     a        iwksp(*), ip(*) 
+      dimension coef(ndim,1), wksp(*)
 c
 c
       n = nn
@@ -1244,7 +1244,7 @@ c********************************************************************
 c
 c ... specifications for parameters
 c
-      integer   p(1), ip(1), jcoef(ndim,1)
+      integer   p(*), ip(*), jcoef(ndim,1)
       dimension coef(ndim,1)
       logical   propa
 c
@@ -1438,7 +1438,7 @@ c********************************************************************
 c
 c ... specifications for parameters
 c
-      integer   p(1), ip(1), iblock(3,ndis,1), lbhb(1)
+      integer   p(*), ip(*), iblock(3,ndis,1), lbhb(*)
       logical   propa
 c
 c ... specifications for local variables
@@ -1665,7 +1665,7 @@ c
 c ... specifications for parameters
 c
       integer   jcoef(2)
-      dimension coef(ndim,1), wksp(1)
+      dimension coef(ndim,1), wksp(*)
 c
       n = nn
       maxnz = maxnzz
@@ -1713,8 +1713,8 @@ c         iwksp   integer workspace vector of length n
 c
 c ... specifications for parameters
 c
-      integer ia(1), ja(1), iwksp(1), np(1)
-      dimension a(1)
+      integer ia(*), ja(*), iwksp(*), np(*)
+      dimension a(*)
 c
 c ... eliminate duplicates from the vectors by adding their 
 c     values in the a vector.  first, sort the vectors by
@@ -1807,7 +1807,7 @@ c         z       output vector
 c
 c ... specifications for parameters
 c
-      dimension r(1), z(1)
+      dimension r(*), z(*)
 c
       n = nn
       do 10 i = 1,n 
@@ -1847,7 +1847,7 @@ c                  = -7   splitting matrix is not positive definite
 c
 c ... specifications for parameters
 c
-      dimension r(1), z(1), u(1), ubar(1)
+      dimension r(*), z(*), u(*), ubar(*)
 c
 c *** begin -- package common 
 c
@@ -2019,7 +2019,7 @@ c                 = 1  matrix is nonsymmetric
 c
 c ... specifications for parameters
 c
-      dimension a(lda,1), x(1)
+      dimension a(lda,1), x(*)
 c
       maxnz = maxnzz
       do 10 i = 1,n 
@@ -2066,7 +2066,7 @@ c
 c ... specifications for parameters
 c
       integer   jcnew(2,1), maxnew(2)
-      dimension coef(ndim,2), b(1), c(1), dfac(1), wksp(1)
+      dimension coef(ndim,2), b(*), c(*), dfac(*), wksp(*)
 c
       n = nn
       nr = nrr
@@ -2132,7 +2132,7 @@ c
 c ... specifications for parameters
 c
       integer   jcoef(ndimm,2)
-      dimension coef(ndimm,2), b(1), c(1), wksp(1)
+      dimension coef(ndimm,2), b(*), c(*), wksp(*)
 c
       ndim = ndimm
       do 10 i = 1,nr
@@ -2182,7 +2182,7 @@ c
 c ... specifications for parameters
 c
       integer   jcnew(2,1), maxnew(2)
-      dimension coef(ndim,2), b(1), c(1), dfac(1), wksp(1)
+      dimension coef(ndim,2), b(*), c(*), dfac(*), wksp(*)
 c
       n = nn
       nr = nrr
@@ -2248,7 +2248,7 @@ c
 c ... specifications for parameters
 c
       integer   jcoef(ndimm,2)
-      dimension coef(ndimm,2), b(1), c(1), wksp(1)
+      dimension coef(ndimm,2), b(*), c(*), wksp(*)
 c
       ndim = ndimm
       do 10 i = 1,nr
@@ -2299,7 +2299,7 @@ c
 c ... specifications for parameters
 c
       integer   jcnew(2,1), maxnew(2)
-      dimension coef(ndim,2), b(1), c(1), dfac(1), wksp(1)
+      dimension coef(ndim,2), b(*), c(*), dfac(*), wksp(*)
 c
       n = nn
       nr = nrr
@@ -2344,7 +2344,7 @@ c
 c ... specifications for parameters
 c
       integer   jcoef(ndim,2) 
-      dimension coef(ndim,2), b(1), c(1), wksp(1) 
+      dimension coef(ndim,2), b(*), c(*), wksp(*) 
 c
       nrp1 = nr + 1 
       do 10 i = 1,nr
@@ -2388,7 +2388,7 @@ c
 c ... specifications for parameters
 c
       integer   jcnew(2,1), maxnew(2)
-      dimension coef(ndim,2), x(1), b(1), dfac(1) 
+      dimension coef(ndim,2), x(*), b(*), dfac(*) 
 c
       n = nn
       nr = nrr
@@ -2434,7 +2434,7 @@ c
 c ... specifications for parameters
 c
       integer   jcoef(ndim,2) 
-      dimension coef(ndim,2), x(1), b(1), wksp(1) 
+      dimension coef(ndim,2), x(*), b(*), wksp(*) 
 c
       nrp1 = nr + 1 
       nb = n - nr
@@ -2491,8 +2491,8 @@ c                        = -2     maxlim .lt. maxrs
 c
 c ... specifications for parameters
 c
-      integer maxnew(2), jcnew(2,1), jcrs(1)
-      dimension db(1), ak(ndim,1), ah(ndim,1), dr(1), rs(nrr,1)
+      integer maxnew(2), jcnew(2,1), jcrs(*)
+      dimension db(*), ak(ndim,1), ah(ndim,1), dr(*), rs(nrr,1)
 c
       nr = nrr
       maxrs = 1
@@ -2568,8 +2568,8 @@ c                        = -2     maxlim .lt. maxrs
 c
 c ... specifications for parameters
 c
-      integer jcoef(ndim,1), jcrs(nrr,1), iwksp(1)
-      dimension coef(ndim,1), rs(nrr,1), wksp(1)
+      integer jcoef(ndim,1), jcrs(nrr,1), iwksp(*)
+      dimension coef(ndim,1), rs(nrr,1), wksp(*)
 c
       nr = nrr
       maxnz = maxnzz
@@ -2647,7 +2647,7 @@ c
 c ... specifications for parameters
 c
       integer   jcnew(2,2), maxnew(2)
-      dimension coef(ndim,2), b(1), c(1), wksp(1) 
+      dimension coef(ndim,2), b(*), c(*), wksp(*) 
 c
       n = nn
       nr = nrr
@@ -2689,7 +2689,7 @@ c
 c ... specifications for parameters
 c
       integer   jcnew(2,2), maxnew(2)
-      dimension coef(ndim,2), x(1), b(1)
+      dimension coef(ndim,2), x(*), b(*)
 c
       n = nn
       nr = nrr
@@ -2735,8 +2735,8 @@ c         omega    over-relaxation factor
 c
 c ... specifications for parameters
 c
-      integer   jt(1), iblock(3,1)
-      dimension d(ldd,2), t(ldt,1), x(1)
+      integer   jt(*), iblock(3,1)
+      dimension d(ldd,2), t(ldt,1), x(*)
 c
       kblsz = kblszz
       l = n/kblsz
@@ -2809,9 +2809,9 @@ c         wksp     floating point workspace vector
 c
 c ... specifications for parameters
 c
-      integer   ipt(1), jt(ncolor,1), nci(1), lbhb(1),
+      integer   ipt(*), jt(ncolor,1), nci(*), lbhb(*),
      a          iblock(3,ncolor,2)
-      dimension d(ldd,2), t(ldt,1), wksp(1), x(1) 
+      dimension d(ldd,2), t(ldt,1), wksp(*), x(*) 
       logical   unif
 c
       unif = iunif .eq. 1
@@ -2905,9 +2905,9 @@ c                   = 1   diagonal blocks are of uniform size
 c
 c ... specifications for parameters
 c
-      integer   ipt(1), jt(ncolor,1), nci(1), lbhb(1),
+      integer   ipt(*), jt(ncolor,1), nci(*), lbhb(*),
      a          iblock(3,ncolor,2)
-      dimension d(ldd,2), t(ldt,1), x(1)
+      dimension d(ldd,2), t(ldt,1), x(*)
       logical   unif
 c
       unif = iunif .eq. 1
@@ -2986,8 +2986,8 @@ c         wksp     floating point workspace vector
 c
 c ... specifications for parameters
 c
-      integer   jt(1), iblock(3,1)
-      dimension d(ldd,2), t(ldt,1), wksp(1), x(1) 
+      integer   jt(*), iblock(3,1)
+      dimension d(ldd,2), t(ldt,1), wksp(*), x(*) 
 c
       kblsz = kblszz
       l = n/kblsz
@@ -3059,9 +3059,9 @@ c                   = 1   diagonal blocks are of uniform size
 c
 c ... specifications for parameters
 c
-      integer   ipt(1), jt(ncolor,1), nci(1), lbhb(1),
+      integer   ipt(*), jt(ncolor,1), nci(*), lbhb(*),
      a          iblock(3,ncolor,2)
-      dimension d(ldd,2), t(ldt,1), x(1)
+      dimension d(ldd,2), t(ldt,1), x(*)
       logical   unif
 c
       unif = iunif .eq. 1
@@ -3153,9 +3153,9 @@ c         wksp     floating point workspace vector
 c
 c ... specifications for parameters
 c
-      integer   ipt(1), jt(ncolor,1), nci(1), lbhb(1),
+      integer   ipt(*), jt(ncolor,1), nci(*), lbhb(*),
      a          iblock(3,ncolor,2)
-      dimension d(ldd,2), t(ldt,1), wksp(1), x(1) 
+      dimension d(ldd,2), t(ldt,1), wksp(*), x(*) 
       logical   unif
 c
       unif = iunif .eq. 1
