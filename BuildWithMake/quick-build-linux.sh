@@ -110,7 +110,7 @@ case "$osid" in
 		  exit
 		elif [ $SV_EXTERNALS_VERSION_NUMBER == '2019.06' ]; then
 		  export EXTERNALS_SV_FULL_OS_VER_NO=8.1
-                  export EXTERNALS_BUILD_DATE=2020.04.13
+                  export EXTERNALS_BUILD_DATE=2020.04.14
                   export EXTERNALS_SV_LOWERCASE_CMAKE_BUILD_TYPE=release
 		fi
 		;;

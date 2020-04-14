@@ -185,9 +185,10 @@ create-svsolver-options-file:
 	@echo "#define VER_VARWALL $(SV_THREEDSOLVER_USE_VARWALL)" >> $(TOP)/../Code/FlowSolvers/Include/Make/cvFlowsolverOptions.h
 	@echo "#define VER_USE_VTK $(SV_THREEDSOLVER_USE_VTK)" >> $(TOP)/../Code/FlowSolvers/Include/Make/cvFlowsolverOptions.h
 
-clean:  veryclean
+veryclean:  clean
+	if [ -e ext ];then /bin/rm -fR ext;fi
 
-veryclean:
+clean:
 	for i in ${THIRD_PARTY_LIBDIRS}; do ( \
 	  echo "super cleaning directory ($$i)"; \
 	  if [ -e $$i ];then \
