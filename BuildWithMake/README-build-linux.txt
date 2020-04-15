@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
             Compiling Instructions for svSolver on Linux
-                       Revised 2020-04-08
+                       Revised 2020-04-15
 ------------------------------------------------------------------------
 
 --------
@@ -12,12 +12,6 @@ makefiles.  You must override the deafult options to build on linux.
 
 Our base test configuration for linux is:
 
-minimim requirements:
-
-Ubuntu 16.04 64-bit desktop (w/ patches)
-Intel 7/9 processor
-gcc/g++/gfortran version 5.4
-
 Highly recommended:
 
 Ubuntu 18.04 64-bit desktop (w/ patches)
@@ -28,7 +22,13 @@ CentOS 8.1 64-bit desktop (w/ patches)
 Intel 7/9 processor
 gcc/g++/gfortran version 8.3
 
-Building with the Intel compilers (ifort/icpc/icc) should
+minimim requirements:
+
+Ubuntu 16.04 64-bit desktop (w/ patches)
+Intel 7/9 processor
+gcc/g++/gfortran version 5.4
+
+Note: Building with the Intel compilers (ifort/icpc/icc) should
 work but this has limited testing.
 
 -------------------------------
@@ -125,14 +125,24 @@ The following packages are required to build simvascular
 3. Building svSolver
 ---------------------
 
+3a. no mpi
+
 By default, on Linux svSolver is built with a dummy version of MPI.
 This is a single processor only version of MPI for testing.  See
 below on how to use openmpi or mpich.
 
 % cd svsolver/BuildWithMake
-% module add mpi/openmpi-x86_64  (if needed on centos)
-% module add mpi/mpich-3.2-x86_64  (if needed on centos)
 % source quick-build-linux.sh
+
+3b. Ubuntu 18 with mpich & openmpi & no mpi
+
+% cd svsolver/BuildWithMake
+% source quick-build-ubuntu18-all-mpi.sh
+
+3c. CentOS 8.1 with mpich & openmpi & no mpi
+
+% cd svsolver/BuildWithMake
+% source quick-build-centos8-all-mpi.sh
 
 4. Launching svSolver
 ---------------------
@@ -194,6 +204,15 @@ SV_USE_MPICH=1
 
 *** end file "global_overrides.mk"
 
+To manually select mpi on CentOS 8, do one
+of the following:
+
+% module add mpi/openmpi-x86_64
+
+OR
+
+% module add mpi/mpich-3.2-x86_64
+
 And then run:
 
 % cd BuildWithMake
@@ -247,3 +266,8 @@ each executable.
 
 % cd Externals/Make/2019.06
 % source build-sv-exeternals-linux.sh
+
+See the "README" files in the SimVascular/Externals directory
+of the SimVascular project for more information regarding the
+building of external open source projects used by SimVascular
+and svSolver.
