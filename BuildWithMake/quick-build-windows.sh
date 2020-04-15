@@ -77,4 +77,18 @@ for i in $EXTERNALS_TOP/tarfiles/$TAR_FILE_PREFIX.*.tar.gz; do
 done
 popd
 
+#
+# default is to build with msmpi
+#
+
+make fast
+
+#
+# now build with dummy mpi
+#
+
+echo "SV_USE_DUMMY_MPI=1" >> global_overrides.mk
+echo "SV_USE_OPENMPI=0" >> global_overrides.mk
+echo "SV_USE_MPICH=0" >> global_overrides.mk
+
 make fast
