@@ -61,7 +61,7 @@ echo "SV_USE_DUMMY_MPI=0" >> global_overrides.mk
 echo "SV_USE_OPENMPI=1" >> global_overrides.mk
 echo "SV_USE_MPICH=0" >> global_overrides.mk
 
-echo "MPI_NAME    = openmpi" >> pkg_overrides.mk
+echo "MPI_NAME    = openmpi" > pkg_overrides.mk
 echo "MPI_INCDIR  = \$(shell mpif90.openmpi --showme:compile)" >> pkg_overrides.mk
 echo "MPI_LIBS    = \$(shell mpicxx.openmpi --showme:link) \$(shell mpif90.openmpi --showme:link)" >> pkg_overrides.mk
 echo "MPI_SO_PATH = \$(shell which mpiexec.openmpi)/../.." >> pkg_overrides.mk
