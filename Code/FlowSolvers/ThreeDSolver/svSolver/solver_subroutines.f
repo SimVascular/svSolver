@@ -15929,6 +15929,8 @@ C
 C     Local variables
 C
       INTEGER             j,           k,           n
+      logical flag1, flag2
+      character*50 fname1, fname2
 
 C
       open(unit=818, file='rcrt.dat',status='old')
@@ -15967,10 +15969,26 @@ C
          allocate (PHistRCR(lstep+nstep(1)+1,numRCRSrfs))
          PHistRCR = zero
          QHistRCR = zero
-         call ReadDataFile(QHistRCR(1:lstep+1,:),lstep+1,numRCRSrfs,
-     &      'QHistRCR.dat',870)
-         call ReadDataFile(PHistRCR(1:lstep+1,:),lstep+1,numRCRSrfs,
-     &      'PHistRCR.dat',871)
+c     check if *HistRCR.dat.step# exists
+         write (fname1, "(a13,i0)") "QHistRCR.dat.", lstep
+         fname1 = trim(fname1)
+         write (fname2, "(a13,i0)") "PHistRCR.dat.", lstep
+         fname2 = trim(fname2)
+         inquire(FILE=fname1, EXIST=flag1)
+         inquire(FILE=fname2, EXIST=flag2)
+c     read the results in format *HistRCR.dat.step#
+         if (flag1.AND.flag2) then
+            call ReadDataFile(QHistRCR(1:lstep+1,:),lstep+1,numRCRSrfs,
+     &         fname1,870)
+            call ReadDataFile(PHistRCR(1:lstep+1,:),lstep+1,numRCRSrfs,
+     &         fname2,871)
+         else
+c     read the results in legacy format *HistRCR.dat
+            call ReadDataFile(QHistRCR(1:lstep+1,:),lstep+1,numRCRSrfs,
+     &         "QHistRCR.dat",870)
+            call ReadDataFile(PHistRCR(1:lstep+1,:),lstep+1,numRCRSrfs,
+     &         "PHistRCR.dat",871)
+         endif
       endif
       
       return
@@ -16857,15 +16875,21 @@ c
 C     
       real*8   y(nshg, ndof), NewP(0:MAXSURF)
       integer  srfIDList(0:MAXSURF),  numSrfs
+      character*50 fname
       
       call integrScalar(NewP,y(:,4),srfIdList,numSrfs)
          PHistRCR(lstep+1,1:numSrfs)=NewP(1:numSrfs)/RCRArea(1:numSrfs)
       if ((mod(lstep, ntout) .eq. 0).and.
      &   (myrank .eq. zero)) then
+c     output the results in format *HistRCR.dat.step#
+         write (fname, "(a13,i0)") "QHistRCR.dat.", lstep
+         fname = trim(fname)
          call OutputDataFile(QHistRCR(1:lstep+1,:),lstep+1,numSrfs,
-     &      'QHistRCR.dat',870)
+     &      fname,870)
+         write (fname, "(a13,i0)") "PHistRCR.dat.", lstep
+         fname = trim(fname)
          call OutputDataFile(PHistRCR(1:lstep+1,:),lstep+1,numSrfs,
-     &      'PHistRCR.dat',871)
+     &      fname,871)
       endif 
 
       return
