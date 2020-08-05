@@ -908,7 +908,8 @@ c
      &                      BC,        iper)
            endif
 
-
+c     increment time step after all outputs have been written
+      call writeNumStart ()
 
 c....  print out results.
 c
@@ -1027,6 +1028,9 @@ c
             call append_restart(myrank, lstep, nshg, 1,
      &                     yerror(:,4),'pressure error'//CHAR(0))
           endif
+
+c     increment time step after all outputs have been written
+         call writeNumStart ()
 
       endif
 
