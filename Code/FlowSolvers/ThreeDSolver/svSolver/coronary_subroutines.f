@@ -57,6 +57,8 @@ c ================================
       include "common_blocks/nomodule.h"
       include "common_blocks/inpdat.h"
       INTEGER k,j,n
+      logical flag1, flag2, flag3
+      character*50 fname1, fname2, fname3
 c      print *,'I am in the initCORt subroutine'
       open(unit=815, file='cort.dat',status='old')
 c         read (815,*)
@@ -124,12 +126,33 @@ c	       print *, 'allocation of conv coef and q and phist done'
          PlvHistCOR = zero
          PHistCOR = zero
 c	       print *, 'allocation of conv coef and q and phist done'
-         call ReadDataFile(QHistCOR(1:lstep+1,:),lstep+1,numCORSrfs,
-     &      'QHistCOR.dat',876)
-         call ReadDataFile(PHistCOR(1:lstep+1,:),lstep+1,numCORSrfs,
-     &      'PHistCOR.dat',877)
-         call ReadDataFile(PlvHistCOR(1:lstep+1,:),lstep+1,numCORSrfs,
-     &      'PlvHistCOR.dat',879)
+c     check if *HistCOR.dat.step# exists
+         write (fname1, "(a13,I0)") "QHistCOR.dat.", lstep
+         fname1 = trim(fname1)
+         write (fname2, "(a13,i0)") "PHistCOR.dat.", lstep
+         fname2 = trim(fname2)
+         write (fname3, "(a15,i0)") "PlvHistCOR.dat.", lstep
+         fname3 = trim(fname3)
+         inquire(FILE=fname1, EXIST=flag1)
+         inquire(FILE=fname2, EXIST=flag2)
+         inquire(FILE=fname3, EXIST=flag3)
+         if (flag1.AND.flag2.AND.flag3) then
+c     read the results in format *HistCOR.dat.step#
+            call ReadDataFile(QHistCOR(1:lstep+1,:),lstep+1,numCORSrfs,
+     &         fname1,876)
+            call ReadDataFile(PHistCOR(1:lstep+1,:),lstep+1,numCORSrfs,
+     &         fname2,877)
+            call ReadDataFile(PlvHistCOR(1:lstep+1,:),lstep+1,numCORSrfs,
+     &         fname3,879)
+         else
+c     read the results in legacy format *HistCOR.dat
+            call ReadDataFile(QHistCOR(1:lstep+1,:),lstep+1,numCORSrfs,
+     &         'QHistCOR.dat',876)
+            call ReadDataFile(PHistCOR(1:lstep+1,:),lstep+1,numCORSrfs,
+     &         'PHistCOR.dat',877)
+            call ReadDataFile(PlvHistCOR(1:lstep+1,:),lstep+1,numCORSrfs,
+     &         'PlvHistCOR.dat',879)
+         endif
       endif
 c     print*, 'End of initcort subroutine'      
       return
@@ -525,6 +548,7 @@ c
       real*8    timestepCOR, PlvistNext(0:MAXSURF)
       real*8    y(nshg,4)
       real*8    CoupleArea(0:MAXSURF), POnly(nshg)
+      character*50 fname
       
       PlvistNext=zero      
       call CORint(timestepCOR*stepn,PlvistNext)
@@ -536,12 +560,18 @@ c
 
       if ((mod(lstep, ntout) .eq. 0).and.
      &   (myrank .eq. zero)) then
+         write (fname, "(a13,i0)") "QHistCOR.dat.", lstep
+         fname = trim(fname)
          call OutputDataFile(QHistCOR(1:lstep+1,:),lstep+1,numSrfs,
-     &      'QHistCOR.dat',876)
+     &      fname,876)
+         write (fname, "(a13,i0)") "PHistCOR.dat.", lstep
+         fname = trim(fname)
          call OutputDataFile(PHistCOR(1:lstep+1,:),lstep+1,numSrfs,
-     &      'PHistCOR.dat',877)
+     &      fname,877)
+         write (fname, "(a15,i0)") "PlvHistCOR.dat.", lstep
+         fname = trim(fname)
          call OutputDataFile(PlvHistCOR(1:lstep+1,:),lstep+1,numSrfs,
-     &      'PlvHistCOR.dat',879)
+     &      fname,879)
       endif 
 
       return

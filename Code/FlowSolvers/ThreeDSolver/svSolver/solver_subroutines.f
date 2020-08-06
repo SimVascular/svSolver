@@ -13798,7 +13798,6 @@ C
         character*8 mach2
         character*20 fname1,  fmt1
         character*5  cname
-        integer ioerr
 
 c
         dimension q(nshg,ndof),ac(nshg,ndof)
@@ -13843,15 +13842,6 @@ c
            call write_restart(myrank, lstep, nshg, ndof, 
      &          qold, acold)
 
-          if (myrank.eq.master) then 
-            open(unit=72,file='numstart.dat',status='old',iostat=ioerr)
-            if (ioerr.eq.0) then
-              write(72,*) lstep
-            else
-              write(*,*) 'IO_ERROR file: numstart.dat code: ',ioerr
-            endif
-            close(72)
-          endif
            deallocate(qold)
            deallocate(acold)
            return
@@ -13871,6 +13861,31 @@ c
 c.... end
 c
         end
+
+c     This subroutine writes the current time step to file. It is called
+c     after all update/output functions have been called. If writing to
+c     file is interrupted in any of these functions, the simulation can
+c     be restarted from the previous time step.
+
+      subroutine writeNumStart ()
+
+      include "common_blocks/timdat.h"
+
+      integer ioerr
+
+      if (myrank.eq.master) then
+         open(unit=72,file='numstart.dat',status='old',iostat=ioerr)
+
+         if (ioerr.eq.0) then
+            write(72,*) lstep
+         else
+            write(*,*) 'IO_ERROR file: numstart.dat code: ',ioerr
+         endif
+
+         close(72)
+      endif
+      end
+
 
 !> This subroutine is responsible for rotating 
 !! the residual and solution vectors for axisymmetric BC's.
