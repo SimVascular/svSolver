@@ -2101,6 +2101,9 @@ int main(int argc, char* argv[])
         }
         else if(tmpstr=="-calcws"){
             RequestedCalcWS = true;
+            RequestedvInPlaneTraction=true;
+            RequestedvWSS = true;
+            RequestedSolution = true;
         }
         else if(tmpstr=="-applywd"){
             RequestedApplyWD = true;
