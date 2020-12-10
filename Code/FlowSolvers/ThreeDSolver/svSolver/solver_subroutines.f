@@ -13870,6 +13870,7 @@ c     be restarted from the previous time step.
       subroutine writeNumStart ()
 
       include "common_blocks/timdat.h"
+      include "common_blocks/workfc.h"
 
       integer ioerr
 

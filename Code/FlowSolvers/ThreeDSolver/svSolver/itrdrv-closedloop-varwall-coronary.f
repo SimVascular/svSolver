@@ -909,7 +909,9 @@ c
            endif
 
 c     increment time step after all outputs have been written
-      call writeNumStart ()
+      if (mod(lstep, ntout) .eq. 0) then
+         call writeNumStart ()
+      endif
 
 c....  print out results.
 c
@@ -1030,8 +1032,9 @@ c
           endif
 
 c     increment time step after all outputs have been written
-         call writeNumStart ()
-
+         if (mod(lstep, ntout) .eq. 0) then
+            call writeNumStart ()
+         endif
       endif
 
       
