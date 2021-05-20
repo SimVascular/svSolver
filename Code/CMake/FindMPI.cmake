@@ -625,6 +625,7 @@ if (MPI_NUMLIBS GREATER 1)
   set(MPI_EXTRA_LIBRARY ${MPI_EXTRA_LIBRARY_WORK} CACHE STRING "Extra MPI libraries to link against" FORCE)
 else()
   set(MPI_EXTRA_LIBRARY "MPI_EXTRA_LIBRARY-NOTFOUND" CACHE STRING "Extra MPI libraries to link against" FORCE)
+  set(MPI_EXTRA_LIBRARY "")
 endif()
 #=============================================================================
 
