@@ -466,7 +466,7 @@ int input_fform(char inpfname[])
       inpdat.LHSupd[5]=inp.GetValue("Number of Solves of Scalar 4 per Left-hand-side Formation","1",false,false);
     }
 
-    inpdat.restol = inp.GetValue("Residual Tolerance","10000.0",false,true);
+    inpdat.restol = inp.GetValue("Residual Tolerance","1000000.0",false,true);
      
     // ======================
     // DISCRETIZATION CONTROL
