@@ -67,7 +67,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: Ubuntu 18 Installer
+          name: Ubuntu 20 Installer
           path: svSolver-Ubuntu-20.deb
           if-no-files-found: error
       - name: Upload release asset
