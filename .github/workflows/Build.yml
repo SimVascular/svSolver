@@ -41,6 +41,43 @@ jobs:
           asset_name: svSolver-${{github.ref_name}}-Ubuntu-18.deb
           tag: ${{ github.ref }}
           
+  build-ubuntu-20:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        shell: bash
+        run: |
+          sudo apt-get install libvtk7-dev openmpi-bin libopenmpi-dev libglu1-mesa-dev libxt-dev libxi-dev libglew-dev libxmu-dev zip 
+      - name: Build
+        shell: bash
+        run: |
+          mkdir Build
+          cd Build
+          cmake .. -DSV_USE_LOCAL_VTK=ON 
+          make -j2
+      - name: Create installer
+        shell: bash
+        run: |
+          cd Build/svSolver-build
+          cmake . -DSV_ENABLE_DISTRIBUTION=ON
+          cpack
+          cp svsolver*.deb ../../svSolver-Ubuntu-20.deb
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Ubuntu 18 Installer
+          path: svSolver-Ubuntu-20.deb
+          if-no-files-found: error
+      - name: Upload release asset
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: svSolver-Ubuntu-20.deb
+          asset_name: svSolver-${{github.ref_name}}-Ubuntu-20.deb
+          tag: ${{ github.ref }}
           
   build-macos-catalina:
     runs-on: macos-10.15
