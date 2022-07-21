@@ -79,8 +79,8 @@ jobs:
           asset_name: svSolver-${{github.ref_name}}-Ubuntu-20.deb
           tag: ${{ github.ref }}
           
-  build-macos-catalina:
-    runs-on: macos-10.15
+  build-macos-big-sur:
+    runs-on: macos-11
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -108,19 +108,19 @@ jobs:
           cmake . -DSV_ENABLE_DISTRIBUTION=ON
           make
           cpack
-          cp svsolver*.pkg ../../svSolver-macOS-Catalina.pkg
+          cp svsolver*.pkg ../../svSolver-macOS-BigSur.pkg
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: macOS Catalina Installer
-          path: svSolver-macOS-Catalina.pkg
+          name: macOS BigSur Installer
+          path: svSolver-macOS-BigSur.pkg
           if-no-files-found: error
       - name: Upload release asset
         if: startsWith(github.ref, 'refs/tags/')
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: svSolver-macOS-Catalina.pkg
-          asset_name: svSolver-${{github.ref_name}}-macOS-Catalina.pkg
+          file: svSolver-macOS-BigSur.pkg
+          asset_name: svSolver-${{github.ref_name}}-macOS-BigSur.pkg
           tag: ${{ github.ref }}
 
