@@ -34,6 +34,7 @@
 
 ifeq ($(CLUSTER), x64_cygwin)
     F90             = ifort -fpp
+    F90 = '/cygdrive/c/Program Files (x86)/Intel/oneAPI/compiler/2022.1.0/windows/bin/intel64/ifort.exe' -fpp
 ifeq ($(MAKE_FULLY_OPTIMIZED),1)
     DEBUG_FFLAGS    =
     OPT_FFLAGS      = /MD /Ox

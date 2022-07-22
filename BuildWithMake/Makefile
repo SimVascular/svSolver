@@ -168,9 +168,12 @@ ifeq ($(CLUSTER),x64_macosx)
 #	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-svsolver-nompi-macosx-script > mysolver-nompi
 #	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-svsolver-nompi-macosx-script > mysolver-$(MPI_NAME)
 endif
+
 ifeq ($(CLUSTER),x64_cygwin)
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-svsolver-nompi-windows-script > mysolver-nompi
-	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-svsolver-nompi-windows-script > mysolver-$(MPI_NAME)
+	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-svsolver-nompi-windows-script > mysolver-msmpi
+	$(info  ### MPI_NAME is $(MPI_NAME))
+	#-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-svsolver-nompi-windows-script > mysolver-$(MPI_NAME)
 endif
 	-chmod a+rx mypre
 	-chmod a+rx mypost

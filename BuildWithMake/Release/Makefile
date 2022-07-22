@@ -41,7 +41,7 @@ include $(TOP)/include.mk
 SV_CLUSTER = $(CLUSTER)
 
 ifeq ($(CLUSTER),x64_cygwin)
-  include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/wix-3.14.x64_cygwin.mk
+  include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/wix-3.11.x64_cygwin.mk
 endif
 
 SV_TIMESTAMP := $(shell date +"%Y-%m-%d")
