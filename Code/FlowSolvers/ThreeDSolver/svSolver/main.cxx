@@ -80,7 +80,8 @@ int lmuCoLite = 0;
 #endif
 
 extern "C" char cvsolver_iotype[80];
-char cvsolver_iotype[80];
+// defined twice.
+//char cvsolver_iotype[80];
 
 extern void Partition_Problem( int, char[], char[] );
 extern "C" void proces();
