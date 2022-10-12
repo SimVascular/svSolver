@@ -69,6 +69,7 @@ using namespace std;
 #include "vtkCellData.h"
 #include "vtkCellArray.h"
 #include "vtkExtractEdges.h"
+#include <vtkKdTreePointLocator.h>
 
 #include "vtkXMLUnstructuredGridWriter.h"
 #include "vtkUnstructuredGridWriter.h"
@@ -1631,12 +1632,10 @@ int geom_create_ratio_map(vtkPolyData* inlet_mesh_face, double radmax, vtkPolyDa
     vScalars->SetNumberOfComponents(1);
     vScalars->Allocate(100,100);
 
-    //create point locator
-    vtkPointLocator* pointLocator=vtkPointLocator::New();
-    pointLocator->SetDataSet(inlet_mesh_face);
-    pointLocator->AutomaticOn();
-    pointLocator->SetTolerance(0.001);
-    pointLocator->BuildLocator();
+    // create point locator
+    auto kDTree = vtkSmartPointer<vtkKdTreePointLocator>::New();
+    kDTree->SetDataSet(inlet_mesh_face);
+    kDTree->BuildLocator();
 
     for(i=0;i<inlet_mesh_face->GetNumberOfPoints();i++){
         vScalars->InsertNextTuple1(-radmax);
@@ -1699,7 +1698,7 @@ int geom_create_ratio_map(vtkPolyData* inlet_mesh_face, double radmax, vtkPolyDa
         }
 
         //update velocities for mesh
-        vtkIdType ptId=pointLocator->FindClosestPoint(node);
+        vtkIdType ptId = kDTree->FindClosestPoint(node);
         vScalars->SetTuple1(ptId,r_pc);
     }
 
@@ -1718,7 +1717,6 @@ int geom_create_ratio_map(vtkPolyData* inlet_mesh_face, double radmax, vtkPolyDa
     extrudedMeshWall->Delete();
     nodes->Delete();
     vScalars->Delete();
-    pointLocator->Delete();
     outputObj->Delete();
 
     return CV_OK;

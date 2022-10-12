@@ -309,7 +309,7 @@ endif
 
 ifeq ($(CLUSTER), x64_cygwin)
   ifeq ($(CXX_COMPILER_VERSION), msvc-19.0)
-	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.vs19.0.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.vs19.10.x64_cygwin.mk
   endif
   ifeq ($(CXX_COMPILER_VERSION), msvc-19.16)
 	include $(TOP)/MakeHelpers/$(SV_EXTERNALS_VERSION_NUMBER)/compiler.vs19.16.x64_cygwin.mk

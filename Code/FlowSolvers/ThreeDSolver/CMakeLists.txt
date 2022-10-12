@@ -113,6 +113,8 @@ if(NOT SV_USE_DUMMY_MPI)
   if(SV_BUILD_ADDITIONAL_NOMPI_VERSION)
     set(SV_USE_DUMMY_MPI ON)
     set(SV_MPI_NAME_EXT "-nompi")
+    # Set including the mpi.h from dummyMPI.
+    include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/dummyMPI)
     add_subdirectory(dummyMPI)
     add_subdirectory(svLS svLS${SV_MPI_NAME_EXT})
     add_subdirectory(svSolver svSolver${SV_MPI_NAME_EXT})
