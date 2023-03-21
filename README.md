@@ -8,7 +8,7 @@ svSolver binaries can be built from the GitHub source using either a CMake build
 
 ## VTK libraries
 
-svSolver uses VTK to read and write simulation results. The VTK libraries used by svSolver are downloaded as prebuilt external packages so VTK does not need to be installed. However, VTK depends on certain grahics libraries being installed (e.g. OpenGL). This may cause compilation problems for certain clusters that don't have graphics libraries installed.
+svSolver uses VTK to read and write simulation results. The VTK libraries used by svSolver are downloaded as prebuilt external packages so VTK does not need to be installed. However, VTK depends on certain graphics libraries being installed (e.g. OpenGL, X11). 
  
 External VTK libraries are currently supported for
 ```
@@ -18,20 +18,18 @@ External VTK libraries are currently supported for
  
  MacOS 10.13 (clang 8.1)
  ```
-
-## Building with Make
-
-To build directly with make files, please see the README files in the "BuildWithMake" directory.  Simple scripts are provided to build on Windows, Linux, MacOS as described.
+ 
+ svSolve can also be built from VTK local and custom installs (see below).
 
 ## Building with CMake
 
-The svSolver project can use CMake to create the Makefiles used to compile and link the source into a binary executable. 
-The solver may also be built using a locally installed version of VTK. See below.
+The svSolver project uses CMake to create the Makefiles used to compile and link the source into a binary executable. 
 
  ### Building on Ubuntu 16.04
  
  #### Software prerequisites
- svSolver requires a CMake version of 3.6 or higher. The CMake version obtained using apt-get may be have a lower version number. A CMake 3.11 version can be installed by following the instructions [here](https://peshmerge.io/how-to-install-cmake-3-11-0-on-ubuntu-16-04/).
+ svSolver requires a CMake version of 3.6 or higher. The CMake version obtained using apt-get may be have a lower version number. 
+ A CMake 3.11 version can be installed by following the instructions [here](https://peshmerge.io/how-to-install-cmake-3-11-0-on-ubuntu-16-04/).
  
  svSolver uses Fortran90. A Fortran90 compiler can be installed using
  ```
