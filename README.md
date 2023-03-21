@@ -83,6 +83,78 @@ ccmake -DSV_USE_LOCAL_VTK=ON ..
 ```
 This has been testing on MacOS, Ubuntu, RedHat and CentOS.
 
+## Building using a custom VTK build
+
+You can also build vSolver using a custom VTK build located in a non-standard directory that CMake may not be able to find. The location of the custom VTK build directory can be specified using the **SV_VTK_LOCAL_PATH** CMake flag
+```
+cmake -DSV_USE_LOCAL_VTK=ON -DSV_VTK_LOCAL_PATH=$HOME/vtk-install/ ..
+```
+where $HOME/vtk-install/ contains the VTK include, ibrary and share (documantaion) directories.
+```
+include/	lib/		share/
+```
+
+# Building on an HPC cluster
+
+Building svSolver on an HPC cluster requires first building a local version of VTK. After VTK is built then you will need to load the 
+appropriate modules needed by svSolver and then build using
+```
+cmake -DSV_USE_LOCAL_VTK=ON -DSV_VTK_LOCAL_PATH=$HOME/vtk-install/ ..
+```
+
+## Loading modules
+You can load the modules needed by svSover using the following commands
+```
+module purge
+module load gcc openmpi openblas cmake
+```
+
+## Building VTK
+VTK source is downloaded from https://www.vtk.org/files/release/8.2/VTK-8.2.0.tar.gz. Note that svSolver is not compatible with VTK 9.
+
+The following steps are used to build VTK
+CMake command-line options are used to build VTK without graphics
+```
+mkdir $HOME/vtk
+cd $HOME/vtk
+wget https://www.vtk.org/files/release/8.2/VTK-8.2.0.tar.gz
+tar xvf VTK-8.2.0.tar.gz 
+mkdir build
+cd build
+cmake -DBUILD_SHARED_LIBS:BOOL=OFF \
+      -DCMAKE_BUILD_TYPE:STRING=RELEASE \
+      -DBUILD_EXAMPLES=OFF \
+      -DBUILD_TESTING=OFF \
+      -DVTK_USE_SYSTEM_EXPAT:BOOL=ON \
+      -DVTK_USE_SYSTEM_ZLIB:BOOL=ON \
+      -DVTK_LEGACY_REMOVE=ON \
+      -DVTK_Group_Rendering=OFF \
+      -DVTK_Group_StandAlone=OFF \
+      -DVTK_RENDERING_BACKEND=None \
+      -DVTK_WRAP_PYTHON=OFF \
+      -DModule_vtkChartsCore=ON \
+      -DModule_vtkCommonCore=ON \
+      -DModule_vtkCommonDataModel=ON \
+      -DModule_vtkCommonExecutionModel=ON \
+      -DModule_vtkFiltersCore=ON \
+      -DModule_vtkFiltersFlowPaths=ON \
+      -DModule_vtkFiltersModeling=ON \
+      -DModule_vtkIOLegacy=ON \
+      -DModule_vtkIOXML=ON \
+      -DVTK_GROUP_ENABLE_Views=NO \
+      -DVTK_GROUP_ENABLE_Web=NO \
+      -DVTK_GROUP_ENABLE_Imaging=NO \
+      -DVTK_GROUP_ENABLE_Qt=DONT_WANT \
+      -DVTK_GROUP_ENABLE_Rendering=DONT_WANT \
+      -DCMAKE_INSTALL_PREFIX=/$HOME/vtk/install \
+      ../VTK-8.2.0
+make
+make install
+
 # Status of Build on Travis
 
 [![Build Status](https://travis-ci.org/SimVascular/svSolver.svg?branch=master)](https://travis-ci.org/SimVascular/svSolver)
+
+
+
+
