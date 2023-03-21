@@ -117,7 +117,7 @@ if(CMAKE_Fortran_COMPILER_ID MATCHES "GNU")
   # Set the -std=legacy option to compile code using gcc 8.1 (see svSolver GitHub Issue #32). 
   if(APPLE AND (Fortran_COMPILER_NAME MATCHES "gfortran.*") AND (COMPILER_MAJOR_VERSION GREATER 7))
       set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -std=legacy")
-  elseif(COMPILER_MAJOR_VERSION GREATER 11)
+  elseif(COMPILER_MAJOR_VERSION GREATER 10)
       set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -std=legacy")
   endif()
 else()
