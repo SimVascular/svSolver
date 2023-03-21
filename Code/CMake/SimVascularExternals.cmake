@@ -25,7 +25,21 @@ endif()
 
 #-----------------------------------------------------------------------------
 # VTK
-if (SV_USE_VTK)
+#
+# If using a local VTK installation. 
+#
+# The SV_VTK_LOCAL_PATH variable is used to identify a VTK 
+# install in a location that CMake can't find.
+#
+if (SV_USE_LOCAL_VTK)
+
+  if (SV_VTK_LOCAL_PATH STREQUAL "") 
+    find_package(VTK REQUIRED)
+  else()
+    find_package(VTK PATHS ${SV_VTK_LOCAL_PATH} REQUIRED)
+  endif()
+
+elseif (SV_USE_VTK)
   #message("SV_VTK_DIR ${SV_VTK_DIR}")
   # If using toplevel dir, foce VTK_DIR to be the SV_VTK_DIR set by the
   if(SV_EXTERNALS_USE_TOPLEVEL_DIR)

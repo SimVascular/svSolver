@@ -95,6 +95,8 @@ set(SV_EXTERNALS_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to 
 
 set(SV_USE_LOCAL_VTK OFF CACHE BOOL "If using an installed VTK version.")
 
+# Add downloading VTK externals.
+#
 if(NOT ${SV_USE_LOCAL_VTK}) 
   ExternalProject_Add(Externals
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Externals
@@ -122,6 +124,12 @@ endif()
 # svSolver!
 set(SV_ADDITIONAL_CMAKE_ARGS "" CACHE STRING "If more options want to be provided to the sv_externals build, they can be with this string")
 
+# Add svsolver project without VTK externals.
+#
+# Pass two additional SV_USE_LOCAL_VTK and SV_VTK_LOCAL_PATH
+# flags to ExternalProject_Add to define CMake variables
+# that can be later used in other CMake files.
+#
 if(${SV_USE_LOCAL_VTK}) 
   ExternalProject_Add(svSolver
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Code
@@ -140,9 +148,13 @@ if(${SV_USE_LOCAL_VTK})
       -DBUILD_TESTING:BOOL=OFF
       -DBUILD_EXAMPLES:BOOL=OFF
       -DBUILD_SHARED_LIBS:BOOL=OFF
+      -DSV_USE_LOCAL_VTK:BOOL=${SV_USE_LOCAL_VTK}
+      -DSV_VTK_LOCAL_PATH::STRING=${SV_VTK_LOCAL_PATH}
       ${SV_ADDITIONAL_CMAKE_ARGS}
       )
 
+# Add svsolver with externals.
+#
 else()
 
   ExternalProject_Add(svSolver
