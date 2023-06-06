@@ -31,14 +31,14 @@ The svSolver project uses CMake to create the Makefiles used to compile and link
  svSolver requires a CMake version of 3.6 or higher. The CMake version obtained using apt-get may be have a lower version number. 
  A CMake 3.11 version can be installed by following the instructions [here](https://peshmerge.io/how-to-install-cmake-3-11-0-on-ubuntu-16-04/).
  
- svSolver uses Fortran90. A Fortran90 compiler can be installed using
+ svSolver uses Fortran90. A Fortran90 compiler is typically installed when gcc. If it is not then it can be installed using
  ```
  sudo apt-get install gfortran
  ```
      
-  svSolver uses the MPICH implementation of MPI. It can be installed using
+  svSolver uses the OpenMPI implementation of MPI. It can be installed using
   ```
-  sudo apt-get install mpich 
+  sudo apt-get install openmpi-bin
   ```
 
 #### Building svSolver
