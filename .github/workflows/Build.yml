@@ -11,6 +11,7 @@ jobs:
       - name: Install dependencies
         shell: bash
         run: |
+          sudo apt update
           sudo apt-get install openmpi-bin libopenmpi-dev libglu1-mesa-dev libxt-dev libxi-dev libglew-dev libxmu-dev zip 
       - name: Build
         shell: bash
@@ -49,6 +50,7 @@ jobs:
       - name: Install dependencies
         shell: bash
         run: |
+          sudo apt update
           sudo apt-get install gcc-8 g++-8 libvtk7-dev openmpi-bin libopenmpi-dev libglu1-mesa-dev libxt-dev libxi-dev libglew-dev libxmu-dev zip 
       - name: Build
         shell: bash
