@@ -1915,7 +1915,8 @@ int VtkUtils_GetAllPolys( vtkPolyData *pd, int *numPgns, vtkIdType **pgns )
 {
     vtkCellArray *pdPgns;
     int size, i;
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+    vtkIdType const *pts;
     int pos = 0;
 
     (*numPgns) = pd->GetNumberOfPolys();
