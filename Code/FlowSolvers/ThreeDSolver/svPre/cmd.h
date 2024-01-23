@@ -57,6 +57,17 @@
 #include "vtkPolyData.h"
 #include "vtkDoubleArray.h"
 
+// Set directive to use vtkIdType const *pts if 
+// VTK version is 9 or large.
+//
+#include <vtkVersion.h>
+
+#ifdef VTK_VERSION_NUMBER
+#if VTK_VERSION_NUMBER >= 90020210809ULL
+#define VTK_USE_NEW_ID_TYPE
+#endif
+#endif
+
 #ifdef WIN32
 #define CALLTYPE __cdecl
 #else
