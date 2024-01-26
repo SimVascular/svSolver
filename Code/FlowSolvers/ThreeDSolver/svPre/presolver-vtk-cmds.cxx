@@ -680,8 +680,14 @@ int cmd_mesh_and_adjncy_vtu(char *cmd) {
     vtkIdType cellId;
     vtkIdType meshCellId;
     vtkIdType p1, p2, p3;
+
+    #ifdef VTK_USE_NEW_ID_TYPE
+    vtkIdType const *pts;
+    #else
+    vtkIdType *pts;
+    #endif
+
     vtkIdType npts = 0;
-    vtkIdType *pts = 0;
     vtkSmartPointer < vtkIdList > ptIds = vtkSmartPointer < vtkIdList > ::New();
     vtkSmartPointer < vtkIdList > cellIds = vtkSmartPointer < vtkIdList
             > ::New();
