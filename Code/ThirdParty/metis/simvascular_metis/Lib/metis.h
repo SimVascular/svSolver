@@ -11,6 +11,7 @@
  * $Id: metis.h,v 1.1 1998/11/27 17:59:21 karypis Exp $
  */
 
+void GKfree(void **ptr1,...);
 
 #include <stdio.h>
 #ifdef __STDC__

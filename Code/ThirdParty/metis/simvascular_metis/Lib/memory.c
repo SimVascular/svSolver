@@ -14,6 +14,8 @@
 
 #include <metis.h>
 
+extern void GKfree(void **ptr1,...);
+
 
 /*************************************************************************
 * This function allocates memory for the workspace

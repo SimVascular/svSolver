@@ -377,7 +377,7 @@
 
 /* util.c */
 #define errexit				__errexit
-#define GKfree				__GKfree
+//#define GKfree				__GKfree
 #ifndef DMALLOC
 #define imalloc				__imalloc
 #define idxmalloc			__idxmalloc

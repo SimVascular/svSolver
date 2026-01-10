@@ -13,6 +13,8 @@
 
 #include <metis.h>
 
+extern void GKfree(void **ptr1,...);
+
 
 /*************************************************************************
 * This function is the entry point of refinement

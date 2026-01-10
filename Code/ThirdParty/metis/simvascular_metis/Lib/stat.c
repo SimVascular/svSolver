@@ -14,6 +14,8 @@
 
 #include <metis.h>
 
+extern void GKfree(void **ptr1,...);
+
 
 /*************************************************************************
 * This function computes cuts and balance information

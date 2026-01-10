@@ -15,6 +15,8 @@
 
 #include <metis.h>
 
+extern void GKfree(void **ptr1,...);
+
 /*************************************************************************
 * This function sets up the graph from the user input
 **************************************************************************/

@@ -16,6 +16,7 @@
 
 #include <metis.h>
 
+extern void GKfree(void **ptr1,...);
 
 /*************************************************************************
 * This function initializes the data structures of the priority queue
